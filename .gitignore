@@ -1,0 +1,5 @@
+.python-version
+.idea/
+cache/
+.DS_store
+__pycache__
