@@ -1,51 +1,44 @@
 from typing import List
 
+import requests
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
-from .models import Book
+from source.utils.models import Book
 import logging
 
-DEFAULT_WAIT_SECONDS = 5
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+headers = {
+    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36}'
+}
 
 
 def retrieve_goodreads_shelf_data(shelf_url: str) -> List[Book]:
-    logging.info("Creating Browser")
-    # Instantiate ChromeOptions
-    chrome_options = webdriver.ChromeOptions()
-
-    # Activate headless mode
-    chrome_options.add_argument('--headless=new')
-    chrome_options.add_argument("--incognito")
-    # potentially add options.add_argument("--disable-site-isolation-trials")
-    chrome_options.add_argument(
-        'user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36')
-
-    # Instantiate a webdriver instance
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+    logging.info("Retrieving Shelf Data")
 
     book_data: List[Book] = []
 
-    page_data = get_initial_page_soup(selenium_driver=driver, url=shelf_url)
+    page_data = get_initial_page_soup(shelf_url)
     add_book_data_from_page(page_data_soup=page_data, book_data_list=book_data)
-    next_page = page_data.select_one("a.next_page")
+    remaining_pages = get_remaining_page_urls(page_data)
 
-    while next_page is not None:
-        new_page_data = get_initial_page_soup(selenium_driver=driver,
-                                              url=f'https://www.goodreads.com{next_page["href"]}')
+    for page in remaining_pages:
+        new_page_data = get_initial_page_soup(f'https://www.goodreads.com{page}')
         add_book_data_from_page(page_data_soup=new_page_data, book_data_list=book_data)
-        next_page = new_page_data.select_one("a.next_page")
 
     return book_data
 
 
-def get_initial_page_soup(selenium_driver, url):
+def get_initial_page_soup(url):
     logging.info(f"Getting Webpage Data To Parse. URL: {url}")
-    selenium_driver.get(url)
-    selenium_driver.implicitly_wait(DEFAULT_WAIT_SECONDS)
-    return BeautifulSoup(selenium_driver.page_source, "html.parser")
+    page_data = requests.get(url, headers=headers)
+    return BeautifulSoup(page_data.text, "html.parser")
+
+
+def get_remaining_page_urls(page_soup):
+    logging.info("Parsing for remaining pages")
+    if page_soup.select_one("#reviewPagination") is not None:
+        return set(map(lambda x: x['href'], page_soup.select_one("#reviewPagination").select("a")))
+    else:
+        return []
 
 
 def add_book_data_from_page(page_data_soup, book_data_list):
