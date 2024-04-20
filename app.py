@@ -7,7 +7,7 @@ from flask_caching import Cache
 import random
 
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], title="Goodreads Shelf Randomizer")
 server = app.server
 cache = Cache(app.server, config={
     'CACHE_TYPE': 'filesystem',

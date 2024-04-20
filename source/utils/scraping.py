@@ -19,6 +19,7 @@ def retrieve_goodreads_shelf_data(shelf_url: str) -> List[Book]:
     # Activate headless mode
     chrome_options.add_argument('--headless=new')
     chrome_options.add_argument("--incognito")
+    # potentially add options.add_argument("--disable-site-isolation-trials")
     chrome_options.add_argument(
         'user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36')
 
