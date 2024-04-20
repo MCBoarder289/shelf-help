@@ -1,8 +1,8 @@
 from dash import Dash, html, dcc, callback, Output, Input, State, ctx
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
-from utils.scraping import retrieve_goodreads_shelf_data
-from utils.converters import book_to_cards
+from source.utils.scraping import retrieve_goodreads_shelf_data
+from source.utils.converters import book_to_cards
 from flask_caching import Cache
 import random
 

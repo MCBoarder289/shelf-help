@@ -20,4 +20,4 @@ fi
 # export PATH="${PATH}:/opt/render/project/.render/chrome/opt/google/chrome"
 
 # add your own build commands...
-pip install -r requirements.txt
+pip install -r requirements.txtgy
