@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, callback, Output, Input, State, ctx
+from dash import Dash, html, dcc, callback, Output, Input, State, ctx, clientside_callback
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 from source.utils.scraping import retrieve_goodreads_shelf_data
@@ -6,8 +6,9 @@ from source.utils.converters import book_to_cards
 from flask_caching import Cache
 import random
 
+dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], title="Goodreads Shelf Randomizer")
+app = Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN, dbc_css, dbc.icons.FONT_AWESOME], title="Goodreads Shelf Randomizer")
 server = app.server
 cache = Cache(app.server, config={
     'CACHE_TYPE': 'filesystem',
@@ -17,45 +18,58 @@ cache = Cache(app.server, config={
 
 timeout = 1800  # 30 minutes
 
+color_mode_switch = html.Span(
+    [
+        dbc.Label(className="fa fa-moon", html_for="color-mode-switch"),
+        dbc.Switch(id="color-mode-switch", value=True, className="d-inline-block ms-1", persistence=True),
+        dbc.Label(className="fa fa-sun", html_for="color-mode-switch"),
+    ]
+)
 
-app.layout = html.Div([
-    dcc.Store(id='signal'),  # signal value to trigger callbacks
-    html.H1(children='Goodreads Shelf Randomizer', style={'textAlign': 'center'}),
-    html.Div([
-        html.Label('Enter Shelf Url:', id='input-label'),
-        dbc.Input(id='input-box', type='text'),
-        html.Br(),
-        dbc.DropdownMenu(
-            label="Examples",
-            children=[
-                dbc.DropdownMenuItem("MC - To Read", id="to-read-item"),
-                dbc.DropdownMenuItem("MC - Currently Reading", id="currently-reading-item")
-            ]
-        ),
-        html.Br(),
-        html.Label('Select Number of Suggestions:', id='slider-label'),
-        dcc.Slider(id='slider-number', min=1, max=5, step=1, value=3),
-        html.Br(),
-        dcc.Loading(
-            id='loading-shelf',
-            type="default",
-            children=[
-                html.Div(id='shelf-url-output')
-            ]
-        ),
-        dbc.Button('Retrieve Shelf', id='retrieve-button', color='primary'),
-        dbc.Alert(
-                    "Hello! I am an auto-dismissing alert!",
-                    id="alert-auto",
-                    is_open=False,
-                    dismissable=False,
-                    duration=4000,
-                    color="warning",
-        ),
-        dbc.CardGroup(id="results")
-    ]),
 
-])
+app.layout = dbc.Container(
+    [
+
+        dcc.Store(id='signal'),  # signal value to trigger callbacks
+        html.H1(children='Goodreads Shelf Randomizer', style={'textAlign': 'center'}),
+        color_mode_switch,
+        html.Div([
+            html.Label('Enter Shelf Url:', id='input-label'),
+            dbc.Input(id='input-box', type='text'),
+            html.Br(),
+            dbc.DropdownMenu(
+                label="Examples",
+                children=[
+                    dbc.DropdownMenuItem("MC - To Read", id="to-read-item"),
+                    dbc.DropdownMenuItem("MC - Currently Reading", id="currently-reading-item")
+                ]
+            ),
+            html.Br(),
+            html.Label('Select Number of Suggestions:', id='slider-label'),
+            dcc.Slider(id='slider-number', className="dbc", min=1, max=5, step=1, value=3),
+            html.Br(),
+            dcc.Loading(
+                id='loading-shelf',
+                type="default",
+                className="dbc",
+                children=[
+                    html.Div(id='shelf-url-output')
+                ]
+            ),
+            dbc.Button('Retrieve Shelf', id='retrieve-button', color='primary'),
+            dbc.Alert(
+                "Hello! I am an auto-dismissing alert!",
+                id="alert-auto",
+                is_open=False,
+                dismissable=False,
+                duration=4000,
+                color="warning",
+            ),
+            dbc.CardGroup(id="results", style={"maxHeight": "600px", "overflow": "scroll"})
+        ]),
+
+    ]
+)
 
 
 @cache.memoize(timeout=timeout)
@@ -94,14 +108,23 @@ def get_shelf_data(n_clicks, shelf_url, slider_number):
     if not shelf_url.startswith("http://") and not shelf_url.startswith("https://"):
         return True, "Invalid Entry: Must start with http:// or https://", None, shelf_url, None
 
-    # TODO: Progress bar/background callback to make this more stable
-    #   currently this can take minutes to parse.
     shelf_data = fetch_shelf_data_from_goodreads(shelf_url)
     sample_number = slider_number if len(shelf_data) >= slider_number else len(shelf_data)
     shelf_choices = list(map(book_to_cards, random.sample(shelf_data, sample_number)))
 
     return False, None, f"Retrieved Shelf Data: {len(shelf_data)} Books Retrieved", shelf_url, shelf_choices
 
+
+clientside_callback(
+    """
+    (switchOn) => {
+       document.documentElement.setAttribute('data-bs-theme', switchOn ? 'light' : 'dark');  
+       return window.dash_clientside.no_update
+    }
+    """,
+    Output("color-mode-switch", "id"),
+    Input("color-mode-switch", "value"),
+)
 
 if __name__ == '__main__':
     app.run(debug=True)
