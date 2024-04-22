@@ -1,10 +1,17 @@
+import requests
+
 from .models import Book
 from dash import html
 import dash_bootstrap_components as dbc
 
 
 def book_to_cards(book: Book):
-    # TODO: Add Google Books API for better image results?
+    cover_response = requests.get(f"https://covers.openlibrary.org/b/isbn/{book.isbn}.json")
+    cover_url: str
+    if not cover_response.ok:
+        cover_url = "assets/book_placeholder.jpeg"
+    else:
+        cover_url = f"https://covers.openlibrary.org/b/isbn/{book.isbn}-L.jpg"
     return dbc.Card([
         dbc.CardBody([
             html.P(f"Title: {book.title}", className="card-text"),
@@ -18,6 +25,6 @@ def book_to_cards(book: Book):
             ])
             ]
         ),
-        dbc.CardImg(src=f"https://covers.openlibrary.org/b/isbn/{book.isbn}-L.jpg", bottom=True),
+        dbc.CardImg(src=cover_url, bottom=True),
     ], style={"width": "18rem"}, class_name="card"
     )

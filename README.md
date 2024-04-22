@@ -9,6 +9,10 @@ Because there is no direct API anymore, I'm resorting to scraping/crawling the p
 * Return the random title with information/navigate to the page in goodreads
 * Do this all in some simple Dash app?
 
+## Requirements:
+* Python `3.8.12`
+* See `requirements.txt`
+
 ## Other cool resources I found
 
 * [Open Library](https://openlibrary.org/developers)
