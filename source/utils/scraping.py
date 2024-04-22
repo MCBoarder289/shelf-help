@@ -60,6 +60,43 @@ def convert_row_to_book(row_soup):
     )
 
 
+def get_library_availability(library_url):
+
+    book_in_inventory = find_book_in_inventory(library_url)
+
+    if book_in_inventory is not None:
+        # Get Shelf Status
+        shelf_status = book_in_inventory.parent.parent.find_all("div", {
+            "class": "related-manifestation-shelf-status"
+        })[0]
+
+        if shelf_status.text.strip() == "On Shelf":
+            available_sites = list(
+                map(
+                    lambda x: x.text.split(" - ")[0], shelf_status.parent.find_all("div", {"class": "itemSummary row"})
+                )
+            )
+            return f"AVAILABLE: {available_sites}"
+
+        elif shelf_status.text.strip() == "Checked Out":
+            return "CHECKED OUT"
+        else:
+            return "UNKNOWN STATUS"
+    else:
+        return "Book Not Found"
+
+
+def find_book_in_inventory(library_url):
+    library_isbn_search = get_initial_page_soup(library_url)
+
+    if len(library_isbn_search.find_all("a", {"aria-label": "View Book"})) > 0:
+        return library_isbn_search.find_all("a", {"aria-label": "View Book"})[0]
+    elif len(library_isbn_search.find_all("a", {"aria-label": "View Manifestations for Book"})) > 0:
+        return library_isbn_search.find_all("a", {"aria-label": "View Manifestations for Book"})[0]
+    else:
+        return None
+
+
 if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
     # multi-page examples:
@@ -67,6 +104,11 @@ if __name__ == "__main__":
     # single-page example:
     single_page = "https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=currently-reading"
 
-    retrieved_book_data = retrieve_goodreads_shelf_data(multi_page)
-    print(retrieved_book_data[0].isbn)
-    print(len(retrieved_book_data))
+    # retrieved_book_data = retrieve_goodreads_shelf_data(multi_page)
+    # print(retrieved_book_data[0].isbn)
+    # print(len(retrieved_book_data))
+
+    # get_library_availability("https://catalog.library.nashville.org/Search/Results?join=AND&lookfor0%5B%5D=9780593157534&type0%5B%5D=ISN")
+    # get_library_availability("https://catalog.library.nashville.org/Search/Results?join=AND&lookfor0%5B%5D=9780441013593&type0%5B%5D=ISN")
+    # get_library_availability("https://catalog.library.nashville.org/Search/Results?join=AND&lookfor0%5B%5D=9780061052651&type0%5B%5D=ISN")
+

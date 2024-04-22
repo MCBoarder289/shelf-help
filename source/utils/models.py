@@ -11,3 +11,4 @@ class Book:
     avg_rating: float
     date_added: str
     link: str
+

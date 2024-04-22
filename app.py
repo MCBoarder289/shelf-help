@@ -1,7 +1,7 @@
-from dash import Dash, html, dcc, callback, Output, Input, State, ctx, clientside_callback
+from dash import Dash, html, dcc, callback, Output, Input, State, ctx, clientside_callback, ALL
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
-from source.utils.scraping import retrieve_goodreads_shelf_data
+from source.utils.scraping import retrieve_goodreads_shelf_data, get_library_availability
 from source.utils.converters import book_to_cards
 from flask_caching import Cache
 import random
@@ -24,6 +24,23 @@ color_mode_switch = html.Span(
         dbc.Switch(id="color-mode-switch", value=True, className="d-inline-block ms-1", persistence=True),
         dbc.Label(className="fa fa-sun", html_for="color-mode-switch"),
     ]
+)
+
+
+modal = html.Div(
+    dbc.Modal(
+            [
+                dbc.ModalHeader(dbc.ModalTitle("Library Status")),
+                dbc.ModalBody("This is the content of the modal", id="library-details"),
+                dbc.ModalFooter(
+                    dbc.Button(
+                        "Open Library Search", id="open-library", className="ms-auto", target="_blank"
+                    )
+                ),
+            ],
+            id="modal",
+            is_open=False,
+        )
 )
 
 
@@ -67,7 +84,7 @@ app.layout = dbc.Container(
             ),
             dbc.CardGroup(id="results", style={"maxHeight": "600px", "overflow": "scroll"})
         ]),
-
+        modal
     ]
 )
 
@@ -113,6 +130,24 @@ def get_shelf_data(n_clicks, shelf_url, slider_number):
     shelf_choices = list(map(book_to_cards, random.sample(shelf_data, sample_number)))
 
     return False, None, f"Retrieved Shelf Data: {len(shelf_data)} Books Retrieved", shelf_url, shelf_choices
+
+
+@callback(
+    Output("modal", "is_open"),
+    Output("library-details", "children"),
+    Output("open-library", "href"),
+    Input({"type": "library-button", "index": ALL}, "n_clicks"),
+    State("modal", "is_open"),
+    State({"type": "library-button", "index": ALL}, "value")
+)
+def toggle_modal(n_clicks, is_open, library_url):
+    if ctx.triggered_id is None or len(n_clicks) == 0:
+        return False, None, None
+    elif ctx.inputs[''.join(str(ctx.triggered_id).replace("'", '"').split())+".n_clicks"] is not None:
+        library_link = ctx.states[''.join(str(ctx.triggered_id).replace("'", '"').split())+".value"]
+        library_status = get_library_availability(library_link)
+        return not is_open, library_status, library_link
+    return is_open, None, None
 
 
 clientside_callback(
