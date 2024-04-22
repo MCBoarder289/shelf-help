@@ -73,6 +73,14 @@ app.layout = dbc.Container(
                     html.Div(id='shelf-url-output')
                 ]
             ),
+            dcc.Loading(
+                id="library-loading",
+                type="default",
+                className="dbc",
+                children=[
+                    html.Div(id="library-loading-output")
+                ]
+            ),
             dbc.Button('Retrieve Shelf', id='retrieve-button', color='primary'),
             dbc.Alert(
                 "Hello! I am an auto-dismissing alert!",
@@ -136,18 +144,19 @@ def get_shelf_data(n_clicks, shelf_url, slider_number):
     Output("modal", "is_open"),
     Output("library-details", "children"),
     Output("open-library", "href"),
+    Output("library-loading-output", "children"),
     Input({"type": "library-button", "index": ALL}, "n_clicks"),
     State("modal", "is_open"),
     State({"type": "library-button", "index": ALL}, "value")
 )
 def toggle_modal(n_clicks, is_open, library_url):
     if ctx.triggered_id is None or len(n_clicks) == 0:
-        return False, None, None
+        return False, None, None, None
     elif ctx.inputs[''.join(str(ctx.triggered_id).replace("'", '"').split())+".n_clicks"] is not None:
         library_link = ctx.states[''.join(str(ctx.triggered_id).replace("'", '"').split())+".value"]
         library_status = get_library_availability(library_link)
-        return not is_open, library_status, library_link
-    return is_open, None, None
+        return not is_open, library_status, library_link, None
+    return is_open, None, None, None
 
 
 clientside_callback(
