@@ -52,12 +52,35 @@ def convert_row_to_book(row_soup):
     return Book(
         title=row_soup.select_one(".title").select_one(".value").select_one("a")["title"].strip(),
         author=row_soup.select_one(".author").select_one(".value").select_one("a").getText().strip(),
-        isbn=row_soup.select_one(".isbn").select_one(".value").getText().strip(),
+        isbn=get_isbn(row_soup),
         isbn13=row_soup.select_one(".isbn13").select_one(".value").getText().strip(),
         avg_rating=float(row_soup.select_one(".avg_rating").select_one(".value").getText().strip()),
         date_added=row_soup.select_one(".date_added").select_one(".value").getText().strip(),
         link=f'https://www.goodreads.com{row_soup.select_one(".title").select_one(".value").select_one("a")["href"]}',
     )
+
+
+def get_isbn(row_soup):
+    parsed_isbn = row_soup.select_one(".isbn").select_one(".value").getText().strip()
+    if parsed_isbn != "":
+        return parsed_isbn
+    else:
+        logging.info("ISBN Not Found... Attempting to Discover")
+        title = row_soup.select_one(".title").select_one(".value").select_one("a")["title"].strip()
+        if "(" in title:
+            title = title.partition("(")[0].strip()
+        author = row_soup.select_one(".author").select_one(".value").select_one("a").getText().strip()
+        isbn = ""
+        query_response = requests.get(
+            f"https://openlibrary.org/search.json?q=title:{'+'.join(title.lower().split())}+author:{'+'.join(author.lower().split())}",
+            headers=headers
+        )
+        if query_response.ok:
+            response_json = query_response.json()
+            if response_json["num_found"] > 0:
+                isbn = response_json["docs"][0]["isbn"][0]
+
+        return isbn
 
 
 def get_library_availability(library_url):
