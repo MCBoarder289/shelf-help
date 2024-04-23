@@ -1,22 +1,38 @@
-from dash import Dash, html, dcc, callback, Output, Input, State, ctx, clientside_callback, ALL
+import os
+from typing import List
+
+from dash import Dash, html, dcc, callback, Output, Input, State, ctx, clientside_callback, ALL, DiskcacheManager
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
-from source.utils.scraping import retrieve_goodreads_shelf_data, get_library_availability
+
+from source.utils.models import Book
+from source.utils.scraping import retrieve_goodreads_page_data, retrieve_goodreads_page_list, get_library_availability
 from source.utils.converters import book_to_cards
 from flask_caching import Cache
 import random
+import diskcache
 
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN, dbc_css, dbc.icons.FONT_AWESOME], title="Goodreads Shelf Randomizer")
+disk_cache = diskcache.Cache("./disk_cache")
+background_callback_manager = DiskcacheManager(disk_cache)
+
+app = Dash(
+    __name__,
+    external_stylesheets=[dbc.themes.CERULEAN, dbc_css, dbc.icons.FONT_AWESOME],
+    title="Goodreads Shelf Randomizer",
+    background_callback_manager=background_callback_manager
+)
+
 server = app.server
 cache = Cache(app.server, config={
     'CACHE_TYPE': 'filesystem',
     'CACHE_DIR': 'cache',
-    'CACHE_THRESHOLD': 100
+    'CACHE_THRESHOLD': 500
 })
 
-timeout = 1800  # 30 minutes
+
+cache_timeout = 1800  # 30 minutes
 
 color_mode_switch = html.Span(
     [
@@ -65,10 +81,10 @@ app.layout = dbc.Container(
             html.Label('Select Number of Suggestions:', id='slider-label'),
             dcc.Slider(id='slider-number', className="dbc", min=1, max=5, step=1, value=3),
             html.Br(),
-            dcc.Loading(
-                id='loading-shelf',
-                type="default",
+            html.Progress(
+                id='progress-bar',
                 className="dbc",
+                value="0",
                 children=[
                     html.Div(id='shelf-url-output')
                 ]
@@ -97,9 +113,14 @@ app.layout = dbc.Container(
 )
 
 
-@cache.memoize(timeout=timeout)
-def fetch_shelf_data_from_goodreads(url):
-    return retrieve_goodreads_shelf_data(shelf_url=url)
+@cache.memoize(timeout=cache_timeout)
+def fetch_page_data_from_goodreads(url):
+    return retrieve_goodreads_page_data(page_url=url)
+
+
+@cache.memoize(timeout=cache_timeout)
+def fetch_pages_from_goodreads(url):
+    return retrieve_goodreads_page_list(shelf_url=url)
 
 
 @callback(
@@ -123,9 +144,19 @@ def populate_examples(to_read_btn, currently_reading_btn):
     Output('results', 'children'),
     Input('retrieve-button', 'n_clicks'),
     State('input-box', 'value'),
-    State('slider-number', 'value')
+    State('slider-number', 'value'),
+    background=True,
+    running=[
+        (Output("retrieve-button", "disabled"), True, False),
+        (Output("progress-bar", "style"), {"visibility": "visible"}, {"visibility": "hidden"},),
+    ],
+    progress=[
+        Output("progress-bar", "value"),
+        Output("progress-bar", "max")
+    ],
+    prevent_initial_call=True
 )
-def get_shelf_data(n_clicks, shelf_url, slider_number):
+def get_shelf_data(set_progress, n_clicks, shelf_url, slider_number):
     if n_clicks is None:
         raise PreventUpdate
     if shelf_url is None:
@@ -133,7 +164,12 @@ def get_shelf_data(n_clicks, shelf_url, slider_number):
     if not shelf_url.startswith("http://") and not shelf_url.startswith("https://"):
         return True, "Invalid Entry: Must start with http:// or https://", None, shelf_url, None
 
-    shelf_data = fetch_shelf_data_from_goodreads(shelf_url)
+    shelf_pages = fetch_pages_from_goodreads(shelf_url)
+    shelf_data: List[Book] = []
+    for i, page in enumerate(shelf_pages):
+        set_progress((str(i), str(len(shelf_pages))))
+        shelf_data.extend(retrieve_goodreads_page_data(page_url=page))
+
     sample_number = slider_number if len(shelf_data) >= slider_number else len(shelf_data)
     shelf_choices = list(map(book_to_cards, random.sample(shelf_data, sample_number)))
 
@@ -171,4 +207,5 @@ clientside_callback(
 )
 
 if __name__ == '__main__':
+    os.environ['OBJC_DISABLE_INITIALIZE_FORK_SAFETY'] = "YES"
     app.run(debug=True)

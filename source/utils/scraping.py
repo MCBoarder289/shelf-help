@@ -1,5 +1,6 @@
 from typing import List
 
+import re
 import requests
 from bs4 import BeautifulSoup
 from source.utils.models import Book
@@ -11,20 +12,22 @@ headers = {
 }
 
 
-def retrieve_goodreads_shelf_data(shelf_url: str) -> List[Book]:
+def retrieve_goodreads_page_data(page_url: str) -> List[Book]:
     logging.info("Retrieving Shelf Data")
-
     book_data: List[Book] = []
-
-    page_data = get_initial_page_soup(shelf_url)
+    page_data = get_initial_page_soup(page_url)
     add_book_data_from_page(page_data_soup=page_data, book_data_list=book_data)
-    remaining_pages = get_remaining_page_urls(page_data)
-
-    for page in remaining_pages:
-        new_page_data = get_initial_page_soup(f'https://www.goodreads.com{page}')
-        add_book_data_from_page(page_data_soup=new_page_data, book_data_list=book_data)
-
     return book_data
+
+
+def retrieve_goodreads_page_list(shelf_url: str) -> List[str]:
+    logging.info("Retrieving List of Goodreads Pages")
+    page_list: List[str] = []
+    page_data = get_initial_page_soup(shelf_url)
+    remaining_pages = get_remaining_page_urls(page_data)
+    page_list.append(shelf_url)
+    page_list.extend(remaining_pages)
+    return page_list
 
 
 def get_initial_page_soup(url):
@@ -36,7 +39,9 @@ def get_initial_page_soup(url):
 def get_remaining_page_urls(page_soup):
     logging.info("Parsing for remaining pages")
     if page_soup.select_one("#reviewPagination") is not None:
-        return set(map(lambda x: x['href'], page_soup.select_one("#reviewPagination").select("a")))
+        present_links = list(map(lambda x: f"https://www.goodreads.com{x['href']}", page_soup.select_one("#reviewPagination").select("a")))
+        max_page = max([int(re.search(r"(?<=page=)\d+", url).group()) for url in present_links])
+        return [re.sub(r"(?<=page=)\d+", str(i), present_links[0]) for i in range(1, max_page + 1)]
     else:
         return []
 
@@ -124,10 +129,13 @@ if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
     # multi-page examples:
     multi_page = "https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=to-read"
+    many_page = "https://www.goodreads.com/review/list/73257606-cole?ref=nav_mybooks&shelf=to-read"
     # single-page example:
     single_page = "https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=currently-reading"
 
-    # retrieved_book_data = retrieve_goodreads_shelf_data(multi_page)
+    page_list = retrieve_goodreads_page_list(many_page)
+
+    # retrieved_book_data = retrieve_goodreads_page_data(multi_page)
     # print(retrieved_book_data[0].isbn)
     # print(len(retrieved_book_data))
 
