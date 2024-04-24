@@ -3,6 +3,7 @@ from typing import List
 
 MAX_PAGES = 10  # If List of Pages is so big, then randomly reduce it down to this number
 
+
 @dataclass
 class Book:
     """DataClass for holding book information"""
