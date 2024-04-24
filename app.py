@@ -1,6 +1,7 @@
 from dash import Dash, html, dcc, callback, Output, Input, State, ctx, clientside_callback, ALL
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
+from source.utils.models import MAX_PAGES
 from source.utils.scraping import retrieve_goodreads_shelf_data, get_library_availability
 from source.utils.converters import book_to_cards
 from flask_caching import Cache
@@ -43,12 +44,37 @@ modal = html.Div(
         )
 )
 
+collapse = html.Div(
+    [
+        dbc.Button(
+            "More Info",
+            id="info-button",
+            className="mb-3",
+            color="info",
+            n_clicks=0,
+        ),
+        dbc.Collapse(
+            dbc.Card(
+                dbc.CardBody(
+                    [
+                        html.P(f"If the number of books returned is lower than you expected, it's because there are up to {MAX_PAGES} pages that we select."),
+                        html.P("We still randomly select from all of them."),
+                        html.P("If the book is unavailable in the Library, still use that button and manually search."),
+                    ]
+                )
+            ),
+            id="collapse",
+            is_open=False,
+        ),
+    ]
+)
+
 
 app.layout = dbc.Container(
     [
 
         dcc.Store(id='signal'),  # signal value to trigger callbacks
-        html.H1(children='Goodreads Shelf Randomizer', style={'textAlign': 'center'}),
+        html.H1(children='Goodreads Shelf Randomizer', style={'textAlign': 'center'}, className="dbc"),
         color_mode_switch,
         html.Div([
             html.Label('Enter Shelf Url:', id='input-label'),
@@ -62,6 +88,8 @@ app.layout = dbc.Container(
                 ]
             ),
             html.Br(),
+            collapse,
+            html.Br(),
             html.Label('Select Number of Suggestions:', id='slider-label'),
             dcc.Slider(id='slider-number', className="dbc", min=1, max=5, step=1, value=3),
             html.Br(),
@@ -70,7 +98,8 @@ app.layout = dbc.Container(
                 type="default",
                 className="dbc",
                 children=[
-                    html.Div(id='shelf-url-output')
+                    html.Div(id='shelf-url-output'),
+                    html.Br()
                 ]
             ),
             dcc.Loading(
@@ -157,6 +186,17 @@ def toggle_modal(n_clicks, is_open, library_url):
         library_status = get_library_availability(library_link)
         return not is_open, library_status, library_link, None
     return is_open, None, None, None
+
+
+@app.callback(
+    Output("collapse", "is_open"),
+    [Input("info-button", "n_clicks")],
+    [State("collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
 
 
 clientside_callback(
