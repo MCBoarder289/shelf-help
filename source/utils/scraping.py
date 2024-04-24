@@ -1,10 +1,11 @@
-from typing import List
+from typing import List, Tuple
 
 import re
 import requests
 import random
 from bs4 import BeautifulSoup
 from source.utils.models import Book, MAX_PAGES
+import urllib.parse
 import logging
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
@@ -63,30 +64,34 @@ def add_book_data_from_page(page_data_soup, book_data_list):
 
 
 def convert_row_to_book(row_soup):
+    title = row_soup.select_one(".title").select_one(".value").select_one("a")["title"].strip()
+    searchable_title = title.partition("(")[0].strip() if "(" in title else title
+    author = row_soup.select_one(".author").select_one(".value").select_one("a").getText().strip()
+    isbn = get_isbn(row_soup, title=searchable_title, author=author)
     return Book(
-        title=row_soup.select_one(".title").select_one(".value").select_one("a")["title"].strip(),
-        author=row_soup.select_one(".author").select_one(".value").select_one("a").getText().strip(),
-        isbn=get_isbn(row_soup),
+        title=title,
+        author=author,
+        isbn=isbn,
         isbn13=row_soup.select_one(".isbn13").select_one(".value").getText().strip(),
         avg_rating=float(row_soup.select_one(".avg_rating").select_one(".value").getText().strip()),
         date_added=row_soup.select_one(".date_added").select_one(".value").getText().strip(),
         link=f'https://www.goodreads.com{row_soup.select_one(".title").select_one(".value").select_one("a")["href"]}',
+        library_links=[
+            f"https://catalog.library.nashville.org/Search/Results?join=AND&lookfor0%5B%5D={isbn}&type0%5B%5D=ISN",
+            f"https://catalog.library.nashville.org/Union/Search?view=list&showCovers=on&lookfor={urllib.parse.quote_plus(searchable_title)}+{urllib.parse.quote_plus(author)}&searchIndex=Keyword"
+        ]
     )
 
 
-def get_isbn(row_soup):
+def get_isbn(row_soup, title, author):
     parsed_isbn = row_soup.select_one(".isbn").select_one(".value").getText().strip()
     if parsed_isbn != "":
         return parsed_isbn
     else:
         logging.info("ISBN Not Found... Attempting to Discover")
-        title = row_soup.select_one(".title").select_one(".value").select_one("a")["title"].strip()
-        if "(" in title:
-            title = title.partition("(")[0].strip()
-        author = row_soup.select_one(".author").select_one(".value").select_one("a").getText().strip()
         isbn = ""
         query_response = requests.get(
-            f"https://openlibrary.org/search.json?q=title:{'+'.join(title.lower().split())}+author:{'+'.join(author.lower().split())}",
+            f"https://openlibrary.org/search.json?q=title:{urllib.parse.quote_plus(title.lower())}+author:{urllib.parse.quote_plus(author.lower())}",
             headers=headers
         )
         if query_response.ok:
@@ -99,30 +104,37 @@ def get_isbn(row_soup):
         return isbn
 
 
-def get_library_availability(library_url):
+def get_library_availability(library_links: List[str]) -> Tuple[str, str]:
 
-    book_in_inventory = find_book_in_inventory(library_url)
+    final_shelf_status: str = "Book Not Found"
+    final_link: str = library_links[1]
+    for link in library_links:
+        book_in_inventory = find_book_in_inventory(link)
 
-    if book_in_inventory is not None:
-        # Get Shelf Status
-        shelf_status = book_in_inventory.parent.parent.find_all("div", {
-            "class": "related-manifestation-shelf-status"
-        })[0]
+        if book_in_inventory is not None:
+            # Get Shelf Status
+            shelf_status = book_in_inventory.parent.parent.find_all("div", {
+                "class": "related-manifestation-shelf-status"
+            })[0]
 
-        if shelf_status.text.strip() == "On Shelf":
-            available_sites = list(
-                map(
-                    lambda x: x.text.split(" - ")[0], shelf_status.parent.find_all("div", {"class": "itemSummary row"})
+            if shelf_status.text.strip() == "On Shelf":
+                available_sites = list(
+                    map(
+                        lambda x: x.text.split(" - ")[0], shelf_status.parent.find_all("div", {"class": "itemSummary row"})
+                    )
                 )
-            )
-            return f"AVAILABLE: {available_sites}"
+                final_shelf_status = f"AVAILABLE: {available_sites}"
 
-        elif shelf_status.text.strip() == "Checked Out":
-            return "CHECKED OUT"
+            elif shelf_status.text.strip() == "Checked Out":
+                final_shelf_status = "CHECKED OUT"
+
+            else:
+                final_shelf_status = "UNKNOWN STATUS"
+            final_link = link
+            break
         else:
-            return "UNKNOWN STATUS"
-    else:
-        return "Book Not Found"
+            continue
+    return final_shelf_status, final_link
 
 
 def find_book_in_inventory(library_url):

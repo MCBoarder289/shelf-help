@@ -47,7 +47,7 @@ modal = html.Div(
 collapse = html.Div(
     [
         dbc.Button(
-            "More Info",
+            [dbc.Label(className="fa fa-info-circle"), " Info"],
             id="info-button",
             className="mb-3",
             color="info",
@@ -162,6 +162,7 @@ def get_shelf_data(n_clicks, shelf_url, slider_number):
     if not shelf_url.startswith("http://") and not shelf_url.startswith("https://"):
         return True, "Invalid Entry: Must start with http:// or https://", None, shelf_url, None
 
+    # TODO: Make the pattern matching better, not just "Starts With"
     shelf_data = fetch_shelf_data_from_goodreads(shelf_url)
     sample_number = slider_number if len(shelf_data) >= slider_number else len(shelf_data)
     shelf_choices = list(map(book_to_cards, random.sample(shelf_data, sample_number)))
@@ -176,22 +177,23 @@ def get_shelf_data(n_clicks, shelf_url, slider_number):
     Output("library-loading-output", "children"),
     Input({"type": "library-button", "index": ALL}, "n_clicks"),
     State("modal", "is_open"),
-    State({"type": "library-button", "index": ALL}, "value")
+    State({"type": "library-store", "index": ALL}, "data")
 )
 def toggle_modal(n_clicks, is_open, library_url):
     if ctx.triggered_id is None or len(n_clicks) == 0:
         return False, None, None, None
-    elif ctx.inputs[''.join(str(ctx.triggered_id).replace("'", '"').split())+".n_clicks"] is not None:
-        library_link = ctx.states[''.join(str(ctx.triggered_id).replace("'", '"').split())+".value"]
-        library_status = get_library_availability(library_link)
+    triggered_key_prefix = ''.join(str(ctx.triggered_id).replace("'", '"').split())
+    if ctx.inputs[triggered_key_prefix + ".n_clicks"] is not None:
+        library_links = ctx.states[triggered_key_prefix.replace("button", "store") + ".data"]
+        library_status, library_link = get_library_availability(library_links)
         return not is_open, library_status, library_link, None
     return is_open, None, None, None
 
 
 @app.callback(
     Output("collapse", "is_open"),
-    [Input("info-button", "n_clicks")],
-    [State("collapse", "is_open")],
+    Input("info-button", "n_clicks"),
+    State("collapse", "is_open"),
 )
 def toggle_collapse(n, is_open):
     if n:

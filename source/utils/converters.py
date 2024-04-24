@@ -1,7 +1,7 @@
 import requests
 
 from .models import Book
-from dash import html
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 
@@ -17,11 +17,13 @@ def book_to_cards(book: Book):
             html.P(f"Title: {book.title}", className="card-text"),
             html.P(f"Author: {book.author}", className="card-text"),
             dbc.Row([
+                dcc.Store(id={"type": "library-store", "index": book.isbn}, data=book.library_links),
                 dbc.Button("Goodreads Link", href=book.link, color="info", target="_blank"),
-                dbc.Button("Check Nashville Library",
-                           color="info",
-                           id={"type": "library-button", "index": book.isbn},
-                           value=f"https://catalog.library.nashville.org/Search/Results?join=AND&lookfor0%5B%5D={book.isbn}&type0%5B%5D=ISN")
+                dbc.Button(
+                    "Check Nashville Library",
+                    color="info",
+                    id={"type": "library-button", "index": book.isbn},
+                )
             ])
             ]
         ),
