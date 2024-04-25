@@ -9,12 +9,13 @@ import random
 
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN, dbc_css, dbc.icons.FONT_AWESOME], title="Goodreads Shelf Randomizer")
+app = Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN, dbc_css, dbc.icons.FONT_AWESOME], title="Shelf Help")
+app._favicon = "assets/images/favicon.ico"
 app.index_string = '''
 <!DOCTYPE html>
 <html>
 <head>
-<title>Goodreads Helper</title>
+<title>Shelf Help</title>
 <link rel="manifest" href="./assets/manifest.json" />
 {%metas%}
 {%favicon%}
@@ -123,7 +124,7 @@ collapse = [
             dbc.Tabs(
                 [
                     dbc.Tab(ios_install_tab, label="iOS Install"),
-                    dbc.Tab(how_to_tab, label="How-To Use")
+                    dbc.Tab(how_to_tab, label="How to use")
                 ]
             )
         ],
@@ -203,6 +204,28 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             children=[
+                dcc.Loading(
+                    id='loading-shelf',
+                    type="default",
+                    className="dbc",
+                    children=[
+                        html.Div(id='shelf-url-output'),
+                        html.Br()
+                    ]
+                ),
+                dcc.Loading(
+                    id="library-loading",
+                    type="default",
+                    className="dbc",
+                    children=[
+                        html.Div(id="library-loading-output")
+                    ]
+                ),
+            ],
+            id="loading-row"
+        ),
+        dbc.Row(
+            children=[
                 dbc.Col(
                     children=[
                         html.Div(
@@ -226,28 +249,6 @@ app.layout = dbc.Container(
 
             ],
             id="alerts-row"
-        ),
-        dbc.Row(
-            children=[
-                dcc.Loading(
-                    id='loading-shelf',
-                    type="default",
-                    className="dbc",
-                    children=[
-                        html.Div(id='shelf-url-output'),
-                        html.Br()
-                    ]
-                ),
-                dcc.Loading(
-                    id="library-loading",
-                    type="default",
-                    className="dbc",
-                    children=[
-                        html.Div(id="library-loading-output")
-                    ]
-                ),
-            ],
-            id="loading-row"
         ),
     ]
 )
