@@ -1,141 +1,141 @@
 {
   "background_color": "#ffffff",
-  "description": "Test Description",
+  "description": "Tool to help you pick your next book on a big shelf",
   "dir": "ltr",
   "display": "standalone",
   "name": "Goodreads Helper",
   "orientation": "any",
   "scope": "https://goodreads-helper.onrender.com/assets",
-  "short_name": "goodreads-helper",
+  "short_name": "Goodreads Helper",
   "start_url": "/https://goodreads-helper.onrender.com/assets/",
   "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "images/android-launchericon-512-512.png",
+      "src": "images/android/android-launchericon-512-512.png",
       "sizes": "512x512"
     },
     {
-      "src": "images/android-launchericon-192-192.png",
+      "src": "images/android/android-launchericon-192-192.png",
       "sizes": "192x192"
     },
     {
-      "src": "images/android-launchericon-144-144.png",
+      "src": "images/android/android-launchericon-144-144.png",
       "sizes": "144x144"
     },
     {
-      "src": "images/android-launchericon-96-96.png",
+      "src": "images/android/android-launchericon-96-96.png",
       "sizes": "96x96"
     },
     {
-      "src": "images/android-launchericon-72-72.png",
+      "src": "images/android/android-launchericon-72-72.png",
       "sizes": "72x72"
     },
     {
-      "src": "images/android-launchericon-48-48.png",
+      "src": "images/android/android-launchericon-48-48.png",
       "sizes": "48x48"
     },
     {
-      "src": "images/16.png",
+      "src": "images/ios/16.png",
       "sizes": "16x16"
     },
     {
-      "src": "images/20.png",
+      "src": "images/ios/20.png",
       "sizes": "20x20"
     },
     {
-      "src": "images/29.png",
+      "src": "images/ios/29.png",
       "sizes": "29x29"
     },
     {
-      "src": "images/32.png",
+      "src": "images/ios/32.png",
       "sizes": "32x32"
     },
     {
-      "src": "images/40.png",
+      "src": "images/ios/40.png",
       "sizes": "40x40"
     },
     {
-      "src": "images/50.png",
+      "src": "images/ios/50.png",
       "sizes": "50x50"
     },
     {
-      "src": "images/57.png",
+      "src": "images/ios/57.png",
       "sizes": "57x57"
     },
     {
-      "src": "images/58.png",
+      "src": "images/ios/58.png",
       "sizes": "58x58"
     },
     {
-      "src": "images/60.png",
+      "src": "images/ios/60.png",
       "sizes": "60x60"
     },
     {
-      "src": "images/64.png",
+      "src": "images/ios/64.png",
       "sizes": "64x64"
     },
     {
-      "src": "images/72.png",
+      "src": "images/ios/72.png",
       "sizes": "72x72"
     },
     {
-      "src": "images/76.png",
+      "src": "images/ios/76.png",
       "sizes": "76x76"
     },
     {
-      "src": "images/80.png",
+      "src": "images/ios/80.png",
       "sizes": "80x80"
     },
     {
-      "src": "images/87.png",
+      "src": "images/ios/87.png",
       "sizes": "87x87"
     },
     {
-      "src": "images/100.png",
+      "src": "images/ios/100.png",
       "sizes": "100x100"
     },
     {
-      "src": "images/114.png",
+      "src": "images/ios/114.png",
       "sizes": "114x114"
     },
     {
-      "src": "images/120.png",
+      "src": "images/ios/120.png",
       "sizes": "120x120"
     },
     {
-      "src": "images/128.png",
+      "src": "images/ios/128.png",
       "sizes": "128x128"
     },
     {
-      "src": "images/144.png",
+      "src": "images/ios/144.png",
       "sizes": "144x144"
     },
     {
-      "src": "images/152.png",
+      "src": "images/ios/152.png",
       "sizes": "152x152"
     },
     {
-      "src": "images/167.png",
+      "src": "images/ios/167.png",
       "sizes": "167x167"
     },
     {
-      "src": "images/180.png",
+      "src": "images/ios/180.png",
       "sizes": "180x180"
     },
     {
-      "src": "images/192.png",
+      "src": "images/ios/192.png",
       "sizes": "192x192"
     },
     {
-      "src": "images/256.png",
+      "src": "images/ios/256.png",
       "sizes": "256x256"
     },
     {
-      "src": "images/512.png",
+      "src": "images/ios/512.png",
       "sizes": "512x512"
     },
     {
-      "src": "images/1024.png",
+      "src": "images/ios/1024.png",
       "sizes": "1024x1024"
     }
   ],
