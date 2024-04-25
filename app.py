@@ -77,88 +77,178 @@ modal = html.Div(
                 ),
             ],
             id="modal",
+            centered=True,
             is_open=False,
         )
 )
 
-collapse = html.Div(
+ios_install_tab = dbc.Card(
     [
-        dbc.Button(
-            [dbc.Label(className="fa fa-info-circle"), " Info"],
-            id="info-button",
-            className="mb-3",
-            color="info",
-            n_clicks=0,
-        ),
-        dbc.Collapse(
-            dbc.Card(
-                dbc.CardBody(
-                    [
-                        html.P(f"If the number of books returned is lower than you expected, it's because there are up to {MAX_PAGES} pages that we select."),
-                        html.P("We still randomly select from all of them."),
-                        html.P("If the book is unavailable in the Library, still use that button and manually search."),
-                    ]
-                )
-            ),
-            id="collapse",
-            is_open=False,
+        dbc.CardBody(
+            [
+                html.P('To install in iOS, simply "Add to Home Screen"', className="card-text"),
+                html.P("Like this video:", className="card-text"),
+                html.Img(src="assets/images/book_placeholder.jpeg", style={"max-width": "50%", "max-height": "50%"})
+            ]
         ),
     ]
 )
 
+how_to_tab = dbc.Card(
+    [
+        dbc.CardBody(
+            [
+                html.P('TODO: Add instructions here"', className="card-text"),
+                html.P(
+                    f"If the number of books returned is lower than you expected, it's because there are up to {MAX_PAGES} pages that we select. We still randomly select from all of them.",
+                    className="card-text"),
+                html.P('If the book is unavailable in the Library, still use that button and manually search.',
+                       className="card-text"),
+            ]
+        )
+    ]
+)
+
+collapse = [
+    dbc.Button(
+        [dbc.Label(className="fa fa-info-circle"), " Info"],
+        id="info-button",
+        size="sm",
+        className="mb-3",
+        color="info",
+        n_clicks=0,
+    ),
+    dbc.Collapse(
+        [
+            dbc.Tabs(
+                [
+                    dbc.Tab(ios_install_tab, label="iOS Install"),
+                    dbc.Tab(how_to_tab, label="How-To Use")
+                ]
+            )
+        ],
+        id="collapse",
+        is_open=False,
+    ),
+]
 
 app.layout = dbc.Container(
-    [
+    style={"padding-left": "calc(var(--bs-gutter-x)* 1.5)", "padding-right": "calc(var(--bs-gutter-x)* 1.5)"},
+    children=[
+        dbc.Row(
+            [
+                dbc.Col(
+                    children=[
+                        dbc.Stack(
+                            [
+                                dcc.Store(id='signal'),  # signal value to trigger callbacks
+                                html.Img(id="app-icon", src="assets/images/icon.png",
+                                         style={'width': '5.5vw', 'border-radius': '20%',
+                                                'max-width': '100%', 'height': 'auto'}, className="dbc"),
+                                html.H1(children='Shelf Help', style={'textAlign': 'center'}, className="dbc")
+                            ],
+                            direction="horizontal",
+                            gap=3
+                        )
 
-        dcc.Store(id='signal'),  # signal value to trigger callbacks
-        html.H1(children='Goodreads Shelf Randomizer', style={'textAlign': 'center'}, className="dbc"),
-        color_mode_switch,
-        html.Div([
-            html.Label('Enter Shelf Url:', id='input-label'),
-            dbc.Input(id='input-box', type='text'),
-            html.Br(),
-            dbc.DropdownMenu(
-                label="Examples",
-                children=[
-                    dbc.DropdownMenuItem("MC - To Read", id="to-read-item"),
-                    dbc.DropdownMenuItem("MC - Currently Reading", id="currently-reading-item")
-                ]
+                    ],
+                    align="center"
+                ),
+            ],
+
+            id="title-row",
+            align="center"
+        ),
+        dbc.Row(
+            dbc.Col(
+                children=color_mode_switch,
             ),
-            html.Br(),
-            collapse,
-            html.Br(),
-            html.Label('Select Number of Suggestions:', id='slider-label'),
-            dcc.Slider(id='slider-number', className="dbc", min=1, max=5, step=1, value=3),
-            html.Br(),
-            dcc.Loading(
-                id='loading-shelf',
-                type="default",
-                className="dbc",
-                children=[
-                    html.Div(id='shelf-url-output'),
-                    html.Br()
-                ]
+            id="color-mode-row",
+            align="center"
+        ),
+        dbc.Row(
+            dbc.Col(
+                children=collapse,
+                align="center"
             ),
-            dcc.Loading(
-                id="library-loading",
-                type="default",
-                className="dbc",
-                children=[
-                    html.Div(id="library-loading-output")
-                ]
-            ),
-            dbc.Button('Retrieve Shelf', id='retrieve-button', color='primary'),
-            dbc.Alert(
-                "Hello! I am an auto-dismissing alert!",
-                id="alert-auto",
-                is_open=False,
-                dismissable=False,
-                duration=4000,
-                color="warning",
-            ),
-            dbc.CardGroup(id="results", style={"maxHeight": "600px", "overflow": "scroll"})
-        ]),
-        modal
+            id="help-row",
+            align="center"
+        ),
+        dbc.Row(
+            children=[
+                dbc.Col(
+                    children=[
+                        html.Label('Enter Shelf Url:', id='input-label'),
+                        dbc.InputGroup(
+                            [
+                                dbc.DropdownMenu(
+                                    label="Examples",
+                                    children=[
+                                        dbc.DropdownMenuItem("MC - To Read", id="to-read-item"),
+                                        dbc.DropdownMenuItem("MC - Currently Reading", id="currently-reading-item")
+                                    ]
+                                ),
+                                dbc.Input(id='input-box', type='text', ),
+                            ]
+                        ),
+                        html.Br(),
+                        html.Label('Select Number of Suggestions:', id='slider-label'),
+                        dcc.Slider(id='slider-number', className="dbc", min=1, max=5, step=1, value=3),
+                        html.Br(),
+                        dbc.Button('Retrieve Shelf', id='retrieve-button', color='primary'),
+                    ],
+                ),
+            ],
+            id="input-row"
+        ),
+        dbc.Row(
+            children=[
+                dbc.Col(
+                    children=[
+                        html.Div(
+                            [
+                                html.Br(),
+                                dbc.Alert(
+                                    "Hello! I am an auto-dismissing alert!",
+                                    id="alert-auto",
+                                    is_open=False,
+                                    dismissable=False,
+                                    duration=4000,
+                                    color="warning",
+                                ),
+                                dbc.CardGroup(id="results", style={"maxHeight": "600px", "overflow": "scroll"})
+                            ]
+                        ),
+                        modal
+                    ]
+
+                ),
+
+            ],
+            id="alerts-row"
+        ),
+        dbc.Row(
+            children=[
+                dcc.Loading(
+                    id='loading-shelf',
+                    type="default",
+                    className="dbc",
+                    children=[
+                        html.Div(id='shelf-url-output'),
+                        html.Br()
+                    ]
+                ),
+                dcc.Loading(
+                    id="library-loading",
+                    type="default",
+                    className="dbc",
+                    children=[
+                        html.Div(id="library-loading-output")
+                    ]
+                ),
+            ],
+            id="loading-row"
+        ),
     ]
 )
 
