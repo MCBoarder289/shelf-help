@@ -9,7 +9,7 @@ def book_to_cards(book: Book):
     cover_response = requests.get(f"https://covers.openlibrary.org/b/isbn/{book.isbn}.json")
     cover_url: str
     if not cover_response.ok:
-        cover_url = "assets/book_placeholder.jpeg"
+        cover_url = "https://drive.google.com/thumbnail?id=1i727hdYfgqoliWkxTxHyaT7b5jE3QISY"
     else:
         cover_url = f"https://covers.openlibrary.org/b/isbn/{book.isbn}-L.jpg"
     return dbc.Card([
