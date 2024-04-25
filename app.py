@@ -88,7 +88,7 @@ ios_install_tab = dbc.Card(
             [
                 html.P('To install in iOS, simply "Add to Home Screen"', className="card-text"),
                 html.P("Like this video:", className="card-text"),
-                html.Img(src="assets/images/book_placeholder.jpeg", style={"max-width": "50%", "max-height": "50%"})
+                html.Img(src="https://drive.google.com/thumbnail?id=1i727hdYfgqoliWkxTxHyaT7b5jE3QISY", style={"max-width": "50%", "max-height": "50%"})
             ]
         ),
     ]
@@ -142,7 +142,7 @@ app.layout = dbc.Container(
                         dbc.Stack(
                             [
                                 dcc.Store(id='signal'),  # signal value to trigger callbacks
-                                html.Img(id="app-icon", src="assets/images/icon.png",
+                                html.Img(id="app-icon", src="https://drive.google.com/thumbnail?id=1nL4BOE7WqG7tPHQLfOq5tBcbazXN06dt",
                                          style={'width': '5.5vw', 'border-radius': '20%',
                                                 'max-width': '100%', 'height': 'auto'}, className="dbc"),
                                 html.H1(children='Shelf Help', style={'textAlign': 'center'}, className="dbc")
