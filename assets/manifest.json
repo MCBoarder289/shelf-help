@@ -3,11 +3,11 @@
   "description": "Tool to help you pick your next book on a big shelf",
   "dir": "ltr",
   "display": "standalone",
-  "name": "Goodreads Helper",
+  "name": "Shelf Help",
   "orientation": "any",
-  "scope": "https://goodreads-helper.onrender.com/assets",
-  "short_name": "Goodreads Helper",
-  "start_url": "/https://goodreads-helper.onrender.com/assets/",
+  "scope": " https://goodreads-helper-pr-5.onrender.com/assets",
+  "short_name": "Shelf Help",
+  "start_url": " https://goodreads-helper-pr-5.onrender.com/assets/",
   "theme_color": "#ffffff",
   "icons": [
     {
@@ -139,7 +139,7 @@
       "sizes": "1024x1024"
     }
   ],
-  "id": "goodreads-helper",
+  "id": "shelf-help",
   "lang": "en",
   "display_override": [
     "standalone",
