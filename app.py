@@ -143,6 +143,7 @@ app.layout = dbc.Container(
                         dbc.Stack(
                             [
                                 dcc.Store(id='signal'),  # signal value to trigger callbacks
+                                html.Meta(name="apple-mobile-web-app-capable", content="yes"),
                                 html.Meta(name="apple-mobile-web-app-status-bar-style", content="black-translucent"),
                                 html.Img(id="app-icon", src="https://drive.google.com/thumbnail?id=1nL4BOE7WqG7tPHQLfOq5tBcbazXN06dt",
                                          style={'width': '5.5vw', 'border-radius': '20%',
