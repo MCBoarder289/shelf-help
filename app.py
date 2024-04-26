@@ -143,7 +143,6 @@ app.layout = dbc.Container(
                         dbc.Stack(
                             [
                                 dcc.Store(id='signal'),  # signal value to trigger callbacks
-                                html.Meta(name="apple-mobile-web-app-status-bar-style", content="black-translucent"),
                                 html.Img(id="app-icon", src="https://drive.google.com/thumbnail?id=1nL4BOE7WqG7tPHQLfOq5tBcbazXN06dt",
                                          style={'width': '5.5vw', 'border-radius': '20%',
                                                 'max-width': '100%', 'height': 'auto'}, className="dbc"),
@@ -333,8 +332,7 @@ def toggle_collapse(n, is_open):
 clientside_callback(
     """
     (switchOn) => {
-       document.documentElement.setAttribute('data-bs-theme', switchOn ? 'light' : 'dark');
-       document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute("content", switchOn ? 'default' : 'black-translucent');  
+       document.documentElement.setAttribute('data-bs-theme', switchOn ? 'light' : 'dark');  
        return window.dash_clientside.no_update
     }
     """,
