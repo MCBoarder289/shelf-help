@@ -1,4 +1,4 @@
-# Goodreads Helper
+# Shelf Help
 
 I'm making this super basic app to help me randomly pick multiple books out of my Goodreads `to-read` shelf.
 Because there is no direct API anymore, I'm resorting to scraping/crawling the public pages for my profile.

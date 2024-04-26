@@ -1,3 +1,4 @@
+import dash_player
 from dash import Dash, html, dcc, callback, Output, Input, State, ctx, clientside_callback, ALL
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
@@ -65,31 +66,51 @@ color_mode_switch = html.Span(
     ]
 )
 
+tab_nav = dbc.Nav(dbc.NavItem(dbc.NavLink("Back to Top", active=True, href="#")))
 
 modal = html.Div(
     dbc.Modal(
-            [
-                dbc.ModalHeader(dbc.ModalTitle("Library Status")),
-                dbc.ModalBody("This is the content of the modal", id="library-details"),
-                dbc.ModalFooter(
-                    dbc.Button(
-                        "Open Library Search", id="open-library", className="ms-auto", target="_blank"
-                    )
-                ),
-            ],
-            id="modal",
-            centered=True,
-            is_open=False,
-        )
+        [
+            dbc.ModalHeader(dbc.ModalTitle("Library Status")),
+            dbc.ModalBody("This is the content of the modal", id="library-details"),
+            dbc.ModalFooter(
+                dbc.Button(
+                    "Open Library Search", id="open-library", className="ms-auto", target="_blank"
+                )
+            ),
+        ],
+        id="modal",
+        centered=True,
+        is_open=False,
+    )
 )
 
 ios_install_tab = dbc.Card(
     [
         dbc.CardBody(
             [
-                html.P('To install in iOS, simply "Add to Home Screen"', className="card-text"),
-                html.P("Like this video:", className="card-text"),
-                html.Img(src="https://drive.google.com/thumbnail?id=1i727hdYfgqoliWkxTxHyaT7b5jE3QISY", style={"max-width": "50%", "max-height": "50%"})
+                dbc.Row(
+                    html.P('To install in iOS, simply "Add to Home Screen"', className="card-text"),
+                    align="center"
+                ),
+                dbc.Row(
+                    html.P("Like this video:", className="card-text"),
+                    align="center"
+                ),
+                dbc.Row(
+                    dash_player.DashPlayer(
+                        url="https://vimeo.com/939721340?share=copy",
+                        loop=True,
+                        muted=True,
+                        playsinline=True,
+                        playing=True,
+                        controls=False,
+                        width="360px",
+                        height="640px"
+                    ),
+                    align="center"
+                ),
+                tab_nav
             ]
         ),
     ]
@@ -99,12 +120,66 @@ how_to_tab = dbc.Card(
     [
         dbc.CardBody(
             [
-                html.P('TODO: Add instructions here"', className="card-text"),
-                html.P(
-                    f"If the number of books returned is lower than you expected, it's because there are up to {MAX_PAGES} pages that we select. We still randomly select from all of them.",
-                    className="card-text"),
-                html.P('If the book is unavailable in the Library, still use that button and manually search.',
-                       className="card-text"),
+                dcc.Markdown(
+                    f"""
+                    ## Using Shelf Help
+                    Shelf Help was designed to help you make a quick decision on what book should be next in your `to-read` shelf.
+                    Two examples of my personal shelves (`to-read` and `currently-reading`) can be selected from the dropdown.
+                    
+                    ### Step 1: Insert a Goodreads shelf URL
+                    The following formats are supported currently:
+                    * `https://www.goodreads.com/review/list/<numbers go here>?shelf=to-read` 
+                    * `https://www.goodreads.com/review/list/<numbers here>-<user-name>?shelf=to-read`
+                    * `https://www.goodreads.com/user_shelves/<numbers here>`
+
+                    > **Note:** The `?shelf=to-read` parameter can also be whatever you named a shelf.
+                    
+                    ### Step 2: Select Number of Suggestions
+                    You can select 1-5 suggestions with the provided slider (the default is 3).
+                    
+                    ### Step 3: Click "Retrieve Shelf"
+                    This app will then get all of your shelf data and pick a random subset for you.
+                    
+                    If the number of books returned is lower than you expected, it's because there are up to {MAX_PAGES} pages that we select. 
+                    We still randomly select from all of them.
+                    
+                    > **Note:** The initial pull will take a little time, but once the data is retrieved, it is saved for {timeout} minutes.
+                    > **Tip:** If you want a new list of suggestions, just keep pressing the `Retrieve Shelf` Button!
+                    
+                    ### Step 4: Check Goodreads or Library
+                    Once you have some books to look through, you can click on either the `Goodreads Link` or `Check Nashville Library` buttons.
+                    This allows you to either:
+                    * Check the Goodreads reviews for the selected book
+                    * See if it is available as a physical copy at the library
+                    
+                    The pop-up showing the Library status allow you to navigate to the website and check it out for yourself.
+                    
+                    > **Note:** If the book is unavailable in the Library, still use that button and manually search their website if you wish.
+                    """
+                ),
+                tab_nav
+            ]
+        )
+    ]
+)
+
+contributing_tab = dbc.Card(
+    [
+        dbc.CardBody(
+            [
+                dcc.Markdown(
+                    f"""
+                    ## Contributing to Shelf Help
+                    Shelf Help is Open Source, so feel free to check out our [Github](https://github.com/MCBoarder289/shelf-help) and contribute.
+                    
+                    Feel free to:
+                    * Make a branch/pull-request with some changes you'd like to see
+                    * Post any issues or requests (other library support, bugs, etc.)
+                    
+                    Thanks for your interest in helping make this better!
+                    """
+                ),
+                tab_nav
             ]
         )
     ]
@@ -114,7 +189,7 @@ collapse = [
     dbc.Button(
         [dbc.Label(className="fa fa-info-circle"), " Info"],
         id="info-button",
-        size="sm",
+        size="md",
         className="mb-3",
         color="info",
         n_clicks=0,
@@ -123,8 +198,9 @@ collapse = [
         [
             dbc.Tabs(
                 [
+                    dbc.Tab(how_to_tab, label="How to Use"),
                     dbc.Tab(ios_install_tab, label="iOS Install"),
-                    dbc.Tab(how_to_tab, label="How to use")
+                    dbc.Tab(contributing_tab, label="Contributing")
                 ]
             )
         ],
@@ -134,7 +210,7 @@ collapse = [
 ]
 
 app.layout = dbc.Container(
-    style={"padding-left": "calc(var(--bs-gutter-x)* 1.5)", "padding-right": "calc(var(--bs-gutter-x)* 1.5)"},
+    style={"paddingLeft": "calc(var(--bs-gutter-x)* 1.5)", "paddingRight": "calc(var(--bs-gutter-x)* 1.5)"},
     children=[
         dbc.Row(
             [
@@ -143,9 +219,10 @@ app.layout = dbc.Container(
                         dbc.Stack(
                             [
                                 dcc.Store(id='signal'),  # signal value to trigger callbacks
-                                html.Img(id="app-icon", src="https://drive.google.com/thumbnail?id=1nL4BOE7WqG7tPHQLfOq5tBcbazXN06dt",
-                                         style={'width': '5.5vw', 'border-radius': '20%',
-                                                'max-width': '100%', 'height': 'auto'}, className="dbc"),
+                                html.Img(id="app-icon",
+                                         src="https://drive.google.com/thumbnail?id=1nL4BOE7WqG7tPHQLfOq5tBcbazXN06dt",
+                                         style={'width': '5.5vw', 'borderRadius': '20%',
+                                                'maxWidth': '100%', 'height': 'auto'}, className="dbc"),
                                 html.H1(children='Shelf Help', style={'textAlign': 'center'}, className="dbc")
                             ],
                             direction="horizontal",
