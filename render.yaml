@@ -1,0 +1,14 @@
+services:
+- type: web
+  name: shelf-help
+  runtime: python
+  repo: https://github.com/MCBoarder289/shelf-help
+  plan: free
+  envVars:
+  - key: PYTHON_VERSION
+    value: 3.8.12
+  region: ohio
+  buildCommand: ./render-build.sh
+  startCommand: ./render-start.sh
+  pullRequestPreviewsEnabled: true
+version: "1"
