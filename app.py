@@ -236,7 +236,6 @@ app.layout = dbc.Container(
                     children=[
                         dbc.Stack(
                             [
-                                dcc.Store(id='signal'),  # signal value to trigger callbacks
                                 html.Img(id="app-icon",
                                          src="https://drive.google.com/thumbnail?id=1nL4BOE7WqG7tPHQLfOq5tBcbazXN06dt",
                                          style={'width': '5.5vw', 'borderRadius': '20%',
@@ -378,7 +377,6 @@ def populate_examples(to_read_btn, currently_reading_btn):
     Output("alert-auto", "is_open"),
     Output("alert-auto", "children"),
     Output("shelf-url-output", "children"),
-    Output('signal', 'data'),
     Output('results', 'children'),
     Input('retrieve-button', 'n_clicks'),
     State('input-box', 'value'),
@@ -388,16 +386,16 @@ def get_shelf_data(n_clicks, shelf_url, slider_number):
     if n_clicks is None:
         raise PreventUpdate
     if shelf_url is None:
-        return True, "Invalid Entry: Must not be blank and url starts with http:// or https://", None, None, None
+        return True, "Invalid Entry: Must not be blank and url starts with http:// or https://", None, None
     if not shelf_url.startswith("http://") and not shelf_url.startswith("https://"):
-        return True, "Invalid Entry: Must start with http:// or https://", None, shelf_url, None
+        return True, "Invalid Entry: Must start with http:// or https://", None, None
 
     # TODO: Make the pattern matching better, not just "Starts With"
-    shelf_data = fetch_shelf_data_from_goodreads(shelf_url)
+    shelf_data = fetch_shelf_data_from_goodreads(shelf_url.strip())
     sample_number = slider_number if len(shelf_data) >= slider_number else len(shelf_data)
     shelf_choices = list(map(book_to_cards, random.sample(shelf_data, sample_number)))
 
-    return False, None, f"Retrieved Shelf Data: {len(shelf_data)} Books Retrieved", shelf_url, shelf_choices
+    return False, None, f"Retrieved Shelf Data: {len(shelf_data)} Books Retrieved", shelf_choices
 
 
 @callback(
