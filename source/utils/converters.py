@@ -20,7 +20,7 @@ def book_to_cards(book: Book):
                 dcc.Store(id={"type": "library-store", "index": book.isbn}, data=book.library_links),
                 dbc.Button("Goodreads Link", href=book.link, color="info", target="_blank"),
                 dbc.Button(
-                    "Check Nashville Library",
+                    "Check Library Status",
                     color="info",
                     id={"type": "library-button", "index": book.isbn},
                 )

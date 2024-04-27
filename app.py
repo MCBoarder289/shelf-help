@@ -2,8 +2,10 @@ import dash_player
 from dash import Dash, html, dcc, callback, Output, Input, State, ctx, clientside_callback, ALL
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
+
+from source.parsers.library import SUPPORTED_LIBRARIES, parser_factory
 from source.utils.models import MAX_PAGES
-from source.utils.scraping import retrieve_goodreads_shelf_data, get_library_availability
+from source.parsers.gr import retrieve_goodreads_shelf_data
 from source.utils.converters import book_to_cards
 from flask_caching import Cache
 import random
@@ -57,6 +59,7 @@ cache = Cache(app.server, config={
 })
 
 timeout = 1800  # 30 minutes
+timeout_mins = timeout // 60
 
 color_mode_switch = html.Span(
     [
@@ -143,7 +146,8 @@ how_to_tab = dbc.Card(
                     If the number of books returned is lower than you expected, it's because there are up to {MAX_PAGES} pages that we select. 
                     We still randomly select from all of them.
                     
-                    > **Note:** The initial pull will take a little time, but once the data is retrieved, it is saved for {timeout} minutes.
+                    > **Note:** The initial pull will take a little time, but once the data is retrieved, it is saved for {timeout_mins} minutes.
+                    
                     > **Tip:** If you want a new list of suggestions, just keep pressing the `Retrieve Shelf` Button!
                     
                     ### Step 4: Check Goodreads or Library
@@ -209,6 +213,20 @@ collapse = [
     ),
 ]
 
+library_selector = dbc.Stack(
+    [
+        html.Label("Library Selector:", className="dbc"),
+        dcc.Dropdown(
+            options=SUPPORTED_LIBRARIES,
+            value="Nashville",
+            clearable=False,
+            className="dbc",
+            id="library-selector"
+        )
+    ],
+    direction="vertical",
+)
+
 app.layout = dbc.Container(
     style={"paddingLeft": "calc(var(--bs-gutter-x)* 1.5)", "paddingRight": "calc(var(--bs-gutter-x)* 1.5)"},
     children=[
@@ -238,11 +256,18 @@ app.layout = dbc.Container(
             align="center"
         ),
         dbc.Row(
-            dbc.Col(
-                children=color_mode_switch,
-            ),
+            children=[
+                dbc.Col(
+                    children=color_mode_switch,
+                ),
+                dbc.Col(
+                    children=library_selector,
+                    align="center",
+                ),
+            ],
             id="color-mode-row",
-            align="center"
+            align="center",
+            justify="between"
         ),
         dbc.Row(
             dbc.Col(
@@ -382,15 +407,16 @@ def get_shelf_data(n_clicks, shelf_url, slider_number):
     Output("library-loading-output", "children"),
     Input({"type": "library-button", "index": ALL}, "n_clicks"),
     State("modal", "is_open"),
-    State({"type": "library-store", "index": ALL}, "data")
+    State({"type": "library-store", "index": ALL}, "data"),
+    State("library-selector", "value"),
 )
-def toggle_modal(n_clicks, is_open, library_url):
+def toggle_modal(n_clicks, is_open, library_url, library):
     if ctx.triggered_id is None or len(n_clicks) == 0:
         return False, None, None, None
     triggered_key_prefix = ''.join(str(ctx.triggered_id).replace("'", '"').split())
     if ctx.inputs[triggered_key_prefix + ".n_clicks"] is not None:
         library_links = ctx.states[triggered_key_prefix.replace("button", "store") + ".data"]
-        library_status, library_link = get_library_availability(library_links)
+        library_status, library_link = parser_factory(library).get_library_availability(library_links)
         return not is_open, library_status, library_link, None
     return is_open, None, None, None
 
