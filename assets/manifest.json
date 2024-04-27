@@ -5,9 +5,9 @@
   "display": "standalone",
   "name": "Shelf Help",
   "orientation": "any",
-  "scope": " https://goodreads-helper-pr-5.onrender.com/assets",
+  "scope": " https://shelf-help.onrender.com/assets",
   "short_name": "Shelf Help",
-  "start_url": " https://goodreads-helper-pr-5.onrender.com/assets/",
+  "start_url": " https://shelf-help.onrender.com/assets/",
   "theme_color": "#ffffff",
   "icons": [
     {
