@@ -9,6 +9,7 @@ from source.utils.models import HEADERS
 
 SUPPORTED_LIBRARIES = [
     "Nashville",
+    "Miami",
     "Columbus",
     "San Francisco"
 ]
@@ -125,7 +126,6 @@ class ColumbusPublicLibraryParser(BaseLibraryParser):
             return None
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
-        # TODO: Actually Implement Another Library
         final_shelf_status: str = "Book Not Found"
         final_link: str = library_links[0]
         book_in_inventory = self.find_book_in_inventory(final_link)
@@ -160,7 +160,6 @@ class SanFranPublicLibraryParser(BaseLibraryParser):
             return None
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
-        # TODO: Actually Implement Another Library
         final_shelf_status: str = "Book Not Found"
         final_link: str = library_links[0]
         book_in_inventory = self.find_book_in_inventory(final_link)
@@ -170,10 +169,85 @@ class SanFranPublicLibraryParser(BaseLibraryParser):
         return final_shelf_status, final_link
 
 
+class MiamiPublicLibraryParser(BaseLibraryParser):
+    def __init__(self):
+        super().__init__()
+
+    def make_isbn_search_url(self, isbn: str) -> str:
+        # Can't search by ISBN
+        pass
+
+    def make_free_text_search_url(self, title: str, author: str) -> str:
+        return f"https://mdpls.na.iiivega.com/search?query={urllib.parse.quote(title)}%20{urllib.parse.quote(author)}"
+
+    def get_library_links(self, isbn: str, title: str, author: str) -> List[str]:
+        return [
+            self.make_free_text_search_url(title=title, author=author),
+            f'"{title}" "{author}"'  # TODO: Hacky - make this cleaner and not index dependent
+        ]
+
+    def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
+        final_shelf_status: str = "Book Not Found"
+        final_link: str = library_links[0]
+        new_headers = HEADERS.copy()
+        new_headers.update(
+            {
+                'Accept': 'application/json, text/plain, */*',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Anonymous-User-Id': '5c645b47-9d91-4945-af3c-0db361b1cd23',
+                'Connection': 'keep-alive',
+                'Content-Type': 'application/json',
+                'Origin': 'https://mdpls.na.iiivega.com',
+                'Referer': 'https://mdpls.na.iiivega.com/',
+                'Sec-Fetch-Dest': 'empty',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Site': 'same-site',
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+                'api-version': '2',
+                'iii-customer-domain': 'mdpls.na.iiivega.com',
+                'iii-host-domain': 'mdpls.na.iiivega.com',
+                'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"macOS"',
+            }
+        )
+
+        response = requests.post(
+            "https://na.iiivega.com/api/search-result/search/format-groups",
+            headers=new_headers,
+            json={
+                'searchText': library_links[1],
+                'sorting': 'relevance',
+                'sortOrder': 'asc',
+                'pageNum': 0,
+                'pageSize': 1,  # TODO: Bring back more pages for better matches?
+                'resourceType': 'FormatGroup',
+            }
+        )
+
+        library_data = response.json().get("data")
+        final_shelf_status: str = "Book Not Found - Check search anyway (other formats, names, etc.)"
+        if library_data:
+            item_locations = [
+                item['locations'] for item in library_data[0].get("materialTabs") if
+                item['type'] == 'physical' and item['name'] == 'Book'
+            ]
+            if item_locations:
+                locations = [item['label'] for item in item_locations[0] if item['availabilityStatus'] == "Available"]
+
+                if locations:
+                    final_shelf_status = f"AVAILABLE: {locations}"
+                else:
+                    final_shelf_status = "UNAVAILABLE: Check search for other statuses"
+
+        return final_shelf_status, final_link
+
+
 def parser_factory(library_name="Nashville") -> BaseLibraryParser:
     """Factory Method for returning correct library parser"""
     library_parsers = {
         "Nashville": NashvillePublicLibraryParser,
+        "Miami": MiamiPublicLibraryParser,
         "Columbus": ColumbusPublicLibraryParser,
         "San Francisco": SanFranPublicLibraryParser,
     }
