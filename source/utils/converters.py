@@ -1,8 +1,12 @@
+from dataclasses import asdict
+
 import requests
 
 from .models import Book
 from dash import html, dcc
 import dash_bootstrap_components as dbc
+
+from ..parsers.library import parser_factory
 
 
 def book_to_cards(book: Book):
@@ -17,7 +21,10 @@ def book_to_cards(book: Book):
             html.P(f"Title: {book.title}", className="card-text"),
             html.P(f"Author: {book.author}", className="card-text"),
             dbc.Row([
-                dcc.Store(id={"type": "library-store", "index": book.isbn}, data=book.library_links),
+                dcc.Store(  # TODO: make choosing new library not require a refreshed pull
+                    id={"type": "library-store", "index": book.isbn},
+                    data=asdict(book)
+                ),
                 dbc.Button("Goodreads Link", href=book.link, color="info", target="_blank"),
                 dbc.Button(
                     "Check Library Status",
