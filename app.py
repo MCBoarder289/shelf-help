@@ -124,13 +124,40 @@ how_to_tab = dbc.Card(
         dbc.CardBody(
             [
                 dcc.Markdown(
-                    f"""
+                    """
                     ## Using Shelf Help
                     Shelf Help was designed to help you make a quick decision on what book should be next in your `to-read` shelf.
                     Two examples of my personal shelves (`to-read` and `currently-reading`) can be selected from the dropdown.
                     
                     ### Step 1: Insert a Goodreads shelf URL
-                    The following formats are supported currently:
+                    Simply copy the `Share` link from goodreads and paste it into the `input box`.
+                    
+                    Images below show you how to do this:
+                    """,
+                    className="dbc"
+                ),
+                dbc.Row(
+                    children=[
+                        dbc.Col(
+                            html.Img(id="gr-img1",
+                                     src="https://drive.google.com/thumbnail?id=1ScHB-yypcEf2gbH7vvuK1qMeLI3BasAX&sz=w1000",
+                                     style={'maxWidth': '100%', 'height': 'auto'},
+                                     className="dbc")
+                        ),
+                        dbc.Col(
+                            html.Img(id="gr-img2",
+                                     src="https://drive.google.com/thumbnail?id=1s2Zpgs6cWdWwK2js3jPqsdET9TWBlY0I&sz=w1000",
+                                     style={'maxWidth': '100%', 'height': 'auto'},
+                                     className="dbc")
+                        ),
+                    ],
+                    id="gr-imgs",
+                    align="center",
+                    justify="between"
+                ),
+                dcc.Markdown(
+                    f"""
+                    If you directly want to create the url, the following formats are supported currently:
                     * `https://www.goodreads.com/review/list/<numbers go here>?shelf=to-read` 
                     * `https://www.goodreads.com/review/list/<numbers here>-<user-name>?shelf=to-read`
                     * `https://www.goodreads.com/user_shelves/<numbers here>`
@@ -151,15 +178,19 @@ how_to_tab = dbc.Card(
                     > **Tip:** If you want a new list of suggestions, just keep pressing the `Retrieve Shelf` Button!
                     
                     ### Step 4: Check Goodreads or Library
-                    Once you have some books to look through, you can click on either the `Goodreads Link` or `Check Nashville Library` buttons.
+                    Once you have some books to look through, you can click on either the `Goodreads Link` or `Check Library` buttons.
+                    
                     This allows you to either:
                     * Check the Goodreads reviews for the selected book
                     * See if it is available as a physical copy at the library
                     
-                    The pop-up showing the Library status allow you to navigate to the website and check it out for yourself.
+                    **Use the `Library Selector` to search your library of choice.**
+                    
+                    The pop-up showing the Library status allows you to navigate to the website and check it out for yourself.
                     
                     > **Note:** If the book is unavailable in the Library, still use that button and manually search their website if you wish.
-                    """
+                    """,
+                    className="dbc"
                 ),
                 tab_nav
             ]
