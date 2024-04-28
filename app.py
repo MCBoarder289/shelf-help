@@ -4,7 +4,7 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 
 from source.parsers.library import SUPPORTED_LIBRARIES, parser_factory
-from source.utils.models import MAX_PAGES
+from source.utils.models import MAX_PAGES, Book
 from source.parsers.gr import retrieve_goodreads_shelf_data
 from source.utils.converters import book_to_cards
 from flask_caching import Cache
@@ -380,9 +380,10 @@ def populate_examples(to_read_btn, currently_reading_btn):
     Output('results', 'children'),
     Input('retrieve-button', 'n_clicks'),
     State('input-box', 'value'),
-    State('slider-number', 'value')
+    State('slider-number', 'value'),
+    State("library-selector", "value")
 )
-def get_shelf_data(n_clicks, shelf_url, slider_number):
+def get_shelf_data(n_clicks, shelf_url, slider_number, library):
     if n_clicks is None:
         raise PreventUpdate
     if shelf_url is None:
@@ -391,7 +392,7 @@ def get_shelf_data(n_clicks, shelf_url, slider_number):
         return True, "Invalid Entry: Must start with http:// or https://", None, None
 
     # TODO: Make the pattern matching better, not just "Starts With"
-    shelf_data = fetch_shelf_data_from_goodreads(shelf_url.strip())
+    shelf_data = fetch_shelf_data_from_goodreads(url=shelf_url.strip())
     sample_number = slider_number if len(shelf_data) >= slider_number else len(shelf_data)
     shelf_choices = list(map(book_to_cards, random.sample(shelf_data, sample_number)))
 
@@ -413,8 +414,15 @@ def toggle_modal(n_clicks, is_open, library_url, library):
         return False, None, None, None
     triggered_key_prefix = ''.join(str(ctx.triggered_id).replace("'", '"').split())
     if ctx.inputs[triggered_key_prefix + ".n_clicks"] is not None:
-        library_links = ctx.states[triggered_key_prefix.replace("button", "store") + ".data"]
-        library_status, library_link = parser_factory(library).get_library_availability(library_links)
+        book_data: Book = Book(**ctx.states[triggered_key_prefix.replace("button", "store") + ".data"])
+        library_parser = parser_factory(library)
+        library_status, library_link = library_parser.get_library_availability(
+            library_parser.get_library_links(
+                isbn=book_data.isbn,
+                title=book_data.searchable_title,
+                author=book_data.author
+            )
+        )
         return not is_open, library_status, library_link, None
     return is_open, None, None, None
 

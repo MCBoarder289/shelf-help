@@ -4,6 +4,8 @@ import re
 import requests
 import random
 from bs4 import BeautifulSoup
+
+from source.parsers.library import get_initial_page_soup, parser_factory
 from source.utils.models import Book, MAX_PAGES, HEADERS
 import urllib.parse
 import logging
@@ -32,12 +34,6 @@ def retrieve_goodreads_page_list(shelf_url: str) -> List[str]:
     page_list.append(shelf_url)
     page_list.extend(remaining_pages)
     return page_list
-
-
-def get_initial_page_soup(url):
-    logging.info(f"Getting Webpage Data To Parse. URL: {url}")
-    page_data = requests.get(url, headers=HEADERS)
-    return BeautifulSoup(page_data.text, "html.parser")
 
 
 def get_remaining_page_urls(page_soup):
@@ -73,10 +69,7 @@ def convert_row_to_book(row_soup):
         avg_rating=float(row_soup.select_one(".avg_rating").select_one(".value").getText().strip()),
         date_added=row_soup.select_one(".date_added").select_one(".value").getText().strip(),
         link=f'https://www.goodreads.com{row_soup.select_one(".title").select_one(".value").select_one("a")["href"]}',
-        library_links=[
-            f"https://catalog.library.nashville.org/Search/Results?join=AND&lookfor0%5B%5D={isbn}&type0%5B%5D=ISN",
-            f"https://catalog.library.nashville.org/Union/Search?view=list&showCovers=on&lookfor={urllib.parse.quote_plus(searchable_title)}+{urllib.parse.quote_plus(author)}&searchIndex=Keyword"
-        ]
+        searchable_title=searchable_title,
     )
 
 
