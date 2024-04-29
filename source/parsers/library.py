@@ -13,7 +13,8 @@ SUPPORTED_LIBRARIES = [
     "Syracuse",
     "Columbus",
     "Cincinnati",
-    "San Francisco"
+    "San Francisco",
+    "Phoenix",
 ]
 
 
@@ -351,6 +352,78 @@ class SyracusePublicLibraryParser(BaseLibraryParser):
         return final_shelf_status, final_link
 
 
+class PhoenixPublicLibraryParser(BaseLibraryParser):
+    def __init__(self):
+        super().__init__()
+
+    def make_isbn_search_url(self, isbn: str) -> str:
+        return f"https://catalog.phoenixpubliclibrary.org/search/searchresults.aspx?ctx=1.1033.0.0.35&type=Advanced&term={isbn}&relation=ALL&by=ISBN&bool4=AND&limit=MAT=1&sort=RELEVANCE&page=0"
+
+    def make_free_text_search_url(self, title: str, author: str) -> str:
+        return f'https://catalog.phoenixpubliclibrary.org/search/searchresults.aspx?ctx=1.1033.0.0.35&type=Advanced&term={title}&relation=ALL&by=TI&term2={urllib.parse.quote(author)}&relation2=ALL&by2=AU&bool1=AND&bool4=AND&limit=MAT=1&sort=RELEVANCE&page=0'
+
+    def get_library_links(self, isbn: str, title: str, author: str) -> List[str]:
+        return [
+            self.make_isbn_search_url(isbn=isbn),
+            self.make_free_text_search_url(title=title, author=author)
+        ]
+
+    def find_book_in_inventory(self, library_url):
+        session = requests.Session()
+        session.get(library_url, headers=HEADERS)
+        new_headers = HEADERS.copy()
+        new_headers.update(
+            {
+                "Referer": library_url,
+                "Sec-Fetch-Dest": "empty",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Site": "same-site",
+                "sec-ch-ua": '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"macOS"',
+                "Connection": "keep-alive",
+                "X-Requested-With": "XMLHttpRequest",
+            }
+        )
+        response = session.get(
+            "https://catalog.phoenixpubliclibrary.org/search/components/ajaxResults.aspx",
+            headers=new_headers,
+            params={"page": 1},
+        )
+
+        inventory_check = (None, None)
+
+        if response.ok:
+            inventory_soup = BeautifulSoup(response.text, "html.parser")
+            local_availability = inventory_soup.find_all("span", "nsm-brief-inline-subzone")
+            if local_availability:
+                all_copies = local_availability[0].text.replace("(", "").replace("of", "").replace(")", "").split()
+                avail_copies = int(all_copies[0])
+                total_copies = int(all_copies[1])
+                if avail_copies != 0:
+                    inventory_check = (f"AVAILABLE: {avail_copies} copies are local out of {total_copies} total copies. Check Link to see locations.", library_url)
+                else:
+                    inventory_check = (f"UNAVAILABLE: {avail_copies} copies are local out of {total_copies} total copies. Check Link to see locations.", library_url)
+
+        return inventory_check
+
+    def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
+        final_shelf_status: str = "Book Not Found"
+        final_link: str = library_links[1]
+        for link in library_links:
+            status, url = self.find_book_in_inventory(link)
+
+            if status is not None and status.startswith("AVAILABLE"):
+                final_shelf_status = status
+                final_link = url
+                break
+            elif status is not None and status.startswith("UNAVAILABLE"):
+                final_shelf_status = status
+                final_link = url
+
+        return final_shelf_status, final_link
+
+
 def parser_factory(library_name="Nashville") -> BaseLibraryParser:
     """Factory Method for returning correct library parser"""
     library_parsers = {
@@ -360,6 +433,7 @@ def parser_factory(library_name="Nashville") -> BaseLibraryParser:
         "Columbus": ColumbusPublicLibraryParser,
         "San Francisco": SanFranPublicLibraryParser,
         "Cincinnati": CincinnatiPublicLibraryParser,
+        "Phoenix": PhoenixPublicLibraryParser,
     }
 
     return library_parsers[library_name]()
