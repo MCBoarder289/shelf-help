@@ -474,7 +474,15 @@ class DelafieldPublicLibraryParser(BaseLibraryParser):
 
         if response.ok:
             inventory_soup = BeautifulSoup(response.text, "html.parser")
-            local_availability = inventory_soup.find_all("span", "nsm-brief-inline-subzone")   # nsm-e31 is local, nsm-e32 is broader
+
+            # Filtering out overdrive and Large Print Editions, since they come up at the top of searches
+            non_overdrive_books = [item for item in inventory_soup.find_all("span", "nsm-short-item nsm-e105") if not "OverDrive" in item.text and not "Large print" in item.text]
+
+            if non_overdrive_books:
+                local_availability = non_overdrive_books[0].findParents("table")[0].find_all_next("span", "nsm-brief-inline-subzone")
+            else:
+                local_availability = None
+
             if local_availability:
                 local_avail_copies, local_total_copies = self.get_available_copies(local_availability[0])
                 avail_copies, total_copies = self.get_available_copies(local_availability[1])
