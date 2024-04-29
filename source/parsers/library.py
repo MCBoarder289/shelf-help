@@ -15,7 +15,15 @@ SUPPORTED_LIBRARIES = [
     "Cincinnati",
     "San Francisco",
     "Phoenix",
+    "Delafield",
 ]
+
+BOOK_NOT_FOUND_MESSAGE = "Book Not Found: Check link to refine search (other locations, formats, etc.)"
+
+# Qualities of the library parsers:
+# * ISBN search
+# * Free text search
+# * Current focus is on Physical Books only, so filter down to those if possible?
 
 
 def get_initial_page_soup(url):
@@ -72,7 +80,7 @@ class NashvillePublicLibraryParser(BaseLibraryParser):
             return None
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
-        final_shelf_status: str = "Book Not Found"
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
         final_link: str = library_links[1]  #
         for link in library_links:
             book_in_inventory = self.find_book_in_inventory(link)
@@ -93,10 +101,10 @@ class NashvillePublicLibraryParser(BaseLibraryParser):
                     final_shelf_status = f"AVAILABLE: {available_sites}"
 
                 elif shelf_status.text.strip() == "Checked Out":
-                    final_shelf_status = "CHECKED OUT"
+                    final_shelf_status = "CHECKED OUT: Check link for more details "
 
                 else:
-                    final_shelf_status = "UNKNOWN STATUS"
+                    final_shelf_status = "UNKNOWN STATUS: Check link for more details"
                 final_link = link
                 break
             else:
@@ -129,7 +137,7 @@ class ColumbusPublicLibraryParser(BaseLibraryParser):
             return None
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
-        final_shelf_status: str = "Book Not Found"
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
         final_link: str = library_links[0]
         book_in_inventory = self.find_book_in_inventory(final_link)
         if book_in_inventory is not None:
@@ -163,7 +171,7 @@ class CincinnatiPublicLibraryParser(BaseLibraryParser):
             return None
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
-        final_shelf_status: str = "Book Not Found"
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
         final_link: str = library_links[0]
         book_in_inventory = self.find_book_in_inventory(final_link)
         if book_in_inventory is not None:
@@ -197,7 +205,7 @@ class SanFranPublicLibraryParser(BaseLibraryParser):
             return None
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
-        final_shelf_status: str = "Book Not Found"
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
         final_link: str = library_links[0]
         book_in_inventory = self.find_book_in_inventory(final_link)
         if book_in_inventory is not None:
@@ -224,7 +232,6 @@ class MiamiPublicLibraryParser(BaseLibraryParser):
         ]
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
-        final_shelf_status: str = "Book Not Found"
         final_link: str = library_links[0]
         new_headers = HEADERS.copy()
         new_headers.update(
@@ -263,7 +270,7 @@ class MiamiPublicLibraryParser(BaseLibraryParser):
         )
 
         library_data = response.json().get("data")
-        final_shelf_status: str = "Book Not Found - Check search anyway (other formats, names, etc.)"
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
         if library_data:
             item_locations = [
                 item['locations'] for item in library_data[0].get("materialTabs") if
@@ -287,7 +294,7 @@ class SyracusePublicLibraryParser(BaseLibraryParser):
     def make_isbn_search_url(self, isbn: str) -> str:
         return f"https://catalog.onlib.org/polaris/search/searchresults.aspx?ctx=1.1033.0.0.6&type=Keyword&term={isbn}&by=ISBN&sort=RELEVANCE&limit=(TOM=bks%20NOT%20TOM=ebk%20NOT%20TOM=elr%20NOT%20TOM=abk)%20AND%20AB=*&query=&page=0"
 
-    def make_free_text_search_url(self, title: str, author: str) -> str:
+    def make_free_text_search_url(self, title: str, author: str) -> str:  # TODO: Cleanup URL encoding for the title (since we include quotes now)
         return f'https://catalog.onlib.org/polaris/search/searchresults.aspx?ctx=1.1033.0.0.6&type=Keyword&term=%22{title}%22%20%22{urllib.parse.quote(author)}%22&by=KW&sort=RELEVANCE&limit=(TOM=bks%20NOT%20TOM=ebk%20NOT%20TOM=elr%20NOT%20TOM=abk)%20AND%20AB=*&query=&page=0'
 
     def get_library_links(self, isbn: str, title: str, author: str) -> List[str]:
@@ -336,7 +343,7 @@ class SyracusePublicLibraryParser(BaseLibraryParser):
         return inventory_check
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
-        final_shelf_status: str = "Book Not Found"
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
         final_link: str = library_links[1]
         for link in library_links:
             status, url = self.find_book_in_inventory(link)
@@ -408,7 +415,87 @@ class PhoenixPublicLibraryParser(BaseLibraryParser):
         return inventory_check
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
-        final_shelf_status: str = "Book Not Found"
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
+        final_link: str = library_links[1]
+        for link in library_links:
+            status, url = self.find_book_in_inventory(link)
+
+            if status is not None and status.startswith("AVAILABLE"):
+                final_shelf_status = status
+                final_link = url
+                break
+            elif status is not None and status.startswith("UNAVAILABLE"):
+                final_shelf_status = status
+                final_link = url
+
+        return final_shelf_status, final_link
+
+
+class DelafieldPublicLibraryParser(BaseLibraryParser):
+    def __init__(self):
+        super().__init__()
+
+    def make_isbn_search_url(self, isbn: str) -> str:
+        return f"https://www.cafelibraries.org/polaris/search/searchresults.aspx?ctx=6.1033.0.0.5&type=Keyword&term={isbn}&by=ISBN&sort=RELEVANCE&limit=TOM=bks&query=&page=0"
+
+    def make_free_text_search_url(self, title: str, author: str) -> str:
+        return f'https://www.cafelibraries.org/polaris/search/searchresults.aspx?ctx=6.1033.0.0.5&type=Keyword&term={title}%20{urllib.parse.quote(author)}&by=KW&sort=RELEVANCE&limit=TOM=bks&query=&page=0'
+
+    def get_library_links(self, isbn: str, title: str, author: str) -> List[str]:
+        return [
+            self.make_isbn_search_url(isbn=isbn),
+            self.make_free_text_search_url(title=title, author=author)
+        ]
+
+    def find_book_in_inventory(self, library_url):
+        session = requests.Session()
+        session.get(library_url, headers=HEADERS)
+        new_headers = HEADERS.copy()
+        new_headers.update(
+            {
+                "Referer": library_url,
+                "Sec-Fetch-Dest": "empty",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Site": "same-site",
+                "sec-ch-ua": '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"macOS"',
+                "Connection": "keep-alive",
+                "X-Requested-With": "XMLHttpRequest",
+            }
+        )
+        response = session.get(
+            "https://www.cafelibraries.org/polaris/search/components/ajaxResults.aspx?page=1",
+            headers=new_headers,
+            params={"page": 1},
+        )
+
+        inventory_check = (None, None)
+
+        if response.ok:
+            inventory_soup = BeautifulSoup(response.text, "html.parser")
+            local_availability = inventory_soup.find_all("span", "nsm-brief-inline-subzone")   # nsm-e31 is local, nsm-e32 is broader
+            if local_availability:
+                local_avail_copies, local_total_copies = self.get_available_copies(local_availability[0])
+                avail_copies, total_copies = self.get_available_copies(local_availability[1])
+
+                if local_total_copies != 0:
+                    inventory_check = (f"AVAILABLE - Locally: {local_avail_copies} out of {local_total_copies} at THIS library, {avail_copies} out of {total_copies} at ALL libraries", library_url)
+                elif avail_copies != 0:
+                    inventory_check = (f"AVAILABLE - Other Libraries: {local_avail_copies} out of {local_total_copies} at THIS library, {avail_copies} out of {total_copies} at ALL libraries", library_url)
+                else:
+                    inventory_check = (f"UNAVAILABLE: {local_avail_copies} out of {local_total_copies} at THIS library, {avail_copies} out of {total_copies} at ALL libraries", library_url)
+
+        return inventory_check
+
+    def get_available_copies(self, local_availability_item):
+        all_copies = local_availability_item.text.replace("(", "").replace("of", "").replace(")", "").split()
+        avail_copies = int(all_copies[0])
+        total_copies = int(all_copies[1])
+        return avail_copies, total_copies
+
+    def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
         final_link: str = library_links[1]
         for link in library_links:
             status, url = self.find_book_in_inventory(link)
@@ -434,6 +521,7 @@ def parser_factory(library_name="Nashville") -> BaseLibraryParser:
         "San Francisco": SanFranPublicLibraryParser,
         "Cincinnati": CincinnatiPublicLibraryParser,
         "Phoenix": PhoenixPublicLibraryParser,
+        "Delafield": DelafieldPublicLibraryParser,
     }
 
     return library_parsers[library_name]()
