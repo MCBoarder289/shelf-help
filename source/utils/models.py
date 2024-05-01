@@ -14,8 +14,9 @@ class Book:
     title: str
     author: str
     isbn: str
-    isbn13: str
     avg_rating: float
     date_added: str
     link: str
     searchable_title: str
+    image_link: str
+    goodreads_id: str

@@ -65,10 +65,15 @@ class NashvillePublicLibraryParser(BaseLibraryParser):
         return f"https://catalog.library.nashville.org/Union/Search?view=list&showCovers=on&lookfor={urllib.parse.quote_plus(title)}+{urllib.parse.quote_plus(author)}&searchIndex=Keyword"
 
     def get_library_links(self, isbn: str, title: str, author: str) -> List[str]:
-        return [
-            self.make_isbn_search_url(isbn=isbn),
-            self.make_free_text_search_url(title=title, author=author)
-        ]
+        if isbn == "":
+            return [
+                self.make_free_text_search_url(title=title, author=author)
+            ]
+        else:
+            return [
+                self.make_isbn_search_url(isbn=isbn),
+                self.make_free_text_search_url(title=title, author=author)
+            ]
 
     def find_book_in_inventory(self, library_url):
         library_isbn_search = get_initial_page_soup(library_url)
@@ -82,7 +87,7 @@ class NashvillePublicLibraryParser(BaseLibraryParser):
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
         final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
-        final_link: str = library_links[1]  #
+        final_link: str = library_links[len(library_links)-1]
         for link in library_links:
             book_in_inventory = self.find_book_in_inventory(link)
 
@@ -229,7 +234,8 @@ class MiamiPublicLibraryParser(BaseLibraryParser):
     def get_library_links(self, isbn: str, title: str, author: str) -> List[str]:
         return [
             self.make_free_text_search_url(title=title, author=author),
-            f'"{title}" "{author}"'  # TODO: Hacky - make this cleaner and not index dependent
+            f'{title} {author}'  # TODO: Hacky - make this cleaner and not index dependent
+            # TODO: Add a fuzzy match title here so that we can match search results better
         ]
 
     def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
@@ -257,7 +263,10 @@ class MiamiPublicLibraryParser(BaseLibraryParser):
             }
         )
 
-        response = requests.post(
+        session = requests.Session()
+        session.get(final_link, headers=new_headers)
+
+        response = session.post(
             "https://na.iiivega.com/api/search-result/search/format-groups",
             headers=new_headers,
             json={
@@ -265,7 +274,7 @@ class MiamiPublicLibraryParser(BaseLibraryParser):
                 'sorting': 'relevance',
                 'sortOrder': 'asc',
                 'pageNum': 0,
-                'pageSize': 1,  # TODO: Bring back more pages for better matches?
+                'pageSize': 10,  # TODO: Bring back more pages for better matches?
                 'resourceType': 'FormatGroup',
             }
         )
