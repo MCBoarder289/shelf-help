@@ -16,6 +16,7 @@ SUPPORTED_LIBRARIES = [
     "San Francisco",
     "Phoenix",
     "Delafield",
+    "Toledo",
 ]
 
 BOOK_NOT_FOUND_MESSAGE = "Book Not Found: Check link to refine search (other locations, formats, etc.)"
@@ -519,6 +520,40 @@ class DelafieldPublicLibraryParser(BaseLibraryParser):
         return final_shelf_status, final_link
 
 
+class ToledoPublicLibraryParser(BaseLibraryParser):
+    def __init__(self):
+        super().__init__()
+
+    def make_isbn_search_url(self, isbn: str) -> str:
+        # Can't search by ISBN
+        pass
+
+    def make_free_text_search_url(self, title: str, author: str) -> str:
+        return f"https://toledo.bibliocommons.com/v2/search?custom_edit=false&query=(title%3A({urllib.parse.quote(title)})%20AND%20contributor%3A({urllib.parse.quote(author)})%20)&searchType=bl&suppress=true&f_FORMAT=BK"
+
+    def get_library_links(self, isbn: str, title: str, author: str) -> List[str]:
+        return [
+            self.make_free_text_search_url(title=title, author=author)
+        ]
+
+    def find_book_in_inventory(self, library_url):
+        library_isbn_search = get_initial_page_soup(library_url)
+        results = library_isbn_search.find_all("span", {"class": "cp-availability-status"})
+        if results:
+            return f"{results[0].text.upper()} - Click button to see where"
+        else:
+            return None
+
+    def get_library_availability(self, library_links: List[str]) -> Tuple[str, str]:
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
+        final_link: str = library_links[0]
+        book_in_inventory = self.find_book_in_inventory(final_link)
+        if book_in_inventory is not None:
+            final_shelf_status = book_in_inventory
+
+        return final_shelf_status, final_link
+
+
 def parser_factory(library_name="Nashville") -> BaseLibraryParser:
     """Factory Method for returning correct library parser"""
     library_parsers = {
@@ -530,6 +565,7 @@ def parser_factory(library_name="Nashville") -> BaseLibraryParser:
         "Cincinnati": CincinnatiPublicLibraryParser,
         "Phoenix": PhoenixPublicLibraryParser,
         "Delafield": DelafieldPublicLibraryParser,
+        "Toledo": ToledoPublicLibraryParser,
     }
 
     return library_parsers[library_name]()
