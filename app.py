@@ -1,14 +1,15 @@
+import random
+
+import dash_bootstrap_components as dbc
 import dash_player
 from dash import Dash, html, dcc, callback, Output, Input, State, ctx, clientside_callback, ALL
 from dash.exceptions import PreventUpdate
-import dash_bootstrap_components as dbc
-
-from source.parsers.library import SUPPORTED_LIBRARIES, parser_factory
-from source.utils.models import MAX_PAGES, Book
-from source.parsers.gr import retrieve_goodreads_shelf_data
-from source.utils.converters import book_to_cards
 from flask_caching import Cache
-import random
+
+from source.parsers.gr import retrieve_goodreads_shelf_data, TOTAL_BOOKS_MAX
+from source.parsers.library import SUPPORTED_LIBRARIES, parser_factory
+from source.utils.converters import book_to_cards
+from source.utils.models import Book
 
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
 
@@ -170,8 +171,7 @@ how_to_tab = dbc.Card(
                     ### Step 3: Click "Retrieve Shelf"
                     This app will then get all of your shelf data and pick a random subset for you.
                     
-                    If the number of books returned is lower than you expected, it's because there are up to {MAX_PAGES} pages that we select. 
-                    We still randomly select from all of them.
+                    If the number of books returned is lower than you expected, it's because we only pull the latest {TOTAL_BOOKS_MAX} books from your Goodreads shelf. 
                     
                     > **Note:** The initial pull will take a little time, but once the data is retrieved, it is saved for {timeout_mins} minutes.
                     

@@ -1,85 +1,74 @@
-from typing import List, Tuple
+from typing import List, Optional
 
-import re
+import feedparser
 import requests
-import random
-from bs4 import BeautifulSoup
 
-from source.parsers.library import get_initial_page_soup, parser_factory
-from source.utils.models import Book, MAX_PAGES, HEADERS
+from source.parsers.library import get_initial_page_soup
+from source.utils.models import Book, HEADERS
 import urllib.parse
 import logging
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
+PER_PAGE_MAX = 200
+TOTAL_BOOKS_MAX = 800
+
 
 def retrieve_goodreads_shelf_data(shelf_url: str) -> List[Book]:
     logging.info("Retrieving Shelf Data")
-    book_data: List[Book] = []
-
-    pages = retrieve_goodreads_page_list(shelf_url)
-
-    for page in pages:
-        new_page_data = get_initial_page_soup(page)
-        add_book_data_from_page(page_data_soup=new_page_data, book_data_list=book_data)
-
-    return book_data
+    rss_link = get_rss_link(shelf_url)
+    return retrieve_books_from_rss_feeds(rss_link)
 
 
-def retrieve_goodreads_page_list(shelf_url: str) -> List[str]:
-    logging.info("Retrieving List of Goodreads Pages")
-    page_list: List[str] = []
-    page_data = get_initial_page_soup(shelf_url)
-    remaining_pages = get_remaining_page_urls(page_data)
-    page_list.append(shelf_url)
-    page_list.extend(remaining_pages)
-    return page_list
-
-
-def get_remaining_page_urls(page_soup):
-    logging.info("Parsing for remaining pages")
-    if page_soup.select_one("#reviewPagination") is not None:
-        present_links = list(map(lambda x: f"https://www.goodreads.com{x['href']}", page_soup.select_one("#reviewPagination").select("a")))
-        max_page = max([int(re.search(r"(?<=page=)\d+", url).group()) for url in present_links])
-        if max_page < MAX_PAGES:
-            return [re.sub(r"(?<=page=)\d+", str(i), present_links[0]) for i in range(2, max_page + 1)]
-        else:
-            return [re.sub(r"(?<=page=)\d+", str(i), present_links[0]) for i in random.sample(range(2, max_page), MAX_PAGES)]
+def get_rss_link(shelf_url: str) -> Optional[str]:
+    element = get_initial_page_soup(shelf_url).find("img", "inter").parent
+    if element["href"]:
+        return element["href"]
     else:
-        return []
+        return None
 
 
-def add_book_data_from_page(page_data_soup, book_data_list):
-    logging.info(f"Parsing Book Data")
-    table_rows = page_data_soup.select_one("#booksBody").select("tr")
-    result = map(convert_row_to_book, table_rows)
-    book_data_list.extend(list(result))
+def retrieve_books_from_rss_feeds(rss_url: str, max_items: int = TOTAL_BOOKS_MAX):
+    page = 1
+    not_complete = True
+    book_data_list: List[Book] = []
+    while not_complete:
+        results = feedparser.parse(f"{rss_url}&page={page}&per_page={PER_PAGE_MAX}").entries
+        if len(results) == 0:
+            not_complete = False
+        else:
+            book_data_list.extend(list(map(convert_rss_item_to_book, results)))
+            if len(results) < PER_PAGE_MAX:
+                not_complete = False
+        if len(book_data_list) >= max_items:
+            not_complete = False
+    return book_data_list
 
 
-def convert_row_to_book(row_soup):
-    title = row_soup.select_one(".title").select_one(".value").select_one("a")["title"].strip()
+def convert_rss_item_to_book(rss_item) -> Book:
+    title = rss_item["title"]
     searchable_title = title.partition("(")[0].strip() if "(" in title else title
-    author = row_soup.select_one(".author").select_one(".value").select_one("a").getText().strip()
-    isbn = get_isbn(row_soup, title=searchable_title, author=author)
+    author = ' '.join(rss_item["author_name"].split())  # TODO: See if this is ok vs. lastname, first
+    isbn = get_isbn(rss_item["isbn"], title, author)
     return Book(
         title=title,
         author=author,
         isbn=isbn,
-        isbn13=row_soup.select_one(".isbn13").select_one(".value").getText().strip(),
-        avg_rating=float(row_soup.select_one(".avg_rating").select_one(".value").getText().strip()),
-        date_added=row_soup.select_one(".date_added").select_one(".value").getText().strip(),
-        link=f'https://www.goodreads.com{row_soup.select_one(".title").select_one(".value").select_one("a")["href"]}',
+        avg_rating=float(rss_item["average_rating"]),
+        date_added=rss_item["user_date_added"],
+        link=f"https://www.goodreads.com/book/show/{rss_item['book_id']}",
         searchable_title=searchable_title,
+        image_link=rss_item["book_large_image_url"],
+        goodreads_id=rss_item["book_id"],
     )
 
 
-def get_isbn(row_soup, title, author):
-    parsed_isbn = row_soup.select_one(".isbn").select_one(".value").getText().strip()
-    if parsed_isbn != "":
-        return parsed_isbn
+def get_isbn(isbn, title, author):
+    if isbn != "":
+        return isbn
     else:
         logging.info("ISBN Not Found... Attempting to Discover")
-        isbn = ""
+        new_isbn = ""
         query_response = requests.get(
             f"https://openlibrary.org/search.json?q=title:{urllib.parse.quote_plus(title.lower())}+author:{urllib.parse.quote_plus(author.lower())}",
             headers=HEADERS
@@ -89,9 +78,9 @@ def get_isbn(row_soup, title, author):
             if response_json["num_found"] > 0:
                 isbn_list = response_json["docs"][0].get("isbn", [])
                 if isbn_list:
-                    isbn = isbn_list[0]
+                    new_isbn = isbn_list[0]
 
-        return isbn
+        return new_isbn
 
 
 if __name__ == "__main__":
