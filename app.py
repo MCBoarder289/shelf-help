@@ -1,4 +1,5 @@
 import random
+import time
 
 import dash_bootstrap_components as dbc
 import dash_player
@@ -7,6 +8,7 @@ from dash.exceptions import PreventUpdate
 from flask_caching import Cache
 
 from source.parsers.gr import retrieve_goodreads_shelf_data, TOTAL_BOOKS_MAX
+from source.parsers.libby import LIBBY_LIBRARIES, search_libby
 from source.parsers.library import SUPPORTED_LIBRARIES, parser_factory
 from source.utils.converters import book_to_cards
 from source.utils.models import Book
@@ -67,6 +69,19 @@ color_mode_switch = html.Span(
         dbc.Label(className="fa fa-moon", html_for="color-mode-switch"),
         dbc.Switch(id="color-mode-switch", value=True, className="d-inline-block ms-1", persistence=True),
         dbc.Label(className="fa fa-sun", html_for="color-mode-switch"),
+    ]
+)
+
+book_or_libby = dbc.Stack(
+    children=[
+        dbc.Label(id="medium-label", children="Physical Book / Libby:"),
+        html.Span(
+            [
+                dbc.Label(className="fa fa-book", html_for="medium-switch"),
+                dbc.Switch(id="medium-switch", value=False, className="d-inline-block ms-1"),
+                dbc.Label(className="fa fa-tablet-screen-button", html_for="color-mode-switch")
+            ]
+        )
     ]
 )
 
@@ -251,6 +266,7 @@ library_selector = dbc.Stack(
             options=SUPPORTED_LIBRARIES,
             value="Nashville",
             clearable=False,
+            multi=False,
             className="dbc",
             id="library-selector"
         )
@@ -289,6 +305,10 @@ app.layout = dbc.Container(
             children=[
                 dbc.Col(
                     children=color_mode_switch,
+                ),
+                dbc.Col(
+                    children=book_or_libby,
+                    align="center",
                 ),
                 dbc.Col(
                     children=library_selector,
@@ -439,21 +459,30 @@ def get_shelf_data(n_clicks, shelf_url, slider_number, library):
     State("modal", "is_open"),
     State({"type": "library-store", "index": ALL}, "data"),
     State("library-selector", "value"),
+    State("medium-switch", "value"),
 )
-def toggle_modal(n_clicks, is_open, library_url, library):
+def toggle_modal(n_clicks, is_open, library_store, library, is_libby):
     if ctx.triggered_id is None or len(n_clicks) == 0:
         return False, None, None, None
     triggered_key_prefix = ''.join(str(ctx.triggered_id).replace("'", '"').split())
     if ctx.inputs[triggered_key_prefix + ".n_clicks"] is not None:
         book_data: Book = Book(**ctx.states[triggered_key_prefix.replace("button", "store") + ".data"])
-        library_parser = parser_factory(library)
-        library_status, library_link = library_parser.get_library_availability(
-            library_parser.get_library_links(
-                isbn=book_data.isbn,
-                title=book_data.searchable_title,
-                author=book_data.author
+
+        if not is_libby:
+            library_parser = parser_factory(library)
+            library_status, library_link = library_parser.get_library_availability(
+                library_parser.get_library_links(
+                    isbn=book_data.isbn,
+                    title=book_data.searchable_title,
+                    author=book_data.author
+                )
             )
-        )
+        else:
+            library_status, library_link = search_libby(
+                library_id=library,
+                title=book_data.searchable_title,
+                author=book_data.author,
+            )
         return not is_open, library_status, library_link, None
     return is_open, None, None, None
 
@@ -467,6 +496,20 @@ def toggle_collapse(n, is_open):
     if n:
         return not is_open
     return is_open
+
+
+@app.callback(
+    Output("library-selector", "options"),
+    Output("library-selector", "value"),
+    Input("medium-switch", "value"),
+    State("library-selector", "value"),
+    prevent_initial_call=True
+)
+def library_selector_dropdown_switch(is_libby, selected_library):
+    if not is_libby:
+        return SUPPORTED_LIBRARIES, [d['label'] for d in LIBBY_LIBRARIES if d['value'] == selected_library][0]
+    else:
+        return LIBBY_LIBRARIES, [d['value'] for d in LIBBY_LIBRARIES if d['label'] == selected_library][0]
 
 
 clientside_callback(

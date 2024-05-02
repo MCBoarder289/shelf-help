@@ -2,6 +2,7 @@ from typing import List, Optional
 
 import feedparser
 import requests
+import orjson
 
 from source.parsers.library import get_initial_page_soup
 from source.utils.models import Book, HEADERS
@@ -74,7 +75,7 @@ def get_isbn(isbn, title, author):
             headers=HEADERS
         )
         if query_response.ok:
-            response_json = query_response.json()
+            response_json = orjson.loads(query_response.text)
             if response_json["num_found"] > 0:
                 isbn_list = response_json["docs"][0].get("isbn", [])
                 if isbn_list:

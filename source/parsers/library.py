@@ -8,15 +8,17 @@ from bs4 import BeautifulSoup
 from source.utils.models import HEADERS
 
 SUPPORTED_LIBRARIES = [
-    "Nashville",
-    "Miami",
-    "Syracuse",
-    "Columbus",
-    "Cincinnati",
-    "San Francisco",
-    "Phoenix",
-    "Delafield",
-    "Toledo",
+
+    {'label': 'Nashville', 'value': 'Nashville'},
+    {'label': 'Miami', 'value': 'Miami'},
+    {'label': 'Syracuse', 'value': 'Syracuse'},
+    {'label': 'Columbus', 'value': 'Columbus'},
+    {'label': 'Cincinnati', 'value': 'Cincinnati'},
+    {'label': 'San Francisco', 'value': 'San Francisco'},
+    {'label': 'Phoenix', 'value': 'Phoenix'},
+    {'label': 'Delafield', 'value': 'Delafield'},
+    {'label': 'Toledo', 'value': 'Toledo'},
+
 ]
 
 BOOK_NOT_FOUND_MESSAGE = "Book Not Found: Check link to refine search (other locations, formats, etc.)"
