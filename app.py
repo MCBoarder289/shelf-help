@@ -1,11 +1,11 @@
 import random
-import time
 
 import dash_bootstrap_components as dbc
 import dash_player
 from dash import Dash, html, dcc, callback, Output, Input, State, ctx, clientside_callback, ALL
 from dash.exceptions import PreventUpdate
 from flask_caching import Cache
+from furl import furl
 
 from source.parsers.gr import retrieve_goodreads_shelf_data, TOTAL_BOOKS_MAX
 from source.parsers.libby import LIBBY_LIBRARIES, search_libby
@@ -74,7 +74,7 @@ color_mode_switch = html.Span(
 
 book_or_libby = dbc.Stack(
     children=[
-        dbc.Label(id="medium-label", children="Physical Book / Libby:"),
+        dbc.Label(id="medium-label", children="Book / Libby:"),
         html.Span(
             [
                 dbc.Label(className="fa fa-book", html_for="medium-switch"),
@@ -109,11 +109,12 @@ ios_install_tab = dbc.Card(
         dbc.CardBody(
             [
                 dbc.Row(
-                    html.P('To install in iOS, simply "Add to Home Screen"', className="card-text"),
-                    align="center"
-                ),
-                dbc.Row(
-                    html.P("Like this video:", className="card-text"),
+                    dcc.Markdown(
+                        '''
+                        To install in iOS, simply "Add to Home Screen".
+                        Like this video:''',
+                        className="dbc"
+                    ),
                     align="center"
                 ),
                 dbc.Row(
@@ -126,6 +127,15 @@ ios_install_tab = dbc.Card(
                         controls=False,
                         width="360px",
                         height="640px"
+                    ),
+                    align="center"
+                ),
+                dbc.Row(
+                    dcc.Markdown(
+                        '''
+                        > **TIP:** If you run this install *after* you run your search, it is saved for next time
+                        ''',
+                        className="dbc"
                     ),
                     align="center"
                 ),
@@ -197,13 +207,20 @@ how_to_tab = dbc.Card(
                     
                     This allows you to either:
                     * Check the Goodreads reviews for the selected book
-                    * See if it is available as a physical copy at the library
+                    * See if it is available, either as a physical copy or on Libby (depending on your toggle selection)
                     
                     **Use the `Library Selector` to search your library of choice.**
                     
                     The pop-up showing the Library status allows you to navigate to the website and check it out for yourself.
                     
                     > **Note:** If the book is unavailable in the Library, still use that button and manually search their website if you wish.
+                    
+                    ### Step 4: (Optional) Bookmark this site/install the app
+                    
+                    If you bookmark the site after you've run a search, it will save that search as the input for next time, so you don't have to copy the url again!
+                    
+                    > **Tip:** If you use "Save to Home Screen" to install this on iOS, your app will always have this default! See the `iOS Install` tab for more details.
+                    
                     """,
                     className="dbc"
                 ),
@@ -261,7 +278,7 @@ collapse = [
 
 library_selector = dbc.Stack(
     [
-        html.Label("Library Selector:", className="dbc"),
+        html.Label("Library:", className="dbc"),
         dcc.Dropdown(
             options=SUPPORTED_LIBRARIES,
             value="Nashville",
@@ -277,6 +294,7 @@ library_selector = dbc.Stack(
 app.layout = dbc.Container(
     style={"paddingLeft": "calc(var(--bs-gutter-x)* 1.5)", "paddingRight": "calc(var(--bs-gutter-x)* 1.5)"},
     children=[
+        dcc.Location(id='url-location', refresh=False),
         dbc.Row(
             [
                 dbc.Col(
@@ -415,13 +433,17 @@ def fetch_shelf_data_from_goodreads(url):
     Output("input-box", "value"),
     Input('to-read-item', 'n_clicks'),
     Input('currently-reading-item', 'n_clicks'),
+    Input("url-location", "href"),
 
 )
-def populate_examples(to_read_btn, currently_reading_btn):
+def populate_examples(to_read_btn, currently_reading_btn, url_query):
     if ctx.triggered_id == 'to-read-item':
         return "https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=to-read"
     elif ctx.triggered_id == 'currently-reading-item':
         return "https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=currently-reading"
+    elif url_query:
+        return furl(url_query).args.get("gr_id", "").strip()
+
 
 
 @callback(
@@ -429,25 +451,26 @@ def populate_examples(to_read_btn, currently_reading_btn):
     Output("alert-auto", "children"),
     Output("shelf-url-output", "children"),
     Output('results', 'children'),
+    Output("url-location", "search"),
     Input('retrieve-button', 'n_clicks'),
     State('input-box', 'value'),
     State('slider-number', 'value'),
-    State("library-selector", "value")
+    State("library-selector", "value"),
 )
 def get_shelf_data(n_clicks, shelf_url, slider_number, library):
     if n_clicks is None:
         raise PreventUpdate
     if shelf_url is None:
-        return True, "Invalid Entry: Must not be blank and url starts with http:// or https://", None, None
+        return True, "Invalid Entry: Must not be blank and url starts with http:// or https://", None, None, None
     if not shelf_url.startswith("http://") and not shelf_url.startswith("https://"):
-        return True, "Invalid Entry: Must start with http:// or https://", None, None
+        return True, "Invalid Entry: Must start with http:// or https://", None, None, None
 
     # TODO: Make the pattern matching better, not just "Starts With"
     shelf_data = fetch_shelf_data_from_goodreads(url=shelf_url.strip())
     sample_number = slider_number if len(shelf_data) >= slider_number else len(shelf_data)
     shelf_choices = list(map(book_to_cards, random.sample(shelf_data, sample_number)))
 
-    return False, None, f"Retrieved Shelf Data: {len(shelf_data)} Books Retrieved", shelf_choices
+    return False, None, f"Retrieved Shelf Data: {len(shelf_data)} Books Retrieved", shelf_choices, f"?gr_id={shelf_url}"
 
 
 @callback(
