@@ -64,8 +64,8 @@ def convert_rss_item_to_book(rss_item) -> Book:
     )
 
 
-def get_isbn(isbn, title, author):
-    if isbn != "":
+def get_isbn(isbn, title, author, skip_isbn_check=True):
+    if isbn != "" or skip_isbn_check:
         return isbn
     else:
         logging.info("ISBN Not Found... Attempting to Discover")
