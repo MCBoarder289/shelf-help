@@ -131,15 +131,6 @@ ios_install_tab = dbc.Card(
                     ),
                     align="center"
                 ),
-                dbc.Row(
-                    dcc.Markdown(
-                        '''
-                        > **TIP:** If you run this install *after* you run your search, it is saved for next time
-                        ''',
-                        className="dbc"
-                    ),
-                    align="center"
-                ),
                 tab_nav
             ]
         ),
