@@ -56,7 +56,6 @@ def search_libby(library_id: str, title: str, author: str) -> Tuple[str, str]:
         headers=LIBBY_HEADERS,
     )
 
-    print(response.ok)
     results = orjson.loads(response.text)
     if results['items']:
         libby_item = results['items'][0]

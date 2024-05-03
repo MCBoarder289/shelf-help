@@ -111,6 +111,7 @@ ios_install_tab = dbc.Card(
                 dbc.Row(
                     dcc.Markdown(
                         '''
+                        ### iOS Install
                         To install in iOS, simply "Add to Home Screen".
                         Like this video:''',
                         className="dbc"
@@ -215,12 +216,9 @@ how_to_tab = dbc.Card(
                     
                     > **Note:** If the book is unavailable in the Library, still use that button and manually search their website if you wish.
                     
-                    ### Step 4: (Optional) Bookmark this site/install the app
+                    ### Step 4: (Optional) Bookmark this site
                     
-                    If you bookmark the site after you've run a search, it will save that search as the input for next time, so you don't have to copy the url again!
-                    
-                    > **Tip:** If you use "Save to Home Screen" to install this on iOS, your app will always have this default! See the `iOS Install` tab for more details.
-                    
+                    If you bookmark the site after you've run a search, it will save that search as the input for next time, so you don't have to copy the url again!                    
                     """,
                     className="dbc"
                 ),
@@ -443,7 +441,6 @@ def populate_examples(to_read_btn, currently_reading_btn, url_query):
         return "https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=currently-reading"
     elif url_query:
         return furl(url_query).args.get("gr_id", "").strip()
-
 
 
 @callback(
