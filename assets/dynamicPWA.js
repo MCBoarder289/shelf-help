@@ -22,7 +22,11 @@ function editStartUrlAndGenerateDataUrl(manifestUrl, newStartUrl) {
         if (data.start_url) {
             originalStartUrl = data.start_url;
             // Edit the start_url
-            data.start_url = newStartUrl;
+            // console.log(newStartUrl)
+            // console.log(newStartUrl.split('?')[1])
+            const queryString = newStartUrl.split('?')[1];
+
+            data.start_url = queryString !== undefined ? originalStartUrl + "?" + queryString : originalStartUrl;
 
             // Convert the updated data back to JSON
             const updatedManifest = JSON.stringify(data);
@@ -47,7 +51,7 @@ function editStartUrlAndGenerateDataUrl(manifestUrl, newStartUrl) {
 if (isiOS()) {
     // Perform iOS-specific action
     console.log("User is using iOS");
-    editStartUrlAndGenerateDataUrl("./assets/manifest.json", "")
+    editStartUrlAndGenerateDataUrl("./assets/manifest.json", window.location.href)
         .then(dataUrlOrStartUrl => {
             document.querySelector("head > link").href = dataUrlOrStartUrl;
             console.log('Generated Data URL:', dataUrlOrStartUrl);
@@ -63,7 +67,7 @@ if (isiOS()) {
     // Perform action for other user agents
     console.log("User is using some other platform");
     // Your generic code here
-    editStartUrlAndGenerateDataUrl("./assets/manifest.json", "")
+    editStartUrlAndGenerateDataUrl("./assets/manifest.json", window.location.href)
         .then(dataUrlOrStartUrl => {
             document.querySelector("head > link").href = dataUrlOrStartUrl;
             console.log('Generated Data URL:', dataUrlOrStartUrl);
