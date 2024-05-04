@@ -27,6 +27,9 @@ app.index_string = '''
 {%favicon%}
 {%css%}
 </head>
+<script>
+   src="./assets/dynamicPWA.js" type="text/javascript"
+</script>
 <script type="module">
    import 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate';
    const el = document.createElement('pwa-update');
@@ -112,7 +115,9 @@ ios_install_tab = dbc.Card(
                     dcc.Markdown(
                         '''
                         ### iOS Install
-                        To install in iOS, simply "Add to Home Screen".
+                        1. First, bookmark this page after you've run the search, so you can save your shelf and not need to enter it each time.
+                        2. Close your browser, then reopen the saved bookmark
+                        3. To install in iOS, simply "Add to Home Screen".
                         Like this video:''',
                         className="dbc"
                     ),
@@ -283,7 +288,7 @@ library_selector = dbc.Stack(
 app.layout = dbc.Container(
     style={"paddingLeft": "calc(var(--bs-gutter-x)* 1.5)", "paddingRight": "calc(var(--bs-gutter-x)* 1.5)"},
     children=[
-        dcc.Location(id='url-location', refresh=False),
+        dcc.Location(id='url-location', refresh="callback-nav"),
         dbc.Row(
             [
                 dbc.Col(
