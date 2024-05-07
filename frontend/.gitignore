@@ -1,8 +1,4 @@
-.python-version
-.idea/
-cache/
-.DS_store
-__pycache__
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
 /node_modules
@@ -16,11 +12,11 @@ __pycache__
 /build
 
 # misc
+.DS_Store
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-.flaskenv
 
 npm-debug.log*
 yarn-debug.log*

@@ -1,4 +1,5 @@
 import random
+import time
 from typing import List
 
 from flask import Flask, request
@@ -60,6 +61,11 @@ dummy_books = [
 @cache.memoize(timeout=1800)  # 30 minutes
 def fetch_shelf_data_from_goodreads(url) -> List[Book]:
     return retrieve_goodreads_shelf_data(shelf_url=url)
+
+
+@app.route('/time')
+def get_current_time():
+    return {'time': time.time()}
 
 
 @app.route("/bookChoices", methods=['POST'])
