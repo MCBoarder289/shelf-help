@@ -1,29 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { createTheme, MantineProvider } from '@mantine/core';
-import { HeaderSimple } from './components/HeaderSimple';
+import '@mantine/core/styles.css';
+import { MantineProvider } from '@mantine/core';
+import { Router } from './Router';
+import { theme } from './theme';
 
-
-
-const theme = createTheme({
-  fontFamily: 'Open Sans, sans-serif',
-  primaryColor: 'blue',
-});
-
-function App() {
-  const [currentTime, setCurrentTime] = useState(0)
-
-  useEffect(() => {
-    // fetch('/time').then(res => res.json()).then(data => {
-    //   setCurrentTime(data.time)
-    // })
-  }, []
-  )
-
+export default function App() {
   return (
-    <MantineProvider>
-      <HeaderSimple/>
+    <MantineProvider theme={theme}>
+      <Router />
     </MantineProvider>
   );
 }
-
-export default App;
