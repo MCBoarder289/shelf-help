@@ -54,7 +54,6 @@ export function HeaderSimple() {
   ));
 
   return (
-    <header className={classes.header}>
       <Container size="md" className={classes.inner}>
         <img src={icon} className={classes.headerlogo}/>
         <Title className={classes.title}>
@@ -66,6 +65,5 @@ export function HeaderSimple() {
         <Switch size="md" color="dark.4" onLabel={sunIcon} offLabel={moonIcon} checked={colorScheme === 'dark' ? true : false} onChange={toggleColorScheme} />
         <Burger opened={opened} onClick={toggle} size="sm" />
       </Container>
-    </header>
   );
 }
