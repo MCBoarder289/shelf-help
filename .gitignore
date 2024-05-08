@@ -1,5 +1,6 @@
 .python-version
 .idea/
+.vscode/
 cache/
 .DS_store
 __pycache__
