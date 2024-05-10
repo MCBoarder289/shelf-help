@@ -5,17 +5,13 @@ import { AppShell, Text, rem } from '@mantine/core';
 import { useHeadroom } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { QueryForm } from '@/components/QueryForm/QueryForm';
+import { Results } from '@/components/Results/Results';
 
 const lorem =
   'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ullam, ex cum repellat alias ea nemo. Ducimus ex nesciunt hic ad saepe molestiae nobis necessitatibus laboriosam officia, reprehenderit, earum fugiat?';
 
 
-export function HomePage() {
-  const [currentTime, setCurrentTime] = useState(0);
-
-  const [data, setData] = useState<Book[]>([])
-
-  type Book = {
+export type Book = {
     title: string,
     author: string,
     isbn: string,
@@ -27,6 +23,13 @@ export function HomePage() {
     goodreads_id: string,
 
   };
+
+export function HomePage() {
+  const [currentTime, setCurrentTime] = useState(0);
+
+  const [data, setData] = useState<Book[]>([])
+
+ 
 
 
   function getTime() {
@@ -49,10 +52,6 @@ export function HomePage() {
     });
   }
 
-  // useEffect(() => {
-  //   setTimeout(() => setData([...data, { title: "New Title", author: "New Author" }]), 3000)
-  // }, [])
-
   return (
     <AppShell header={{ height: 60, offset: false }} padding="md">
       <AppShell.Header>
@@ -65,20 +64,9 @@ export function HomePage() {
         {/* <ul>
           {data.map(d => (<li>Title: {d.title}, Author: {d.author}</li>))}
         </ul> */}
-        <ul>
-          {
-            data.map(d =>
-              ( <>
-                <li>Title: {d.title}, Author: {d.author} </li>
-                <ul>
-                <li>GR Link: {d.link}</li>
-                </ul>
-                </>
-              )
-            )}
-        </ul>
       <br></br>
       <QueryForm onFormSubmit={getBookData}></QueryForm>
+      <Results input={data} />
       </AppShell.Main>
     </AppShell>
   );
