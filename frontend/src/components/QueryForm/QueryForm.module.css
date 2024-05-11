@@ -1,0 +1,15 @@
+.inner {
+    height: rem(56px);
+    display: flex;
+    justify-content: start;
+    align-items: center;
+  }
+
+.input {
+    flex: 3;
+}
+
+.button {
+    flex: 1;
+    max-width: 30%;
+}

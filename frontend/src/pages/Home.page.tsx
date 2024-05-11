@@ -1,9 +1,6 @@
-import { Welcome } from '../components/Welcome/Welcome';
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import { HeaderSimple } from '@/components/HeaderSimple/HeaderSimple';
-import { AppShell, Text, rem } from '@mantine/core';
-import { useHeadroom } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
+import { AppShell, rem } from '@mantine/core';
+import { useState } from 'react';
 import { QueryForm } from '@/components/QueryForm/QueryForm';
 import { Results } from '@/components/Results/Results';
 
@@ -24,13 +21,13 @@ export type Book = {
 
   };
 
+export type bookRequest = {num_books: number, gr_url: string};
+
+
 export function HomePage() {
   const [currentTime, setCurrentTime] = useState(0);
 
   const [data, setData] = useState<Book[]>([])
-
- 
-
 
   function getTime() {
     fetch('/time').then(res => res.json()).then(data => {
@@ -38,7 +35,6 @@ export function HomePage() {
     });
   }
 
-  type bookRequest = {num_books: number, gr_url: string};
 
   function getBookData(request: bookRequest) {
     fetch("/bookChoices",  {
@@ -61,9 +57,6 @@ export function HomePage() {
       <AppShell.Main pt={`calc(${rem(60)} + var(--mantine-spacing-md))`}>
       <button onClick={getTime}>Time Test</button>
       <p>The current time is {currentTime}</p>
-        {/* <ul>
-          {data.map(d => (<li>Title: {d.title}, Author: {d.author}</li>))}
-        </ul> */}
       <br></br>
       <QueryForm onFormSubmit={getBookData}></QueryForm>
       <Results input={data} />
