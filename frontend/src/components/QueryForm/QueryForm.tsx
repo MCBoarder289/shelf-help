@@ -2,13 +2,13 @@ import { Button, Container, Flex, Group, Stack, TextInput } from "@mantine/core"
 import classes from "./QueryForm.module.css"
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { bookRequest } from "@/pages/Home.page";
 
-type bookRequest = {num_books: number, gr_url: string};
 
-
-export function QueryForm({onFormSubmit  = (request: bookRequest) => {}}) {
+export function QueryForm({ onFormSubmit = (request: bookRequest) => { }, loading }: { onFormSubmit: (request: bookRequest) => void, loading: boolean }) {
 
     const [link, setLink] = useState("");
+    const [errorStatus, setErrorStatus] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
 
     // Initialize the link state with the value of the "gr_id" parameter from URL
@@ -21,10 +21,18 @@ export function QueryForm({onFormSubmit  = (request: bookRequest) => {}}) {
 
     function validateUrlInput() {
         if(!link.startsWith("https://www.goodreads.com")) {
-            alert("URL must start with 'https://www.goodreads.com'")
+            setErrorStatus(true)
+            // alert("URL must start with 'https://www.goodreads.com'")
             return false
         } else {
             return true
+        }
+    }
+
+    function updateErrorAndLink(e: React.ChangeEvent<HTMLInputElement>) {
+        setLink(e.target.value)
+        if (errorStatus) {
+            setErrorStatus(false)
         }
     }
 
@@ -40,7 +48,6 @@ export function QueryForm({onFormSubmit  = (request: bookRequest) => {}}) {
 
             // Update the search parameters in the URL
             setSearchParams(params);
-
             // Call the onFormSubmit function with the updated request
             onFormSubmit({ num_books: 5, gr_url: link });
         }
@@ -53,14 +60,16 @@ export function QueryForm({onFormSubmit  = (request: bookRequest) => {}}) {
                 <TextInput
                     className={classes.input}
                     label="Shelf Url"
-                    placeholder="Enter Goodreads Shelf URL"
+                    placeholder="Enter Goodreads Shelf"
                     size="sm"
                     value={link}
-                    // onChange={(e) => setLink(e.target.value)}
+                    error={errorStatus}
+                    onChange={(e) => updateErrorAndLink(e)}
                 ></TextInput>
             <Button 
                 className={classes.button}
                 onClick={handleFormSubmit}
+                loading={loading}
                 >Get data</Button>
             </Flex>
         </Container>

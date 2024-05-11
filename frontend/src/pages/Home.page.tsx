@@ -4,10 +4,6 @@ import { useState } from 'react';
 import { QueryForm } from '@/components/QueryForm/QueryForm';
 import { Results } from '@/components/Results/Results';
 
-const lorem =
-  'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ullam, ex cum repellat alias ea nemo. Ducimus ex nesciunt hic ad saepe molestiae nobis necessitatibus laboriosam officia, reprehenderit, earum fugiat?';
-
-
 export type Book = {
     title: string,
     author: string,
@@ -27,6 +23,7 @@ export type bookRequest = {num_books: number, gr_url: string};
 export function HomePage() {
   const [currentTime, setCurrentTime] = useState(0);
 
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Book[]>([])
 
   function getTime() {
@@ -37,6 +34,7 @@ export function HomePage() {
 
 
   function getBookData(request: bookRequest) {
+    setLoading(true);
     fetch("/bookChoices",  {
       method: 'POST',
       body: JSON.stringify(request),
@@ -45,6 +43,7 @@ export function HomePage() {
   }
     }).then(res => res.json()).then(data => {
       setData(data.books)
+      setLoading(false)
     });
   }
 
@@ -58,7 +57,7 @@ export function HomePage() {
       <button onClick={getTime}>Time Test</button>
       <p>The current time is {currentTime}</p>
       <br></br>
-      <QueryForm onFormSubmit={getBookData}></QueryForm>
+      <QueryForm onFormSubmit={getBookData} loading={loading}></QueryForm>
       <Results input={data} />
       </AppShell.Main>
     </AppShell>
