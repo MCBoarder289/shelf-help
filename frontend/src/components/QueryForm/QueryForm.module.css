@@ -7,9 +7,11 @@
 
 .input {
     flex: 3;
+    justify-content: center;
 }
 
 .button {
     flex: 1;
     max-width: 30%;
+    justify-content: center ;
 }
