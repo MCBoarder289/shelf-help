@@ -10,8 +10,22 @@
     justify-content: center;
 }
 
+.select {
+    flex: 2;
+    justify-content: center;
+}
+
 .button {
     flex: 1;
-    max-width: 30%;
+    max-width: 40%;
     justify-content: center ;
 }
+
+.thumb {
+    border: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-2));
+    width: rem(28px);
+    height: rem(22px);
+    color: var(--mantine-color-gray-5);
+    background-color: var(--mantine-color-white);
+    border-radius: var(--mantine-radius-sm);
+  }

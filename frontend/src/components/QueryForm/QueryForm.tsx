@@ -1,15 +1,35 @@
-import { Button, Container, Flex, Group, Stack, TextInput } from "@mantine/core";
+import { Button, Container, Flex, Select, Slider, TextInput, Stack, rem } from "@mantine/core";
 import classes from "./QueryForm.module.css"
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { bookRequest } from "@/pages/Home.page";
+import { IconGripHorizontal } from '@tabler/icons-react';
 
 
-export function QueryForm({ onFormSubmit = (request: bookRequest) => { }, loading }: { onFormSubmit: (request: bookRequest) => void, loading: boolean }) {
+
+export function QueryForm({ 
+    onFormSubmit = (_request: bookRequest) => { }, 
+    loading, 
+    librarySubmit = (_libraryName: String) => {},
+}: { 
+    onFormSubmit: (request: bookRequest) => void, 
+    loading: boolean,  
+    librarySubmit: (libraryName: string) => void,
+}) {
 
     const [link, setLink] = useState("");
     const [errorStatus, setErrorStatus] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
+    const [numBooks, setNumBooks] = useState(4)
+
+
+    const marks = [
+        { value: 1, label: '1' },
+        { value: 2, label: '2' },
+        { value: 3, label: '3' },
+        { value: 4, label: '4' },
+      ];
+      
 
     // Initialize the link state with the value of the "gr_id" parameter from URL
     useEffect(() => {
@@ -49,15 +69,15 @@ export function QueryForm({ onFormSubmit = (request: bookRequest) => { }, loadin
             // Update the search parameters in the URL
             setSearchParams(params);
             // Call the onFormSubmit function with the updated request
-            onFormSubmit({ num_books: 5, gr_url: link });
+            onFormSubmit({ num_books: numBooks, gr_url: link });
         }
       };
 
 
     return (
         <Container size="md">
-            <Flex justify="Flex-start" align="Flex-end" gap="md">
-                <TextInput
+            <Stack>
+            <TextInput
                     className={classes.input}
                     label="Shelf Url"
                     placeholder="Enter Goodreads Shelf"
@@ -66,10 +86,42 @@ export function QueryForm({ onFormSubmit = (request: bookRequest) => { }, loadin
                     error={errorStatus}
                     onChange={(e) => updateErrorAndLink(e)}
                 ></TextInput>
+            <label className={"m_8fdc1311 mantine-InputWrapper-label mantine-TextInput-label"}>Number of Suggested Books</label>
+            <Slider
+                classNames={classes}
+                thumbChildren={
+                    <IconGripHorizontal style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+                }
+                defaultValue={4}
+                onChange={(value) => setNumBooks(value)}
+                min={1}
+                max={4}
+                marks={marks}
+            />
+            </Stack>
+            <br></br>
+            <Flex justify="Flex-start" align="Flex-end" gap="md">
+            <Select
+                className={classes.select}
+                label="Select Library"
+                data={['Nashville', 
+                'Miami', 
+                'Syracuse', 
+                'Columbus', 
+                'Cincinnati', 
+                'San Francisco',
+                'Phoenix', 
+                'Delafield', 
+                'Toledo', ]}
+                defaultValue={"Nashville"}
+                allowDeselect={false}
+                onChange={(value, _option) => librarySubmit(value!!)}
+            ></Select>
             <Button 
                 className={classes.button}
                 onClick={handleFormSubmit}
                 loading={loading}
+                radius="md"
                 >Get data</Button>
             </Flex>
         </Container>

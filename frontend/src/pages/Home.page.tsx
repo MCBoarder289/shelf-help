@@ -25,13 +25,14 @@ export function HomePage() {
 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Book[]>([])
+  const [library, setLibrary] = useState("Nashville")
+
 
   function getTime() {
     fetch('/time').then(res => res.json()).then(data => {
       setCurrentTime(data.time);
     });
   }
-
 
   function getBookData(request: bookRequest) {
     setLoading(true);
@@ -47,6 +48,10 @@ export function HomePage() {
     });
   }
 
+  function updateLibrary(libraryName: string) {
+    setLibrary(libraryName)
+  }
+
   return (
     <AppShell header={{ height: 60, offset: false }} padding="md">
       <AppShell.Header>
@@ -54,11 +59,9 @@ export function HomePage() {
       </AppShell.Header>
 
       <AppShell.Main pt={`calc(${rem(60)} + var(--mantine-spacing-md))`}>
-      <button onClick={getTime}>Time Test</button>
-      <p>The current time is {currentTime}</p>
+      <QueryForm onFormSubmit={getBookData} loading={loading} librarySubmit={setLibrary}></QueryForm>
       <br></br>
-      <QueryForm onFormSubmit={getBookData} loading={loading}></QueryForm>
-      <Results input={data} />
+      <Results input={data} library={library}/>
       </AppShell.Main>
     </AppShell>
   );
