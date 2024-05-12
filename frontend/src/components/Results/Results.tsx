@@ -1,7 +1,8 @@
 import { Book } from "@/pages/Home.page";
-import { Card, Container, Group, Image, Text, Button, Badge, Stack, SimpleGrid, SegmentedControl, Modal} from "@mantine/core";
+import { Card, Container, Group, Image, Text, Button, SimpleGrid, SegmentedControl, Modal, Flex} from "@mantine/core";
 import classes from "./Results.module.css"
 import { useState } from "react";
+import React from "react";
 
 
   
@@ -16,17 +17,55 @@ type LibraryStatusRequest = {
   book: Book
 }
 
-function openNewWindow(link: string) {
-  window.open(link, "_blank")
+type LibraryStatusResponse = {
+  is_available: boolean
+  msg: string
+  link: string
 }
 
 
-export function Results({input}: ResultsProps) {
+export function Results({input, library}: ResultsProps) {
 
   // Define an array of states, one for each item in the input array
   const [values, setValues] = useState<string[]>(input.map(() => "Book"));
+  const [loading, setLoading] = useState<boolean[]>(input.map(() => false));
+
   const [showModal, setShowModal] = useState(false); // State for controlling modal visibility
-  const [modalContent, setModalContent] = useState(""); // State for modal content
+  const [modalContent, setModalContent] = useState<LibraryStatusResponse>(); // State for modal content
+
+
+  function openNewWindow(link: string) {
+    window.open(link, "_blank")
+  }
+  
+  function getLibraryStatus(request: LibraryStatusRequest, index: number) {
+    setLoading((prevLoading) => {
+      const newLoading = [...prevLoading];
+      newLoading[index] = true;
+      return newLoading;
+    });      
+    
+    fetch("/libraryCheck",  {
+        method: 'POST',
+        body: JSON.stringify(request),
+        headers: {
+      'Content-Type': 'application/json'
+    }
+      }).then(res => res.json()).then(data => {
+        setModalContent(data)
+        console.log(data.msg)
+        setShowModal(true)
+      }).finally(
+        () => {
+          // Set loading state for the corresponding index to false when the request completes
+          setLoading((prevLoading) => {
+            const newLoading = [...prevLoading];
+            newLoading[index] = false;
+            return newLoading;
+          });
+        });
+      
+  }
 
   // Function to handle change in SegmentedControl for a specific index
   const handleSegmentedControlChange = (index: number, newValue: string) => {
@@ -37,75 +76,86 @@ export function Results({input}: ResultsProps) {
     });
   };
 
-  const openModal = (link: string, index: number) => {
+  const openModal = (book: Book, index: number) => {
     const currentValue = values[index];
     if (currentValue === "Libby") {
       // Perform action for Libby
-      setModalContent(`Performing action for Libby with link: ${link}`);
-      setShowModal(true);
-      // Here you can make API calls or perform other actions specific to Libby
+      getLibraryStatus({is_libby: true, library: library, book: book}, index)
     } else {
-      // Perform action for Book
-      // Here you can perform any action specific to Book, if needed
+      getLibraryStatus({is_libby: false, library: library, book: book}, index)
     }
   };
 
     return (
-      <Container>
+      <Container key={"resultsContainer"}>
         <SimpleGrid 
+          key={"simpleGrid"}
           cols={{ base: 1, sm: 2 }}
           spacing={{ base: "xl", sm: 'xl' }}
         >
         {
           input.map((d, index) => 
           (
-            <>
-            <Card key={index} className={classes.card} shadow="md" padding="lg" radius="md" withBorder>
-              <Card.Section>
+            <React.Fragment key={index+"fragment"}>
+            <Card key={index+"card"} className={classes.card} shadow="md" padding="lg" radius="md" withBorder>
+              <Card.Section key={index+"cardSection"}>
                 <Image
+                  key={index+"img"}
                   src={d.image_link}
                   height={160}
                   fit="contain"
                   />
               </Card.Section>
-              <Group justify="space-between" mt="md" mb="xs">
-                <Text fw={600}>{d.title}</Text>
-                <Text fw={250}>{d.author}</Text>
+              <Group key={index+"infoText"} justify="space-between" mt="md" mb="xs">
+                <Text key={index+"text1"} fw={600}>{d.title}</Text>
+                <Text key={index+"text2"} fw={250}>{d.author}</Text>
               </Group>
 
-              <SegmentedControl 
+              <SegmentedControl
+                key={index+"segControl"}
                 data={["Book", "Libby"]}
                 radius="md"
                 value={values[index]}
                 onChange={(newValue) => handleSegmentedControlChange(index, newValue)}
               ></SegmentedControl>
-              <br></br>
+              <br key={index+"br"}></br>
 
-              <Group justify="space-around">
+              <Group key={index+"btnGroup"} justify="space-around">
                 <Button 
+                  key={index+"grButton"}
                   color="blue"
                   radius="md" 
                   onClick={(_e) => openNewWindow(d.link)}
                   >Check Goodreads</Button>
                   <Button 
+                  key={index+"libraryButton"}
                   color="blue"
                   radius="md" 
-                  onClick={(_e) => openModal(d.link, index)}
+                  onClick={(_e) => openModal(d, index)}
+                  loading={loading[index]}
                   >Check Library</Button>
                 </Group>
             </Card>
-            </>
+            </React.Fragment>
           )
         )}
         </SimpleGrid>
         <Modal
-          title="Library Modal"
+          key={"modal"}
+          title="Library Status"
           onClose={() => setShowModal(false)}
           opened={showModal}
           size="sm"
+          centered
          >
-          <Text>{modalContent}</Text>
-          <Button onClick={() => setShowModal(false)}>Close</Button>
+          <Text key={"modalText"} size="sm">{modalContent?.msg}</Text>
+          <br></br>
+          <Flex justify={"flex-end"}>
+            <Button 
+              key={"libraryStatusBtn"}
+              onClick={() => openNewWindow(modalContent?.link!!)}
+              >Open Library Search</Button>
+          </Flex>
         </Modal>
       </Container>
     )

@@ -21,18 +21,11 @@ export type bookRequest = {num_books: number, gr_url: string};
 
 
 export function HomePage() {
-  const [currentTime, setCurrentTime] = useState(0);
 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Book[]>([])
   const [library, setLibrary] = useState("Nashville")
 
-
-  function getTime() {
-    fetch('/time').then(res => res.json()).then(data => {
-      setCurrentTime(data.time);
-    });
-  }
 
   function getBookData(request: bookRequest) {
     setLoading(true);
