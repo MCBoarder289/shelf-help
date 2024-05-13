@@ -3,6 +3,7 @@ import { AppShell, rem } from '@mantine/core';
 import { useState } from 'react';
 import { QueryForm } from '@/components/QueryForm/QueryForm';
 import { Results } from '@/components/Results/Results';
+import { InfoCollapse } from '@/components/InfoCollapse/InfoCollapse';
 
 export type Book = {
     title: string,
@@ -52,9 +53,10 @@ export function HomePage() {
       </AppShell.Header>
 
       <AppShell.Main pt={`calc(${rem(60)} + var(--mantine-spacing-md))`}>
-      <QueryForm onFormSubmit={getBookData} loading={loading} librarySubmit={setLibrary}></QueryForm>
-      <br></br>
-      <Results input={data} library={library}/>
+        <InfoCollapse></InfoCollapse>
+        <QueryForm onFormSubmit={getBookData} loading={loading} librarySubmit={setLibrary}></QueryForm>
+        <br></br>
+        <Results input={data} library={library}/>
       </AppShell.Main>
     </AppShell>
   );
