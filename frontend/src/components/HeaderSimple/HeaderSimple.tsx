@@ -1,6 +1,6 @@
 import { Container, Title, rem, useMantineTheme, Switch, useMantineColorScheme } from '@mantine/core';
 import classes from './HeaderSimple.module.css';
-import icon from "../../public/images/icon.png"
+import icon from "/images/icon.png"
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
 
 

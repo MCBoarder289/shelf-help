@@ -54,7 +54,6 @@ export function Results({input, library}: ResultsProps) {
     }
       }).then(res => res.json()).then(data => {
         setModalContent(data)
-        console.log(data.msg)
         setShowModal(true)
       }).finally(
         () => {
