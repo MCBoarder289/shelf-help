@@ -1,9 +1,11 @@
 import { HeaderSimple } from '@/components/HeaderSimple/HeaderSimple';
-import { AppShell, rem } from '@mantine/core';
+import { AppShell, Container, Flex, Group, rem } from '@mantine/core';
 import { useState } from 'react';
 import { QueryForm } from '@/components/QueryForm/QueryForm';
 import { Results } from '@/components/Results/Results';
-import { InfoCollapse } from '@/components/InfoCollapse/InfoCollapse';
+import { Info } from '@/components/Info/Info';
+import { CoffeeButton } from '@/components/CoffeeButton/CoffeeButton';
+import { GithubButton } from '@/components/GithubButton/GithubButton';
 
 export type Book = {
     title: string,
@@ -53,7 +55,13 @@ export function HomePage() {
       </AppShell.Header>
 
       <AppShell.Main pt={`calc(${rem(60)} + var(--mantine-spacing-md))`}>
-        <InfoCollapse></InfoCollapse>
+        <Container>
+        <Flex justify={"space-between"}>
+          <Info></Info>
+          <CoffeeButton></CoffeeButton>
+        </Flex>
+        </Container>
+        <br></br>
         <QueryForm onFormSubmit={getBookData} loading={loading} librarySubmit={setLibrary}></QueryForm>
         <br></br>
         <Results input={data} library={library}/>
