@@ -19,9 +19,9 @@ export default defineConfig({
         "display": "standalone",
         "name": "Shelf Help",
         "orientation": "any",
-        "scope": "http://localhost:5173/",
+        "scope": ".",
         "short_name": "Shelf Help",
-        "start_url": "http://localhost:5173/",
+        "start_url": ".",
         "theme_color": "#ffffff",
         "icons": [
           {
