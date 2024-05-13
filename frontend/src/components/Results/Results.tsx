@@ -3,6 +3,7 @@ import { Card, Container, Group, Image, Text, Button, SimpleGrid, SegmentedContr
 import classes from "./Results.module.css"
 import { useState } from "react";
 import React from "react";
+import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 
 
   
@@ -86,6 +87,14 @@ export function Results({input, library}: ResultsProps) {
     }
   };
 
+  const GreenCheckIcon = () => ( // TODO: Don't Hardcode Color, make it the var <mantine-green-5> for example
+    <IconCircleCheck stroke={2} style={{ margin: 2 }} color={"#51cf66"} />
+  );
+  
+  const RedCrossIcon = () => ( // TODO: Don't Hardcode Color, make it the var <mantine-red-8> for example
+    <IconCircleX stroke={2} style={{ margin: 2 }} color={"#e03131"} />
+  );
+
     return (
       <Container key={"resultsContainer"}>
         <SimpleGrid 
@@ -141,12 +150,24 @@ export function Results({input, library}: ResultsProps) {
         )}
         </SimpleGrid>
         <Modal
+          styles={{
+            title: {fontWeight: 510, alignItems: "center", display: "flex"}
+          }}
           key={"modal"}
-          title="Library Status"
+          title={ 
+              <>
+              Library Status
+              {modalContent?.is_available ? <GreenCheckIcon /> : <RedCrossIcon />}
+              </>
+          }
           onClose={() => setShowModal(false)}
           opened={showModal}
-          size="sm"
+          size="md"
           centered
+          overlayProps={{
+            backgroundOpacity: 0.55,
+            blur: 3,
+          }}
          >
           <Text key={"modalText"} size="sm">{modalContent?.msg}</Text>
           <br></br>
