@@ -174,7 +174,6 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/time': 'http://localhost:5000',
       '/libraryCheck': 'http://localhost:5000',
       '/bookChoices': 'http://localhost:5000',
     },

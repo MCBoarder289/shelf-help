@@ -63,11 +63,6 @@ def fetch_shelf_data_from_goodreads(url) -> List[Book]:
     return retrieve_goodreads_shelf_data(shelf_url=url)
 
 
-@app.route('/time')
-def get_current_time():
-    return {'time': time.time()}
-
-
 @app.route("/bookChoices", methods=['POST'])
 def get_book_choices():
     if request.is_json:
