@@ -1,35 +1,35 @@
 services:
 
-- type: web
-  name: shelfhelp
-  runtime: static
-  repo: https://github.com/MCBoarder289/shelf-help
-  branch: main
-  envVars:
-  - key: SKIP_INSTALL_DEPS
-    sync: false
-  buildCommand: yarn; yarn build
-  staticPublishPath: dist
-  routes:
-  - type: rewrite
-    source: /bookChoices
-    destination: https://shelfhelp-api.onrender.com/bookChoices
-  - type: rewrite
-    source: /libraryCheck
-    destination: https://shelfhelp-api.onrender.com/libraryCheck
-  rootDir: frontend
+  - type: web
+    name: shelfhelp
+    runtime: static
+    repo: https://github.com/MCBoarder289/shelf-help
+    branch: main
+    envVars:
+      - key: SKIP_INSTALL_DEPS
+        value: true
+    buildCommand: yarn; yarn build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /bookChoices
+        destination: https://shelfhelp-api.onrender.com/bookChoices
+      - type: rewrite
+        source: /libraryCheck
+        destination: https://shelfhelp-api.onrender.com/libraryCheck
+    rootDir: frontend
 
-- type: web
-  name: shelfhelp-api
-  runtime: python
-  repo: https://github.com/MCBoarder289/shelf-help
-  branch: main
-  plan: free
-  envVars:
-    - key: PYTHON_VERSION
-      sync: false
-  region: ohio
-  buildCommand: pip install -r requirements.txt
-  startCommand: gunicorn app:app -t 60 --keep-alive 60
-  rootDir: backend
+  - type: web
+    name: shelfhelp-api
+    runtime: python
+    repo: https://github.com/MCBoarder289/shelf-help
+    branch: main
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.8.12
+    region: ohio
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app -t 60 --keep-alive 60
+    rootDir: backend
 version: "1"
