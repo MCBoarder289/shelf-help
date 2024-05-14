@@ -115,6 +115,7 @@ export function QueryForm({
                 'Toledo', ]}
                 defaultValue={"Nashville"}
                 allowDeselect={false}
+                searchable
                 onChange={(value, _option) => librarySubmit(value!!)}
             ></Select>
             <Button 
