@@ -1,23 +1,45 @@
 # Shelf Help 
-![Shelf Help](assets/images/ios/144.png) 
+![Shelf Help](frontend/public/images/ios/144.png) 
 
-I'm making this super basic app to help me randomly pick multiple books out of my Goodreads `to-read` shelf.
-Because there is no direct API anymore, I'm resorting to scraping/crawling the public pages for my profile.
+<a href="https://www.buymeacoffee.com/michaelchapman" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
-## High Level Plan
-* Input: Goodreads Shelf URL
-* Process the resulting page to get the title's data.
-* Return the random title with information/navigate to the page in goodreads
-* Do this all in some simple Dash app?
+Do you have a really large `to-read` shelf on Goodreads, and need some help deciding what to read next?
+
+Do you also love the library, whether it be physical books or using [Libby](https://libbyapp.com/)?
+
+If you answered yes to either of those questions, then [Shelf Help](https://shelfhelp.onrender.com) a great app for you!
+
+
+## Background
+The idea for this came about when I was browsing my Goodreads app while in the library trying to pick out what to read next.
+I was frustrated that I couldn't randomly sort in the app because things I recently put on there were at the top by default,
+but even then, I didn't have a way to know if it was available at my library.
+
+I decided to put together a quick prototype project, originally in [Plotly's Dash](https://dash.plotly.com/) framework.
+In my work, I had built Dash apps before, but I recently discovered how you can host these webapps on [Render](https://render.com/), and it made me want to make something I could share more broadly.
+
+So I figured I'd take a dive into React and make a bit more modern app, with a better look and feel, and here we are!
+
+## Contributing
+If there is anything you'd like to see done here, throw up an issue here on Github!
+
+Or if you want to help contribute directly, put up an issue and a branch.
+
+**BEFORE YOU PUT UP A PR** please make sure you put one of these 4 terms in the title so that Render doesn't build the preview environment yet:
+* `[skip render]`
+* `[skip preview]`
+* `[render skip]`
+* `[preview skip]`
+
+I am currently hosting everything right now, and currently on the free plan. If it gets more usage, then I'll investigate spending more keep it hosting.
+
+If you feel so inclined and would like to support monetarily, feel free to use the "Buy me a coffee" link above!
 
 ## Requirements:
+### Back End
 * Python `3.8.12`
-* See `requirements.txt`
-
-## Other cool resources I found
-
-* [Open Library](https://openlibrary.org/developers)
-  * Has an API and their mission resonates with me
-  * Might want to look into porting goodreads things here?
-* [OverReader](http://overreader.com/)
-  * Uses a GoodReads Shelf to find your local libraries' audio/eBook/Kindle Unlimited availability
+* See `/backend/requirements.txt`
+### Front End
+* [Yarn](https://yarnpkg.com/getting-started/install)
+* [Vite](https://vitejs.dev/guide/)
+* See `/frontend`
