@@ -36,6 +36,11 @@ export function QueryForm({
         const grId = searchParams.get("gr_id");
         if (grId) {
             setLink(grId);
+            localStorage.setItem("gr_id", grId)
+        } else {
+            if (localStorage.getItem("gr_id")) {
+                setLink(localStorage.getItem("gr_id")!!)
+            }
         }
     }, [searchParams]);
 
@@ -51,6 +56,7 @@ export function QueryForm({
 
     function updateErrorAndLink(e: React.ChangeEvent<HTMLInputElement>) {
         setLink(e.target.value)
+        localStorage.setItem("gr_id", e.target.value)
         if (errorStatus) {
             setErrorStatus(false)
         }

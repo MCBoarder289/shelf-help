@@ -1,11 +1,10 @@
 import { HeaderSimple } from '@/components/HeaderSimple/HeaderSimple';
-import { AppShell, Container, Flex, Group, rem } from '@mantine/core';
+import { AppShell, Container, Flex, rem } from '@mantine/core';
 import { useState } from 'react';
 import { QueryForm } from '@/components/QueryForm/QueryForm';
 import { Results } from '@/components/Results/Results';
 import { Info } from '@/components/Info/Info';
 import { CoffeeButton } from '@/components/CoffeeButton/CoffeeButton';
-import { GithubButton } from '@/components/GithubButton/GithubButton';
 
 export type Book = {
     title: string,
@@ -38,14 +37,21 @@ export function HomePage() {
       headers: {
     'Content-Type': 'application/json'
   }
-    }).then(res => res.json()).then(data => {
-      setData(data.books)
-      setLoading(false)
-    });
-  }
-
-  function updateLibrary(libraryName: string) {
-    setLibrary(libraryName)
+    }).then(res => {
+      if (!res.ok) {
+          throw new Error('Failed to fetch data');
+      }
+      return res.json();
+  })
+  .then(data => {
+      setData(data.books);
+      setLoading(false);
+  })
+  .catch(error => {
+      setLoading(false);
+      console.error('Error fetching data:', error);
+      alert("Error: This is likely due to a bad shelf url or empty shelf!")
+  });
   }
 
   return (
