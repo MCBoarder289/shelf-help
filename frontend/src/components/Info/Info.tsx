@@ -73,10 +73,10 @@ export function Info() {
                 <Space h="sm" />
                 <Text fw={700}>Step 4: Check Goodreads Review or Library Availability</Text>
                 <Text>
-                    The "Check Goodreads" button will take you to the Goodreads review page.
+                    The "Goodreads Review" button will take you to the Goodreads review page.
                 </Text>
                 <Text>
-                    The "Check Library " button will see if it is available at your selected library.
+                    The "Check Library" button will see if it is available at your selected library.
                 </Text>
                 <Text>
                     Choosing "Book" will search for availability of a physical copy, whereas choosing "Libby" will serach for Libby availability.
