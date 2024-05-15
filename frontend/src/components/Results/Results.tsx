@@ -134,7 +134,7 @@ export function Results({input, library}: ResultsProps) {
                   color="blue"
                   radius="md" 
                   onClick={(_e) => openNewWindow(d.link)}
-                  >Check Goodreads</Button>
+                  >Goodreads Review</Button>
                   <Button 
                   key={index+"libraryButton"}
                   color="blue"

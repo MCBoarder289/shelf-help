@@ -85,8 +85,8 @@ export function QueryForm({
             <Stack>
             <TextInput
                     className={classes.input}
-                    label="Shelf Url"
-                    placeholder="Enter Goodreads Shelf"
+                    label="Shelf URL"
+                    placeholder="Enter Goodreads Shelf URL"
                     size="sm"
                     value={link}
                     error={errorStatus}
@@ -129,7 +129,7 @@ export function QueryForm({
                 onClick={handleFormSubmit}
                 loading={loading}
                 radius="md"
-                >Get data</Button>
+                >Get Data</Button>
             </Flex>
         </Container>
     );

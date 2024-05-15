@@ -50,7 +50,7 @@ export function HomePage() {
   .catch(error => {
       setLoading(false);
       console.error('Error fetching data:', error);
-      alert("Error: This is likely due to a bad shelf url or empty shelf!")
+      alert("Error: This is likely due to a bad shelf url, empty shelf, or connection issue!")
   });
   }
 
