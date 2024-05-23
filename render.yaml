@@ -6,18 +6,19 @@ services:
     repo: https://github.com/MCBoarder289/shelf-help
     branch: main
     envVars:
-      - key: SKIP_INSTALL_DEPS
-        value: true
+    - key: SKIP_INSTALL_DEPS
+      value: true
     buildCommand: yarn; yarn build
     staticPublishPath: dist
     routes:
-      - type: rewrite
-        source: /bookChoices
-        destination: https://shelfhelp-api.onrender.com/bookChoices
-      - type: rewrite
-        source: /libraryCheck
-        destination: https://shelfhelp-api.onrender.com/libraryCheck
+    - type: rewrite
+      source: /bookChoices
+      destination: https://shelfhelp-api.onrender.com/bookChoices
+    - type: rewrite
+      source: /libraryCheck
+      destination: https://shelfhelp-api.onrender.com/libraryCheck
     rootDir: frontend
+    pullRequestPreviewsEnabled: true
 
   - type: web
     name: shelfhelp-api
@@ -26,10 +27,11 @@ services:
     branch: main
     plan: free
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.3
+    - key: PYTHON_VERSION
+      value: 3.12.3
     region: ohio
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app -t 60 --keep-alive 60
     rootDir: backend
+    pullRequestPreviewsEnabled: true
 version: "1"
