@@ -27,7 +27,7 @@ services:
     plan: free
     envVars:
       - key: PYTHON_VERSION
-        value: 3.8.12
+        value: 3.12.3
     region: ohio
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app -t 60 --keep-alive 60

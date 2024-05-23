@@ -37,7 +37,7 @@ If you feel so inclined and would like to support monetarily, feel free to use t
 
 ## Requirements:
 ### Back End
-* Python `3.8.12`
+* Python `3.12.3`
 * See `/backend/requirements.txt`
 ### Front End
 * [Yarn](https://yarnpkg.com/getting-started/install)
