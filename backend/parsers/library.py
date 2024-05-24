@@ -572,16 +572,17 @@ class ToledoPublicLibraryParser(BaseLibraryParser):
 
 def parser_factory(library_name="Nashville") -> BaseLibraryParser:
     """Factory Method for returning correct library parser"""
+    # See
     library_parsers = {
-        "Nashville": NashvillePublicLibraryParser,
-        "Miami": MiamiPublicLibraryParser,
-        "Syracuse": SyracusePublicLibraryParser,
-        "Columbus": ColumbusPublicLibraryParser,
-        "San Francisco": SanFranPublicLibraryParser,
-        "Cincinnati": CincinnatiPublicLibraryParser,
-        "Phoenix": PhoenixPublicLibraryParser,
-        "Delafield": DelafieldPublicLibraryParser,
-        "Toledo": ToledoPublicLibraryParser,
+        "nashville": NashvillePublicLibraryParser,
+        "mdpls": MiamiPublicLibraryParser,
+        "onlib": SyracusePublicLibraryParser,
+        "clc": ColumbusPublicLibraryParser,
+        "sfpl": SanFranPublicLibraryParser,
+        "cincinnatilibrary": CincinnatiPublicLibraryParser,
+        "phoenix": PhoenixPublicLibraryParser,
+        "wplc": DelafieldPublicLibraryParser,
+        "toledo": ToledoPublicLibraryParser,
     }
 
     return library_parsers[library_name]()

@@ -4,6 +4,7 @@ import classes from "./Results.module.css"
 import { useState } from "react";
 import React from "react";
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
+import { bookSupportedLibraries } from "@/LibraryConstants";
 
 
   
@@ -28,7 +29,7 @@ type LibraryStatusResponse = {
 export function Results({input, library}: ResultsProps) {
 
   // Define an array of states, one for each item in the input array
-  const [values, setValues] = useState<string[]>(input.map(() => "Book"));
+  const [values, setValues] = useState<string[]>(input.map(() => "Libby"));
   const [loading, setLoading] = useState<boolean[]>(input.map(() => false));
 
   const [showModal, setShowModal] = useState(false); // State for controlling modal visibility
@@ -78,7 +79,8 @@ export function Results({input, library}: ResultsProps) {
 
   const openModal = (book: Book, index: number) => {
     const currentValue = values[index];
-    if (currentValue === "Libby") {
+    // need to check book support in case user switches between an unsupported library and back
+    if (currentValue === "Libby" || !(library in bookSupportedLibraries) || currentValue === undefined) {
       // Perform action for Libby
       getLibraryStatus({is_libby: true, library: library, book: book}, index)
     } else {
@@ -121,9 +123,21 @@ export function Results({input, library}: ResultsProps) {
 
               <SegmentedControl
                 key={index+"segControl"}
-                data={["Book", "Libby"]}
+                data={[
+                  {
+                    value: "Libby",
+                    label: "Libby",
+                  },
+                  {
+                    value: "Book",
+                    label: "Book",
+                    disabled: !(library in bookSupportedLibraries)
+                  },
+                ]}
                 radius="md"
-                value={values[index]}
+                value={
+                  (library in bookSupportedLibraries) && values[index] !== undefined ? values[index]  : "Libby"
+                }
                 onChange={(newValue) => handleSegmentedControlChange(index, newValue)}
               ></SegmentedControl>
               <br key={index+"br"}></br>
@@ -141,6 +155,7 @@ export function Results({input, library}: ResultsProps) {
                   radius="md" 
                   onClick={(_e) => openModal(d, index)}
                   loading={loading[index]}
+                  disabled={library == ""}
                   >Check Library</Button>
                 </Group>
             </Card>

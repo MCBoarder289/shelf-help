@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { bookRequest } from "@/pages/Home.page";
 import { IconGripHorizontal } from '@tabler/icons-react';
-
+import { librarySelectValues } from "../../LibraryConstants";
 
 
 export function QueryForm({ 
@@ -110,17 +110,9 @@ export function QueryForm({
             <Select
                 className={classes.select}
                 label="Select Library"
-                data={['Nashville', 
-                'Miami', 
-                'Syracuse', 
-                'Columbus', 
-                'Cincinnati', 
-                'San Francisco',
-                'Phoenix', 
-                'Delafield', 
-                'Toledo', ]}
-                defaultValue={"Nashville"}
-                allowDeselect={false}
+                data={librarySelectValues}
+                placeholder="Search for your library here..."
+                limit={10}
                 searchable
                 onChange={(value, _option) => librarySubmit(value!!)}
             ></Select>
