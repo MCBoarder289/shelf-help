@@ -73,7 +73,8 @@ export function QueryForm({
     }
 
     function updateLibraryId(libraryId: string) {
-        localStorage.setItem("lib_id", libraryId)
+        // never storing a blank library in local storage
+        if (libraryId != null) { localStorage.setItem("lib_id", libraryId) }
         librarySubmit(libraryId)
     }
 

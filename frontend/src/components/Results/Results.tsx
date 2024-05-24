@@ -155,7 +155,7 @@ export function Results({input, library}: ResultsProps) {
                   radius="md" 
                   onClick={(_e) => openModal(d, index)}
                   loading={loading[index]}
-                  disabled={library == ""}
+                  disabled={(library == "" || library == undefined)}
                   >Check Library</Button>
                 </Group>
             </Card>
