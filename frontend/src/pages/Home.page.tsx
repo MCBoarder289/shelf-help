@@ -26,7 +26,7 @@ export function HomePage() {
 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Book[]>([])
-  const [library, setLibrary] = useState("Nashville")
+  const [library, setLibrary] = useState("")
 
 
   function getBookData(request: bookRequest) {

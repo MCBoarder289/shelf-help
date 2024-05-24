@@ -1,7 +1,7 @@
-from enum import Enum
 
 from pydantic import BaseModel, ConfigDict
 from typing import List
+from libraryEnum import LibraryEnum
 
 MAX_PAGES = 10  # If List of Pages is so big, then randomly reduce it down to this number
 
@@ -43,18 +43,6 @@ class GetBooksRequest(BaseModel):
     gr_url: str
 
     model_config = ConfigDict(extra='forbid')
-
-
-class LibraryEnum(str, Enum):
-    nashville = "Nashville"
-    miami = "Miami"
-    syracuse = "Syracuse"
-    columbus = "Columbus"
-    cincinnati = "Cincinnati"
-    sanfrancisco = "San Francisco"
-    phoenix = "Phoenix"
-    delafield = "Delafield"
-    toledo = "Toledo"
 
 
 class LibraryStatusRequest(BaseModel):
