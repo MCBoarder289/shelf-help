@@ -11,10 +11,12 @@ export function QueryForm({
     onFormSubmit = (_request: bookRequest) => { }, 
     loading, 
     librarySubmit = (_libraryName: String) => {},
+    library,
 }: { 
     onFormSubmit: (request: bookRequest) => void, 
     loading: boolean,  
     librarySubmit: (libraryName: string) => void,
+    library: string
 }) {
 
     const [link, setLink] = useState("");
@@ -34,12 +36,20 @@ export function QueryForm({
     // Initialize the link state with the value of the "gr_id" parameter from URL
     useEffect(() => {
         const grId = searchParams.get("gr_id");
+        const libId = searchParams.get("lib_id");
         if (grId) {
             setLink(grId);
             localStorage.setItem("gr_id", grId)
         } else {
             if (localStorage.getItem("gr_id")) {
                 setLink(localStorage.getItem("gr_id")!!)
+            }
+        }
+        if (libId) {
+            updateLibraryId(libId)
+        } else {
+            if (localStorage.getItem("lib_id")) {
+                updateLibraryId(localStorage.getItem("lib_id")!!)
             }
         }
     }, [searchParams]);
@@ -62,6 +72,11 @@ export function QueryForm({
         }
     }
 
+    function updateLibraryId(libraryId: string) {
+        localStorage.setItem("lib_id", libraryId)
+        librarySubmit(libraryId)
+    }
+
     const handleFormSubmit = () => {
 
         const validUrl = validateUrlInput()
@@ -71,6 +86,7 @@ export function QueryForm({
 
             // Set the "gr_id" parameter to the link value
             params.set("gr_id", link);
+            params.set("lib_id", library)
 
             // Update the search parameters in the URL
             setSearchParams(params);
@@ -112,9 +128,10 @@ export function QueryForm({
                 label="Select Library"
                 data={librarySelectValues}
                 placeholder="Search for your library here..."
+                value={library}
                 limit={10}
                 searchable
-                onChange={(value, _option) => librarySubmit(value!!)}
+                onChange={(value, _option) => updateLibraryId(value!!)}
             ></Select>
             <Button 
                 className={classes.button}

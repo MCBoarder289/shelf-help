@@ -68,7 +68,7 @@ export function HomePage() {
         </Flex>
         </Container>
         <br></br>
-        <QueryForm onFormSubmit={getBookData} loading={loading} librarySubmit={setLibrary}></QueryForm>
+        <QueryForm onFormSubmit={getBookData} loading={loading} librarySubmit={setLibrary} library={library}></QueryForm>
         <br></br>
         <Results input={data} library={library}/>
       </AppShell.Main>
