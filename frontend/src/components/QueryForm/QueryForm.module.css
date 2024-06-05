@@ -16,8 +16,8 @@
 }
 
 .button {
-    flex: 1;
-    max-width: 40%;
+    flex: 2;
+    max-width: 32%;
     justify-content: center ;
 }
 

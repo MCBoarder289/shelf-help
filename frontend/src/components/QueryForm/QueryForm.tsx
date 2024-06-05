@@ -128,7 +128,7 @@ export function QueryForm({
                 className={classes.select}
                 label="Select Library"
                 data={librarySelectValues}
-                placeholder="Search for your library here..."
+                placeholder="Search for library here..."
                 value={library}
                 limit={10}
                 searchable

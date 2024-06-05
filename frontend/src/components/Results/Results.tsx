@@ -100,7 +100,8 @@ export function Results({input, library}: ResultsProps) {
       <Container key={"resultsContainer"}>
         <SimpleGrid 
           key={"simpleGrid"}
-          cols={{ base: 1, sm: 2 }}
+          type="container"
+          cols={{ base: 1, '670px': 2 }}
           spacing={{ base: "xl", sm: 'xl' }}
         >
         {
