@@ -7,7 +7,7 @@ Do you have a really large `to-read` shelf on Goodreads, and need some help deci
 
 Do you also love the library, whether it be physical books or using [Libby](https://libbyapp.com/)?
 
-If you answered yes to either of those questions, then [Shelf Help](https://shelfhelp.onrender.com) a great app for you!
+If you answered yes to either of those questions, then [Shelf Help](https://shelfhelp.onrender.com) is a great app for you!
 
 
 ## Background
@@ -16,7 +16,7 @@ I was frustrated that I couldn't randomly sort in the app because things I recen
 but even then, I didn't have a way to know if it was available at my library.
 
 I decided to put together a quick prototype project, originally in [Plotly's Dash](https://dash.plotly.com/) framework.
-In my work, I had built Dash apps before, but I recently discovered how you can host these webapps on [Render](https://render.com/), and it made me want to make something I could share more broadly.
+Professionally, I had built Dash apps before, but I recently discovered how you can host these webapps on [Render](https://render.com/), and it made me want to make something I could share more broadly.
 
 So I figured I'd take a dive into React and make a bit more modern app, with a better look and feel, and here we are!
 
@@ -31,7 +31,7 @@ Or if you want to help contribute directly, put up an issue and a branch.
 * `[render skip]`
 * `[preview skip]`
 
-I am currently hosting everything right now, and currently on the free plan. If it gets more usage, then I'll investigate spending more keep it hosting.
+I am currently hosting everything right now, and currently on the free plan. If it gets more usage, then I'll investigate spending more to improve performance for more users.
 
 If you feel so inclined and would like to support monetarily, feel free to use the "Buy me a coffee" link above!
 
