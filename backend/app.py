@@ -1,5 +1,4 @@
 import random
-import time
 from typing import List
 
 from flask import Flask, request
@@ -19,43 +18,6 @@ cache = Cache(config={
 
 app = Flask(__name__)
 cache.init_app(app)
-
-
-dummy_books = [
-    Book(
-        title="Book 1",
-        author="Author 1",
-        isbn="1234567890",
-        avg_rating=4.5,
-        date_added="2023-01-01",
-        link="https://example.com/book1",
-        searchable_title="book_1",
-        image_link="https://example.com/image1",
-        goodreads_id="1"
-    ),
-    Book(
-        title="Book 2",
-        author="Author 2",
-        isbn="0987654321",
-        avg_rating=4.0,
-        date_added="2023-01-02",
-        link="https://example.com/book2",
-        searchable_title="book_2",
-        image_link="https://example.com/image2",
-        goodreads_id="2"
-    ),
-    Book(
-        title="Book 3",
-        author="Author 3",
-        isbn="5432167890",
-        avg_rating=4.2,
-        date_added="2023-01-03",
-        link="https://example.com/book3",
-        searchable_title="book_3",
-        image_link="https://example.com/image3",
-        goodreads_id="3"
-    )
-]
 
 
 @cache.memoize(timeout=1800)  # 30 minutes
