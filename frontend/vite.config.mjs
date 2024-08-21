@@ -174,8 +174,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/libraryCheck': 'http://localhost:5000',
-      '/bookChoices': 'http://localhost:5000',
+      '/libraryCheck': 'http://0.0.0.0:5000',
+      '/bookChoices': 'http://0.0.0.0:5000',
     },
   },
 });

@@ -35,13 +35,11 @@ def retrieve_books_from_rss_feeds(rss_url: str, max_items: int = TOTAL_BOOKS_MAX
     book_data_list: List[Book] = []
     while not_complete:
         results = feedparser.parse(f"{rss_url}&page={page}&per_page={PER_PAGE_MAX}").entries
-        if len(results) == 0:
+        if len(results) == 0 or len(results) + len(book_data_list) >= max_items:
             not_complete = False
         else:
             book_data_list.extend(list(map(convert_rss_item_to_book, results)))
             page += 1
-        if len(book_data_list) >= max_items:
-            not_complete = False
     return book_data_list
 
 
