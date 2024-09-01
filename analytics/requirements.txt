@@ -1,0 +1,5 @@
+boto3==1.35.10
+botocore==1.35.10
+orjson==3.10.3
+sqlalchemy==2.0.32
+psycopg2-binary
