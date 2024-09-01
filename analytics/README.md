@@ -17,9 +17,87 @@ while providing insight into the size/frequency of results and usage of the appl
 ### Lambda Function
 
 This is designed to take all what is written in the queue, and depending on what event is fired, process the correct writes to the database.
+#### Testing Lambda
+Add the following to the lambda_function to test it locally:
+```python
+if __name__ == '__main__':
+    example_shelf_search_body = r"""
+    {
+      "Type" : "Notification",
+      "MessageId" : "bd0ff884-73c8-5106-bf98-a7cba1ea884c",
+      "SequenceNumber" : "10000000000000027000",
+      "TopicArn" : "arn:aws:sns:us-east-2:692859946229:shelfhelp-event-pipeline.fifo",
+      "Message" : "{\"msg_type\":\"SHELFSEARCH\",\"shelf_url\":\"https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=to-read\",\"books\":[{\"title\":\"Into Thin Air: A Personal Account of the Mt. Everest Disaster\",\"author\":\"Jon Krakauer\",\"isbn\":\"\",\"avg_rating\":4.23,\"date_added\":\"Fri, 25 Nov 2022 14:52:40 -0800\",\"link\":\"https://www.goodreads.com/book/show/1898\",\"searchable_title\":\"Into Thin Air: A Personal Account of the Mt. Everest Disaster\",\"image_link\":\"https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1631501298l/1898._SY475_.jpg\",\"goodreads_id\":\"1898\"},{\"title\":\"The Stranger\",\"author\":\"Albert Camus\",\"isbn\":\"\",\"avg_rating\":4.04,\"date_added\":\"Wed, 12 Jun 2024 18:14:43 -0700\",\"link\":\"https://www.goodreads.com/book/show/49552\",\"searchable_title\":\"The Stranger\",\"image_link\":\"https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1590930002l/49552._SY475_.jpg\",\"goodreads_id\":\"49552\"},{\"title\":\"Narrative of the Life of Frederick Douglass\",\"author\":\"Frederick Douglass\",\"isbn\":\"1580495761\",\"avg_rating\":4.08,\"date_added\":\"Sat, 13 Jan 2024 18:52:35 -0800\",\"link\":\"https://www.goodreads.com/book/show/36529\",\"searchable_title\":\"Narrative of the Life of Frederick Douglass\",\"image_link\":\"https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1388234247l/36529.jpg\",\"goodreads_id\":\"36529\"},{\"title\":\"Skin in the Game: The Hidden Asymmetries in Daily Life\",\"author\":\"Nassim Nicholas Taleb\",\"isbn\":\"0241300657\",\"avg_rating\":3.87,\"date_added\":\"Fri, 14 Jun 2024 07:07:57 -0700\",\"link\":\"https://www.goodreads.com/book/show/36064445\",\"searchable_title\":\"Skin in the Game: The Hidden Asymmetries in Daily Life\",\"image_link\":\"https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1510319798l/36064445.jpg\",\"goodreads_id\":\"36064445\"}],\"num_books\":4,\"time_start\":\"2024-09-02T09:46:54.835456\",\"time_end\":\"2024-09-02T09:46:58.513410\",\"total_books\":127}",
+      "Timestamp" : "2024-09-02T14:46:58.708Z",
+      "UnsubscribeURL" : "https://sns.us-east-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-2:692859946229:shelfhelp-event-pipeline.fifo:bb37548a-fa4a-4343-8cd4-ce9bb9760157"
+    }
+    """
 
-* Perhaps we'll use an ENUM for the event type?
+    example_library_search_body = r"""
+    {
+      "Type" : "Notification",
+      "MessageId" : "40cfe23d-96c0-5096-b23f-bd7244e649dc",
+      "SequenceNumber" : "10000000000000028000",
+      "TopicArn" : "arn:aws:sns:us-east-2:692859946229:shelfhelp-event-pipeline.fifo",
+      "Message" : "{\"msg_type\":\"LIBRARYSEARCH\",\"library_id\":\"nashville\",\"is_libby\":true,\"time_start\":\"2024-09-02T09:47:02.582256\",\"time_end\":\"2024-09-02T09:47:02.878562\",\"book\":{\"title\":\"Into Thin Air: A Personal Account of the Mt. Everest Disaster\",\"author\":\"Jon Krakauer\",\"isbn\":\"\",\"avg_rating\":4.23,\"date_added\":\"Fri, 25 Nov 2022 14:52:40 -0800\",\"link\":\"https://www.goodreads.com/book/show/1898\",\"searchable_title\":\"Into Thin Air: A Personal Account of the Mt. Everest Disaster\",\"image_link\":\"https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1631501298l/1898._SY475_.jpg\",\"goodreads_id\":\"1898\"},\"available\":true,\"availability_message\":\"AVAILABLE: Check link for more\"}",
+      "Timestamp" : "2024-09-02T14:47:02.908Z",
+      "UnsubscribeURL" : "https://sns.us-east-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-2:692859946229:shelfhelp-event-pipeline.fifo:bb37548a-fa4a-4343-8cd4-ce9bb9760157"
+    }
+    """
 
+    test_event = {
+        'Records': [
+            {'body': example_shelf_search_body},
+            {'body': example_library_search_body}
+        ]
+    }
+
+
+    test = lambda_handler(test_event, None)
+
+    print(test)
+```
+
+#### Containerizing Lambda with Docker
+Assuming all commands that follow are in the `analytics` directory.
+
+[Helpful link](https://docs.aws.amazon.com/lambda/latest/dg/python-image.html#python-image-instructions)
+
+**Build Command**:
+```commandline
+docker build --platform linux/arm64 -t shelf-help-analytics .
+```
+
+**Run Command (to test locally)**:
+```commandline
+docker run --platform linux/arm64 -p 9001:8080 --env-file .env shelf-help-analytics
+```
+
+**Test Curl Command**:
+```commandline
+curl "http://localhost:9001/2015-03-31/functions/function/invocations" -d @test-payload.json
+```
+
+**Kill Container Commands**:
+```commandline
+docker ps
+```
+* Find container id, then...
+```commandline
+docker kill <container id>
+```
+
+**Cost Management**:
+* Realized that Amazon ECR (Container Registry) costs money after a year in the "Private" repo.
+* Can't have a Lambda run from a "Public" repo even though that storage is free.
+* Therefore, I decided to build the docker image, and then pull out what I needed to create the `.zip` file instead.
+* Steps to recreate this:
+  * Run docker container with `docker run --platform linux/arm64 -p 9001:8080 --env-file .env shelf-help-analytics`
+  * In a separate terminal, copy the main to a new directory like so: `docker cp <running-container-name>:/var/task ./lambda_package`
+  * Next, copy all the installed python packages like so: `docker cp <running-container-name>:/var/lang/lib/python3.12/site-packages ./lambda_package`
+  * Manually move all the items out of the `site-packages` directory in `./lambda_package` to that top level with everything else
+  * Zip it all together from the lambda_package directory with `zip -r ../lambda_function.zip ./*`
+  * Then upload that directly to the Lambda
 
 ## Data Observations
 
@@ -106,3 +184,53 @@ This is the basic idea of the relational schema. Each parent bullet is a table:
 
 ### Migrations
 Will try to leverage [Atlas](https://atlasgo.io/) for tracking database migrations
+
+* [This walkthrough](https://atlasgo.io/guides/postgres/automatic-migrations) is how I got started.
+
+* Using a `schema.sql` file to be the actual schema
+* Using a `migrations` directory to hold the migrations
+* Using `atlas.hcl` to hold config/environment definitions
+  * the `local` env uses the atlas-demo docker container. Need to have it running via the following command:
+  * `docker run --rm -d --name atlas-demo -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=demo -p 5432:5432 postgres`
+* CORRECT Steps I did to setup the schema/migrations:
+  * Created initial schema.sql
+  * Made sure local db was completely blank, since we want to start from scratch.
+  * ` atlas migrate diff initial_schema --env local`
+    * Created initial_schema migration file
+  * Add new migration with:
+    * `atlas migrate new seed_libraries`
+    * Then manually update the SQL in the generated .sql file in `migrations`
+    * Update the hash with `atalas migrate hash`
+  * Double-checked SQLAlchemy was synced with:
+    * ` atlas migrate diff --env sqlalchemy` didn't return a new generated schema
+
+* WRONG Steps I did to set up the schema/migrations:
+  * Created initial schema.sql
+  * `atlas schema apply --env prod`
+  * Created baseline with following command:
+    * `atlas migrate diff my_baseline --env local`
+  * Add new migration with:
+    * `atlas migrate new seed_libraries`
+    * Then manually update the SQL in the generated .sql file in `migrations`
+  * Applied the new migration with:
+    * `atlas migrate apply --env local --baseline "20240901143242"`
+    * In order to make this work for prod, I had do run the `20240901143242` migration manually. *Then* all of the other migrations will follow the pattern below.
+  * Net new migrations need to go as follows:
+    * Changes to `schema.sql`:
+      * `atlas migrate diff <migration_name> --env local`
+      * `atlas migrate apply --env local`
+
+## Sequencing
+Need a FIFO queue because order will matter given the foreign key constraints, etc.
+
+### DB Order of events:
+
+**ShelfSearch Event:**
+1. Insert shelf_url into `shelves` tables (and return id)
+2. Insert the books returned data into `books` table (and return ids)
+3. Insert into `shelf_searches` using the shelf_id and book_ids
+
+**LibrarySearch Event:**:
+1. Retrieve the `book_id` using the ISBN to search the `books` table
+2. Insert into `library_searches` using the retrieved book_id
+3. Handle if book_id is not present in `books` (Edge Case)

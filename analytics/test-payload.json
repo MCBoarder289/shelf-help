@@ -1,0 +1,36 @@
+{
+  "Records": [
+    {
+      "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
+      "receiptHandle": "MessageReceiptHandle",
+      "body": "\n    {\n      \"Type\" : \"Notification\",\n      \"MessageId\" : \"bd0ff884-73c8-5106-bf98-a7cba1ea884c\",\n      \"SequenceNumber\" : \"10000000000000027000\",\n      \"TopicArn\" : \"arn:aws:sns:us-east-2:692859946229:shelfhelp-event-pipeline.fifo\",\n      \"Message\" : \"{\\\"msg_type\\\":\\\"SHELFSEARCH\\\",\\\"shelf_url\\\":\\\"https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=to-read\\\",\\\"books\\\":[{\\\"title\\\":\\\"Into Thin Air: A Personal Account of the Mt. Everest Disaster\\\",\\\"author\\\":\\\"Jon Krakauer\\\",\\\"isbn\\\":\\\"\\\",\\\"avg_rating\\\":4.23,\\\"date_added\\\":\\\"Fri, 25 Nov 2022 14:52:40 -0800\\\",\\\"link\\\":\\\"https://www.goodreads.com/book/show/1898\\\",\\\"searchable_title\\\":\\\"Into Thin Air: A Personal Account of the Mt. Everest Disaster\\\",\\\"image_link\\\":\\\"https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1631501298l/1898._SY475_.jpg\\\",\\\"goodreads_id\\\":\\\"1898\\\"},{\\\"title\\\":\\\"The Stranger\\\",\\\"author\\\":\\\"Albert Camus\\\",\\\"isbn\\\":\\\"\\\",\\\"avg_rating\\\":4.04,\\\"date_added\\\":\\\"Wed, 12 Jun 2024 18:14:43 -0700\\\",\\\"link\\\":\\\"https://www.goodreads.com/book/show/49552\\\",\\\"searchable_title\\\":\\\"The Stranger\\\",\\\"image_link\\\":\\\"https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1590930002l/49552._SY475_.jpg\\\",\\\"goodreads_id\\\":\\\"49552\\\"},{\\\"title\\\":\\\"Narrative of the Life of Frederick Douglass\\\",\\\"author\\\":\\\"Frederick Douglass\\\",\\\"isbn\\\":\\\"1580495761\\\",\\\"avg_rating\\\":4.08,\\\"date_added\\\":\\\"Sat, 13 Jan 2024 18:52:35 -0800\\\",\\\"link\\\":\\\"https://www.goodreads.com/book/show/36529\\\",\\\"searchable_title\\\":\\\"Narrative of the Life of Frederick Douglass\\\",\\\"image_link\\\":\\\"https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1388234247l/36529.jpg\\\",\\\"goodreads_id\\\":\\\"36529\\\"},{\\\"title\\\":\\\"Skin in the Game: The Hidden Asymmetries in Daily Life\\\",\\\"author\\\":\\\"Nassim Nicholas Taleb\\\",\\\"isbn\\\":\\\"0241300657\\\",\\\"avg_rating\\\":3.87,\\\"date_added\\\":\\\"Fri, 14 Jun 2024 07:07:57 -0700\\\",\\\"link\\\":\\\"https://www.goodreads.com/book/show/36064445\\\",\\\"searchable_title\\\":\\\"Skin in the Game: The Hidden Asymmetries in Daily Life\\\",\\\"image_link\\\":\\\"https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1510319798l/36064445.jpg\\\",\\\"goodreads_id\\\":\\\"36064445\\\"}],\\\"num_books\\\":4,\\\"time_start\\\":\\\"2024-09-02T09:46:54.835456\\\",\\\"time_end\\\":\\\"2024-09-02T09:46:58.513410\\\",\\\"total_books\\\":127}\",\n      \"Timestamp\" : \"2024-09-02T14:46:58.708Z\",\n      \"UnsubscribeURL\" : \"https://sns.us-east-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-2:692859946229:shelfhelp-event-pipeline.fifo:bb37548a-fa4a-4343-8cd4-ce9bb9760157\"\n    }\n    ",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1523232000000",
+        "SenderId": "123456789012",
+        "ApproximateFirstReceiveTimestamp": "1523232000001"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "{{{md5_of_body}}}",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-1:123456789012:MyQueue",
+      "awsRegion": "us-east-1"
+    },
+    {
+      "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb79",
+      "receiptHandle": "MessageReceiptHandle",
+      "body": "\n    {\n      \"Type\" : \"Notification\",\n      \"MessageId\" : \"40cfe23d-96c0-5096-b23f-bd7244e649dc\",\n      \"SequenceNumber\" : \"10000000000000028000\",\n      \"TopicArn\" : \"arn:aws:sns:us-east-2:692859946229:shelfhelp-event-pipeline.fifo\",\n      \"Message\" : \"{\\\"msg_type\\\":\\\"LIBRARYSEARCH\\\",\\\"library_id\\\":\\\"nashville\\\",\\\"is_libby\\\":true,\\\"time_start\\\":\\\"2024-09-02T09:47:02.582256\\\",\\\"time_end\\\":\\\"2024-09-02T09:47:02.878562\\\",\\\"book\\\":{\\\"title\\\":\\\"Into Thin Air: A Personal Account of the Mt. Everest Disaster\\\",\\\"author\\\":\\\"Jon Krakauer\\\",\\\"isbn\\\":\\\"\\\",\\\"avg_rating\\\":4.23,\\\"date_added\\\":\\\"Fri, 25 Nov 2022 14:52:40 -0800\\\",\\\"link\\\":\\\"https://www.goodreads.com/book/show/1898\\\",\\\"searchable_title\\\":\\\"Into Thin Air: A Personal Account of the Mt. Everest Disaster\\\",\\\"image_link\\\":\\\"https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1631501298l/1898._SY475_.jpg\\\",\\\"goodreads_id\\\":\\\"1898\\\"},\\\"available\\\":true,\\\"availability_message\\\":\\\"AVAILABLE: Check link for more\\\"}\",\n      \"Timestamp\" : \"2024-09-02T14:47:02.908Z\",\n      \"UnsubscribeURL\" : \"https://sns.us-east-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-2:692859946229:shelfhelp-event-pipeline.fifo:bb37548a-fa4a-4343-8cd4-ce9bb9760157\"\n    }\n    ",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1523232000000",
+        "SenderId": "123456789012",
+        "ApproximateFirstReceiveTimestamp": "1523232000001"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "{{{md5_of_body}}}",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-1:123456789012:MyQueue",
+      "awsRegion": "us-east-1"
+    }
+  ]
+}
