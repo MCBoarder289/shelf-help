@@ -220,6 +220,36 @@ Will try to leverage [Atlas](https://atlasgo.io/) for tracking database migratio
       * `atlas migrate diff <migration_name> --env local`
       * `atlas migrate apply --env local`
 
+### Transfer/Backup the database
+I went through the following steps to move my Supabase project over to another region.
+These steps should also work if I ever want to back up or relocate the database in the future.
+
+1. Disable the Lambda trigger. This way it will prevent data loss since the SQS queue should hold the data for some time.
+2. Followed [these instructions](https://supabase.com/docs/guides/platform/migrating-and-upgrading-projects#migrate-your-project) mostly which are outlined as follows:
+3. Run supabase backup commands:
+```commandline
+supabase db dump --db-url "$OLD_DB_URL" -f roles.sql --role-only
+supabase db dump --db-url "$OLD_DB_URL" -f schema.sql
+supabase db dump --db-url "$OLD_DB_URL" -f data.sql --use-copy --data-only
+```
+4. I only cared about the `data.sql` beacuse `atlas` commands will do my migrations for me.
+5. Edited the SQL file to remove the following references:
+   * Any tables or sequences for tables not in the atlas migration code
+   * Take out the INSERT commands related to seeding the databse (taken care of in atlas migrations)
+   * Take out anything related to the `atlas_schema_revisions` table
+6. Run the following `psql` command to load the data into the new database:
+```commandline
+psql \
+  --single-transaction \
+  --variable ON_ERROR_STOP=1 \
+  --command 'SET session_replication_role = replica' \
+  --file data.sql \
+  --dbname "$NEW_DB_URL"
+```
+7. Turn back on the lambda so that the queue can process
+ 
+
+
 ## Sequencing
 Need a FIFO queue because order will matter given the foreign key constraints, etc.
 
