@@ -53,19 +53,25 @@ def insert_into_database(data):
             # Second, Add all unique books, and track the book ids for the array
             new_book_ids = []
             for book_dict in data['books']:
+                unique_hash = generate_book_unique_hash(book_dict)
                 book_insert_stmt = pg_insert(Book).values(
-                    unique_hash=generate_book_unique_hash(book_dict),
+                    unique_hash=unique_hash,
                     gr_id=book_dict['goodreads_id'],
                     title=book_dict['title'],
                     author=book_dict['author'],
                     isbn=book_dict['isbn']
-                ).on_conflict_do_update(
+                ).on_conflict_do_nothing(
                     index_elements=[Book.unique_hash],
-                    set_={'unique_hash': Book.unique_hash}
-                ).returning(Book.book_id)
+                )
 
                 book_result = session.execute(book_insert_stmt)
-                new_book_ids.append(book_result.scalar())
+                book_id = book_result.scalar()
+
+                if not book_id:
+                    existing_book = session.query(Book).filter_by(unique_hash=unique_hash).first()
+                    book_id = existing_book.book_id
+
+                new_book_ids.append(book_id)
 
             # Finally, add the new shelf search using the shelf_id and new_book_ids array
             new_shelf_search = ShelfSearch(
