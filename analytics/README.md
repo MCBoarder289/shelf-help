@@ -247,8 +247,34 @@ psql \
   --dbname "$NEW_DB_URL"
 ```
 7. Turn back on the lambda so that the queue can process
- 
 
+### Set up Local Database for migration testing
+
+The following steps are what you can take to recreate a database with some initial seed data:
+1. Spin up the local `atlas-demo` postgres table:
+```commandline
+docker run --rm -d --name atlas-demo -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=demo -p 5432:5432 postgres
+```
+2. Run the atlas migrations:
+```commandline
+atlas migrate apply --env local
+```
+3. Load the data with psql:
+```commandline
+psql \                         
+  --single-transaction \
+  --variable ON_ERROR_STOP=1 \
+  --command 'SET session_replication_role = replica' \
+  --file db_state/data_raw_local_load.sql \
+  --dbname "postgresql://postgres:pass@localhost:5432/demo"
+```
+
+4. Once you have finished adding migrations and testing everything manually, replace `data_raw_local_load.sql` with what you have locally at the end.
+```commandline
+docker exec atlas-demo pg_dump --column-inserts --data-only -U postgres demo > db_state/data_raw_local_load.sql
+```
+
+5. Make sure you delete all resulting inserts to `atlas_schema_revisions` and `libraries` before commiting.
 
 ## Sequencing
 Need a FIFO queue because order will matter given the foreign key constraints, etc.
