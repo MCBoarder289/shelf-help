@@ -4,10 +4,10 @@
 cache/
 .DS_store
 __pycache__
-lambda_package/
+lambda_package*/
 shelf_help_analytics_lambda.zip
 .env
-lambda_function.zip
+lambda_function*.zip
 
 # dependencies
 /node_modules

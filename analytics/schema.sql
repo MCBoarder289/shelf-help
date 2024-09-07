@@ -10,13 +10,16 @@ CREATE TABLE books (
     title VARCHAR,
     author VARCHAR,
     isbn VARCHAR,
-
+    date_added TIMESTAMP,
+    date_last_displayed TIMESTAMP,
     PRIMARY KEY (book_id)
 );
 
 CREATE TABLE shelves (
     shelf_id BIGINT GENERATED ALWAYS AS IDENTITY,
     shelf_url VARCHAR NOT NULL UNIQUE,
+    date_added TIMESTAMP,
+    date_last_searched TIMESTAMP,
     PRIMARY KEY (shelf_id)
 );
 

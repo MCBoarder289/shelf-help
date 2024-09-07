@@ -39,14 +39,20 @@ def insert_into_database(data):
     with Session() as session:
         if data['msg_type'] == "SHELFSEARCH":
             # First, Add shelf to unique shelves, and track the shelf_id
-            insert_stmt = pg_insert(Shelf).values(shelf_url=data['shelf_url']).on_conflict_do_nothing(
-                index_elements=[Shelf.shelf_url]
-            )
+            insert_stmt = pg_insert(Shelf).values(
+                shelf_url=data['shelf_url'],
+                date_added=data['time_start'],
+                date_last_searched=data['time_start']
+            ).on_conflict_do_update(
+                index_elements=[Shelf.shelf_url],
+                set_={'date_last_searched': data['time_start']}
+            ).returning(Shelf.shelf_id)
+
 
             result = session.execute(insert_stmt)
             shelf_id = result.scalar()
 
-            if not shelf_id:
+            if not shelf_id:  # Believe this is redundant now, but to be safe I'll leave it in
                 existing_shelf = session.query(Shelf).filter_by(shelf_url=data['shelf_url']).first()
                 shelf_id = existing_shelf.shelf_id
 
@@ -59,15 +65,18 @@ def insert_into_database(data):
                     gr_id=book_dict['goodreads_id'],
                     title=book_dict['title'],
                     author=book_dict['author'],
-                    isbn=book_dict['isbn']
-                ).on_conflict_do_nothing(
+                    isbn=book_dict['isbn'],
+                    date_added=data['time_start'],
+                    date_last_displayed=data['time_start']
+                ).on_conflict_do_update(
                     index_elements=[Book.unique_hash],
-                )
+                    set_={'date_last_displayed': data['time_start']}
+                ).returning(Book.book_id)
 
                 book_result = session.execute(book_insert_stmt)
                 book_id = book_result.scalar()
 
-                if not book_id:
+                if not book_id: # Believe this is redundant now, but to be safe I'll leave it in
                     existing_book = session.query(Book).filter_by(unique_hash=unique_hash).first()
                     book_id = existing_book.book_id
 

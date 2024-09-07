@@ -25,6 +25,8 @@ class Book(Base):
     title = Column(String)
     author = Column(String)
     isbn = Column(String)
+    date_added = Column(TIMESTAMP)
+    date_last_displayed = Column(TIMESTAMP)
 
 
 class Shelf(Base):
@@ -32,6 +34,8 @@ class Shelf(Base):
 
     shelf_id = Column(BigInteger, Identity(always=True), primary_key=True)
     shelf_url = Column(String, unique=True, nullable=False)
+    date_added = Column(TIMESTAMP)
+    date_last_searched = Column(TIMESTAMP)
 
     # Relationship to link to shelf_searches
     shelf_searches = relationship('ShelfSearch', back_populates='shelf')
