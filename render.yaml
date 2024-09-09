@@ -34,4 +34,18 @@ services:
     startCommand: gunicorn app:app -t 60 --keep-alive 60
     rootDir: backend
     pullRequestPreviewsEnabled: true
+
+  - type: web
+    name: shelfhelpanalytics
+    runtime: static
+    repo: https://github.com/MCBoarder289/shelf-help
+    branch: main
+    envVars:
+      - key: SKIP_INSTALL_DEPS
+        value: true
+    buildCommand: yarn; yarn build
+    staticPublishPath: dist
+    rootDir: analytics/app
+    pullRequestPreviewsEnabled: true
+
 version: "1"
