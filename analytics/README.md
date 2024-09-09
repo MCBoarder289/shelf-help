@@ -261,12 +261,12 @@ atlas migrate apply --env local
 ```
 3. Load the data with psql:
 ```commandline
-psql \                         
+psql \
   --single-transaction \
-  --variable ON_ERROR_STOP=1 \
-  --command 'SET session_replication_role = replica' \
-  --file db_state/data_raw_local_load.sql \
-  --dbname "postgresql://postgres:pass@localhost:5432/demo"
+  --variable=ON_ERROR_STOP=1 \
+  --command='SET session_replication_role = replica' \
+  --file=db_state/data_raw_local_load.sql \
+  --dbname="postgresql://postgres:pass@localhost:5432/demo"
 ```
 
 4. Once you have finished adding migrations and testing everything manually, replace `data_raw_local_load.sql` with what you have locally at the end.
@@ -276,6 +276,15 @@ docker exec atlas-demo pg_dump --column-inserts --data-only -U postgres demo > d
 
 5. Make sure you delete all resulting inserts to `atlas_schema_revisions` and `libraries` before commiting.
 
+### Helpful DB maintenance tips:
+* running `cluster <table_name> using <index_name>` will reorder the rows physically (helps after weird migrations might update various rows)
+* Maintenance commands:
+```
+REINDEX: This command is used to rebuild an index. It can be used to rebuild all indexes in a specific table or all indexes in the entire database.
+VACUUM: This command is used to reclaim space from deleted or updated rows. It can be used to vacuum all tables in the current database or a specific table.
+ANALYZE: This command is used to update statistics about the distribution of data in tables and indexes. This can help the query planner make better decisions about how to execute queries.
+CLUSTER: This command is used to physically reorder the rows of a table based on the values in one or more of its indexes. This can improve query performance for certain types of queries.
+```
 ## Sequencing
 Need a FIFO queue because order will matter given the foreign key constraints, etc.
 

@@ -36,7 +36,7 @@ FROM
 WHERE
  s.shelf_id = subquery.shelf_id;
 
--- Set book date_added field for exisitng records
+-- Set book date_added field for existing records
 
 UPDATE books b
 SET
@@ -58,16 +58,16 @@ FROM
 WHERE
     b.book_id = subquery.book_id;
 
--- Set book date_last_displayed field for exisitng records
+-- Set book date_last_displayed field for existing records
 
 UPDATE books b
 SET
-    date_last_displayed = subquery.earliest_date
+    date_last_displayed = subquery.latest_date
 FROM
     (
         SELECT
             UNNEST(books_returned) as book_id,
-            MAX(time_start) as earliest_date
+            MAX(time_start) as latest_date
 
         FROM shelf_searches
 
