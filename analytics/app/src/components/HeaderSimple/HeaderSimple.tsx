@@ -30,7 +30,7 @@ export function HeaderSimple() {
   return (
       <Container size="md" className={classes.inner}>
         <img src={icon} className={classes.headerlogo}/>
-        <Title className={classes.title}>
+        <Title className={classes.title} style={{"--title-fw": "var(--mantine-h1-font-weight)", "--title-lh": "var(--mantine-h1-line-height)", "--title-fz": "var(--mantine-h2-font-size)"}}>
           Shelf Help Analytics
         </Title>
         <Switch size="md" color="dark.4" onLabel={sunIcon} offLabel={moonIcon} checked={colorScheme === 'dark' ? true : false} onChange={toggleColorScheme} />
