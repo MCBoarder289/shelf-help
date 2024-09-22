@@ -8,7 +8,6 @@ export function HeaderSimple() {
  
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
 
-
   const theme = useMantineTheme();
 
   const sunIcon = (

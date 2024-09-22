@@ -1,4 +1,4 @@
-import { Button, Group, Space, Image, Text, Modal, ScrollArea, Flex, Center } from "@mantine/core";
+import { Button, Group, Space, Image, Text, Modal, ScrollArea } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 import classes from "./Info.module.css"
 import { useDisclosure } from "@mantine/hooks";
