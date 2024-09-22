@@ -8,6 +8,16 @@ export function HeaderSimple() {
  
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
 
+  function toggleColorSchemeAndMeta() {
+    if (colorScheme == 'dark') {
+      document.querySelector("meta[name='theme-color']")?.setAttribute("content", "#ffffff")
+    }
+    else if (colorScheme == 'light') {
+      document.querySelector("meta[name='theme-color']")?.setAttribute("content", "#242424")
+    }
+    toggleColorScheme()
+  }
+
 
   const theme = useMantineTheme();
 
@@ -33,7 +43,7 @@ export function HeaderSimple() {
         <Title className={classes.title}>
           Shelf Help
         </Title>
-        <Switch size="md" color="dark.4" onLabel={sunIcon} offLabel={moonIcon} checked={colorScheme === 'dark' ? true : false} onChange={toggleColorScheme} />
+        <Switch size="md" color="dark.4" onLabel={sunIcon} offLabel={moonIcon} checked={colorScheme === 'dark' ? true : false} onChange={toggleColorSchemeAndMeta} />
       </Container>
   );
 }
