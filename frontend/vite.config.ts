@@ -1,19 +1,18 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    tsconfigPaths(),
-    VitePWA({
+    VitePWA({ 
       registerType: 'autoUpdate',
       devOptions: {
         enabled: true
       },
       manifest: {
-        "background_color": "#ffffff",
         "description": "Tool to help you pick your next book on a big shelf",
         "dir": "ltr",
         "display": "standalone",
@@ -167,15 +166,10 @@ export default defineConfig({
       }
     })
   ],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './vitest.setup.mjs',
-  },
   server: {
     proxy: {
       '/libraryCheck': 'http://0.0.0.0:5000',
       '/bookChoices': 'http://0.0.0.0:5000',
     },
   },
-});
+})

@@ -1,6 +1,5 @@
 import { Button } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons-react";
-import classes from "./GithubButton.module.css"
 
 export function GithubButton() {
 
