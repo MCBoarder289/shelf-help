@@ -21,7 +21,6 @@ export default defineConfig({
         "scope": ".",
         "short_name": "Shelf Help",
         "start_url": ".",
-        "theme_color": "#ffffff",
         "icons": [
           {
             "src": "images/android/android-launchericon-512-512.png",
