@@ -2,7 +2,7 @@ import { Button, Container, Flex, Select, Slider, TextInput, Stack, rem } from "
 import classes from "./QueryForm.module.css"
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { bookRequest } from "@/pages/Home.page";
+import { bookRequest } from "../../pages/Home.page";
 import { IconGripHorizontal } from '@tabler/icons-react';
 import { librarySelectValues } from "../../LibraryConstants";
 

@@ -5,6 +5,7 @@ export function CoffeeButton() {
     return (
         <Button
         className={classes.coffeeButton}
+        style={{color: 'black'}}
         leftSection={'☕'}
         radius={"md"}
         color="#FFDD00"

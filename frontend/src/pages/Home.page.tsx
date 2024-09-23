@@ -1,10 +1,10 @@
-import { HeaderSimple } from '@/components/HeaderSimple/HeaderSimple';
+import { HeaderSimple } from '../components/HeaderSimple/HeaderSimple';
 import { AppShell, Container, Flex, rem } from '@mantine/core';
 import { useState } from 'react';
-import { QueryForm } from '@/components/QueryForm/QueryForm';
-import { Results } from '@/components/Results/Results';
-import { Info } from '@/components/Info/Info';
-import { CoffeeButton } from '@/components/CoffeeButton/CoffeeButton';
+import { QueryForm } from '../components/QueryForm/QueryForm';
+import { Results } from '../components/Results/Results';
+import { Info } from '../components/Info/Info';
+import { CoffeeButton } from '../components/CoffeeButton/CoffeeButton';
 
 export type Book = {
     title: string,

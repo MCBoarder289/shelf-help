@@ -1,10 +1,10 @@
-import { Book } from "@/pages/Home.page";
+import { Book } from "../../pages/Home.page";
 import { Card, Container, Group, Image, Text, Button, SimpleGrid, SegmentedControl, Modal, Flex} from "@mantine/core";
 import classes from "./Results.module.css"
 import { useState } from "react";
 import React from "react";
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
-import { bookSupportedLibraries } from "@/LibraryConstants";
+import { bookSupportedLibraries } from "../../LibraryConstants";
 
 
   
