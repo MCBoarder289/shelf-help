@@ -10,10 +10,10 @@ export function HeaderSimple() {
 
   function toggleColorSchemeAndMeta() {
     if (colorScheme == 'dark') {
-      document.querySelector("meta[name='theme-color']")?.setAttribute("content", "#ffffff")
+      document.querySelector("html")?.setAttribute("background-color", "#ffffff")
     }
     else if (colorScheme == 'light') {
-      document.querySelector("meta[name='theme-color']")?.setAttribute("content", "#242424")
+      document.querySelector("html")?.setAttribute("background-color", "#242424")
     }
     toggleColorScheme()
   }
