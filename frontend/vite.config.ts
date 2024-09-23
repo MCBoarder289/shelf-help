@@ -13,7 +13,6 @@ export default defineConfig({
         enabled: true
       },
       manifest: {
-        "background_color": "#ffffff",
         "description": "Tool to help you pick your next book on a big shelf",
         "dir": "ltr",
         "display": "standalone",
