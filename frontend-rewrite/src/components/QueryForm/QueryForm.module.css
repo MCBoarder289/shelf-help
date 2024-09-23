@@ -1,0 +1,31 @@
+.inner {
+    height: rem(56px);
+    display: flex;
+    justify-content: start;
+    align-items: center;
+  }
+
+.input {
+    flex: 3;
+    justify-content: center;
+}
+
+.select {
+    flex: 2;
+    justify-content: center;
+}
+
+.button {
+    flex: 2;
+    max-width: 32%;
+    justify-content: center ;
+}
+
+.thumb {
+    border: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-2));
+    width: rem(28px);
+    height: rem(22px);
+    color: var(--mantine-color-gray-5);
+    background-color: var(--mantine-color-white);
+    border-radius: var(--mantine-radius-sm);
+  }
