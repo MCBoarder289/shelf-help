@@ -108,7 +108,24 @@ export function QueryForm({
 
       function searchSpecificBooks(bookList: string[]) {
         setBookListSearch(bookList)
-        onFormSubmit({num_books: 0, gr_url: link, book_keys: bookList})
+        const validUrl = validateUrlInput()
+        if (validUrl) {
+            // Create a new URLSearchParams object
+            const params = new URLSearchParams(searchParams);
+
+            // Set the "gr_id" parameter to the link value
+            params.set("gr_id", link);
+            params.set("lib_id", library)
+
+            // Update the search parameters in the URL
+            setSearchParams(params);
+            onFormSubmit({num_books: 0, gr_url: link, book_keys: bookList})
+        }
+      }
+
+      function setSearchModeAndClearList(newSearchMode: string) {
+        setSearchMode(newSearchMode)
+        setBookListSearch([])
       }
 
 
@@ -156,7 +173,7 @@ export function QueryForm({
                 ),
               }
             ]}
-            onChange={setSearchMode}
+            onChange={setSearchModeAndClearList}
             ></SegmentedControl>
             {
                 searchMode === 'shuffle' ? (

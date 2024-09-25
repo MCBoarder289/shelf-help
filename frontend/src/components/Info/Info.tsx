@@ -59,33 +59,47 @@ export function Info() {
                     />
                 </Group>
                 <Space h="sm"/>
-                <Text fw={700}>Step 2: Select Number of Suggestions</Text>
+                <Text fw={700}>Step 2: Select your library</Text>
                 <Text>
-                    You can select 1-4 suggestions with the provided slider (the default is 4).
+                    Depending on which library you select will dictate if you can search for physical books. Libby is available for all libraries listed.
                 </Text>
                 <Space h="sm" />
-                <Text fw={700}>Step 3: Click Get Data</Text>
+                <Text fw={700}>Step 3: Choose to Shuffle or Search</Text>
                 <Text>
-                    This app will then get all of your shelf data and pick a random subset for you.
+                    In Shuffle mode, you can choose how many suggestions to receive. 4 is the max and the default.
                 </Text>
                 <Space h="sm" />
+                <Text>
+                    In Search mode, you will be able to search for a Title/Author in the search bar after you click "Get Data"
+                </Text>
+                <Space h="sm" />
+                <Text fw={700}>Step 4: Click Get Data</Text>
+                <Text>
                     Your shelf data is cached for 30 minutes. After that, any changes you make would be reflected.
+                </Text> 
                 <Space h="sm" />
-                <Text fw={700}>Step 4: Check Goodreads Review or Library Availability</Text>
+                <Text>
+                    Your Goodreads url and Library are saved and you can bookmark this link to skip steps 1 and 2 next time!
+                </Text> 
+                <Space h="sm" />
+                <Text fw={700}>Step 5: Check Goodreads Review or Library Availability</Text>
                 <Text>
                     The "Goodreads Review" button will take you to the Goodreads review page.
                 </Text>
+                <Space h="sm" />
                 <Text>
                     The "Check Library" button will see if it is available at your selected library.
                 </Text>
+                <Space h="sm" />
                 <Text>
-                    Choosing "Book" will search for availability of a physical copy, whereas choosing "Libby" will serach for Libby availability.
+                    Choosing "Book" will search for availability of a physical copy, whereas choosing "Libby" will search for Libby availability.
                 </Text>
                 <Space h="sm" />
-                <Text fw={700}>Step 5: Repeat as needed!</Text>
+                <Text fw={700}>Step 6: Repeat as needed!</Text>
                 <Text>
-                    Feel free to click "Get Data" multiple times if you don't like the suggestions.
+                    In shuffle mode, feel free to click "Get Data" multiple times and get new suggestions!
                 </Text>
+                <Space h="sm" />
                 <Text>
                     You can also change libraries or mediums at any time.
                 </Text>
