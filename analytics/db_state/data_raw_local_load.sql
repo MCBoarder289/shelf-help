@@ -24,11 +24,9 @@ INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (42, 'd7792ca487ae88a0108773f89afd4ee717460891d0e337b2fdd72c23260c09df', 68428, 'The Final Empire (Mistborn, #1)', 'Brandon Sanderson', '', '2024-09-05 02:08:56.93004', '2024-09-05 02:08:56.93004');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (19, '3d33756ff016f47d6c577133c24ee8a9cb91a2085b3ac8ab550195a9240a6c98', 23168817, 'The Dark Forest (Remembrance of Earth’s Past, #2)', 'Liu Cixin', '', '2024-09-03 04:39:16.877058', '2024-09-03 04:39:16.877058');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (13, 'a17ae520d90e32c2d72266f3fd34dc7793bd601869597db5c185e1c3fcab5570', 40376072, 'Children of Ruin (Children of Time, #2)', 'Adrian Tchaikovsky', '', '2024-09-03 04:25:27.736715', '2024-09-03 04:25:27.736715');
-INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (2, '4304f0a833cf3a4c3855c2f59133449756992052654e32201746794bad30ef23', 49552, 'The Stranger', 'Albert Camus', '', '2024-09-02 09:46:54.835456', '2024-09-05 02:11:25.101794');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (12, '2e4908bc3eee2617a20beef863ad301702ddc3bdef0bf13b9e91c152a30efc2c', 33600, 'Shantaram', 'Gregory David Roberts', '192076920X', '2024-09-03 04:25:27.736715', '2024-09-03 04:25:27.736715');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (24, '90ab6599e9950d5373c8e1756b06009005187f762b65ab54a7477695fbf2ec76', 40604658, 'Jurassic Park (Jurassic Park, #1)', 'Michael Crichton', '', '2024-09-03 18:26:08.26731', '2024-09-03 18:26:08.26731');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (49, '0f906ffc960727ac9f517d0f3956fd24d1610d20e4f543248a46df38b850821b', 24800, 'House of Leaves', 'Mark Z. Danielewski', '', '2024-09-05 02:11:25.101794', '2024-09-05 02:11:25.101794');
-INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (4, 'e65bb2dd37b7be4eb893f71f22c4fb006ac4324851a36617656ba4b8a8d8083e', 36064445, 'Skin in the Game: The Hidden Asymmetries in Daily Life', 'Nassim Nicholas Taleb', '0241300657', '2024-09-02 09:46:54.835456', '2024-09-04 22:33:44.123466');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (6, '272c36a3b4c8519dcadca2d8836780557a70994f8ba9c0b9642412ac2b96a288', 24885533, 'The Paper Menagerie and Other Stories', 'Ken Liu', '1481442546', '2024-09-02 23:03:45.622513', '2024-09-02 23:03:45.622513');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (52, 'a10c07ed9b7edef19a61b925fd7e68a7f7e9a3a3f4ccd35d532b97f2dbd02730', 6063554, 'Columbine: A True Crime Story', 'Jeff Kass', '0981652565', '2024-09-05 02:11:30.036162', '2024-09-05 02:11:30.036162');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (11, 'ae330ce0285eb74847ee51013795b0a9cf440ae48a9c3edf7f54864ad693a854', 35631386, 'The Undoing Project: A Friendship That Changed Our Minds', 'Michael Lewis', '0393354776', '2024-09-03 04:25:27.736715', '2024-09-04 22:33:44.123466');
@@ -36,7 +34,6 @@ INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (22, 'b99ab890a4aa8bddd04a3065d89c78ea08ac9fb868e3e5548f8f1fe9d9d924db', 60165391, 'Survival of the Richest: Escape Fantasies of the Tech Billionaires', 'Douglas Rushkoff', '0393881067', '2024-09-03 18:26:08.26731', '2024-09-03 18:26:08.26731');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (18, '327d53026dc9ef78e42bfc6fa400e4158cd5036e9b742f69b3ddf77edf0cf998', 170505, 'American Ground: Unbuilding the World Trade Center', 'William Langewiesche', '0865476756', '2024-09-03 04:39:16.877058', '2024-09-03 04:39:16.877058');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (27, 'd84ed2525c2c76c9f78acfef81c13c927c6cfeb3b7200d44b4b3180730c2325d', 40864030, 'A Prayer for the Crown-Shy (Monk & Robot, #2)', 'Becky Chambers', '', '2024-09-04 01:42:59.489135', '2024-09-04 01:52:59.240974');
-INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (3, '40b301fe09ffbd1569f03877787a7caccc4c3868d610b46c972a12e853098a40', 36529, 'Narrative of the Life of Frederick Douglass', 'Frederick Douglass', '1580495761', '2024-09-02 09:46:54.835456', '2024-09-05 02:08:56.93004');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (48, '47a0e31420225eb5267f53b85654d7f42ef8c67494aabacdc584696d4ab58821', 123471, 'I Am a Strange Loop', 'Douglas R. Hofstadter', '0465030785', '2024-09-05 02:11:25.101794', '2024-09-05 02:11:25.101794');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (8, 'dff74765ca235b8cf8fc7b94bb073556e7debe82ed17e3b3d8036d9a44634404', 170945, 'Five Were Missing', 'Lois Duncan', '0451086783', '2024-09-02 23:03:45.622513', '2024-09-02 23:03:45.622513');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (26, 'fc5cc30cfee2023e0768e6f642f7c31beb8d6b5a733993a5a13ef10e48cda014', 57701764, 'Wish You Were Here', 'Jodi Picoult', '1984818414', '2024-09-04 01:42:59.489135', '2024-09-04 01:52:59.240974');
@@ -49,7 +46,6 @@ INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (41, '4111be00c761c2a7c9c33382d81b22d6717a0f8a101bdf93eb3b89b11732e2c3', 199698485, 'The God of the Woods', 'Liz Moore', '', '2024-09-05 02:08:56.93004', '2024-09-07 20:20:52.81133');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (14, '9bc88918e6a2d50933f36cf308c122842a15fc698f63f08be79b99910351ce7a', 41128, 'The Wild Shore (Three Californias Triptych, #1)', 'Kim Stanley Robinson', '0312890362', '2024-09-03 04:25:27.736715', '2024-09-03 04:25:27.736715');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (7, 'd9fe03330b69e819335f78e9c4278320d247f53a7e3e275ae0334069ec8bc972', 25451264, 'Death''s End (Remembrance of Earth’s Past, #3)', 'Liu Cixin', '0765377101', '2024-09-02 23:03:45.622513', '2024-09-02 23:03:45.622513');
-INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (1, '45fe47cba7e94651749d00ef4768a0a8b554995e305dfd5ba60aca38979685b1', 1898, 'Into Thin Air: A Personal Account of the Mt. Everest Disaster', 'Jon Krakauer', '', '2024-09-02 09:46:54.835456', '2024-09-02 09:46:54.835456');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (16, 'ba1460c45d9c0347cf58297d626aa69a398babbae6eeaabf3657f976ac5ac218', 31548, 'Of Human Bondage', 'W. Somerset Maugham', '0451530179', '2024-09-03 04:39:16.877058', '2024-09-03 04:39:16.877058');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (54, 'e430404398d9549ae3b112a58872b233356122a87087f9cfb2b09f1daa03f55a', 31176818, 'The Shadow of What Was Lost (The Licanius Trilogy, #1)', 'James Islington', '', '2024-09-07 15:53:06.456185', '2024-09-07 15:53:06.456185');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (55, 'd8bee2696652b63f72d7efd1d379eb8defa730c47412ad9de722486e3528e75e', 56474282, 'Heartless Sky (Zodiac Academy, #7)', 'Caroline Peckham', '', '2024-09-07 15:53:06.456185', '2024-09-07 15:53:06.456185');
@@ -65,6 +61,10 @@ INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (88, 'b285780317998861adc39f183f5cc3bdd3164a0d70a7000a97df52b7878c1e92', 53906012, 'The Billiard Ball', 'Isaac Asimov', '', '2024-09-07 20:20:52.81133', '2024-09-07 20:20:52.81133');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (89, 'b5493bc26f3b8563da8c4d6242e75116fc70ede69bb4901f70ed41e035ea837d', 20906644, 'The MAXX: Maxximized Volume 1', 'Sam Kieth', '1613779593', '2024-09-07 20:20:52.81133', '2024-09-07 20:20:52.81133');
 INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (90, '2d0db2a7b8a7209eb2e09d21743e8a5ac5ad93fda3c1249b2129125478681a92', 62919902, 'The Handyman Method', 'Nick Cutter', '1982196718', '2024-09-07 20:20:52.81133', '2024-09-07 20:20:52.81133');
+INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (1, '45fe47cba7e94651749d00ef4768a0a8b554995e305dfd5ba60aca38979685b1', 1898, 'Into Thin Air: A Personal Account of the Mt. Everest Disaster', 'Jon Krakauer', '', '2024-09-02 09:46:54.835456', '2024-09-02 09:46:54.835456');
+INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (2, '4304f0a833cf3a4c3855c2f59133449756992052654e32201746794bad30ef23', 49552, 'The Stranger', 'Albert Camus', '', '2024-09-02 09:46:54.835456', '2024-09-02 09:46:54.835456');
+INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (3, '40b301fe09ffbd1569f03877787a7caccc4c3868d610b46c972a12e853098a40', 36529, 'Narrative of the Life of Frederick Douglass', 'Frederick Douglass', '1580495761', '2024-09-02 09:46:54.835456', '2024-09-02 09:46:54.835456');
+INSERT INTO public.books (book_id, unique_hash, gr_id, title, author, isbn, date_added, date_last_displayed) OVERRIDING SYSTEM VALUE VALUES (4, 'e65bb2dd37b7be4eb893f71f22c4fb006ac4324851a36617656ba4b8a8d8083e', 36064445, 'Skin in the Game: The Hidden Asymmetries in Daily Life', 'Nassim Nicholas Taleb', '0241300657', '2024-09-02 09:46:54.835456', '2024-09-02 09:46:54.835456');
 
 
 --
@@ -98,68 +98,70 @@ INSERT INTO public.library_searches (library_search_id, library_id, is_libby, ti
 INSERT INTO public.library_searches (library_search_id, library_id, is_libby, time_start, time_complete, book_id, available, availability_message) OVERRIDING SYSTEM VALUE VALUES (25, 'nashville', true, '2024-09-07 15:57:46.146086', '2024-09-07 15:57:46.647002', 57, true, 'AVAILABLE: Check link for more');
 INSERT INTO public.library_searches (library_search_id, library_id, is_libby, time_start, time_complete, book_id, available, availability_message) OVERRIDING SYSTEM VALUE VALUES (26, 'nashville', true, '2024-09-07 20:27:00.485207', '2024-09-07 20:27:01.199723', 90, false, 'UNAVAILABLE: Check to see hold');
 INSERT INTO public.library_searches (library_search_id, library_id, is_libby, time_start, time_complete, book_id, available, availability_message) OVERRIDING SYSTEM VALUE VALUES (27, 'nashville', true, '2024-09-07 20:31:06.219267', '2024-09-07 20:31:06.895772', 41, false, 'UNAVAILABLE: Check to see hold');
+INSERT INTO public.library_searches (library_search_id, library_id, is_libby, time_start, time_complete, book_id, available, availability_message) OVERRIDING SYSTEM VALUE VALUES (28, 'nashville', true, '2024-09-02 09:47:02.582256', '2024-09-02 09:47:02.878562', 1, true, 'AVAILABLE: Check link for more');
 
 
 --
 -- Data for Name: shelves; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.shelves (shelf_id, shelf_url, date_added, date_last_searched) OVERRIDING SYSTEM VALUE VALUES (1, 'https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=to-read', '2024-09-02 09:46:54.835456', '2024-09-03 04:25:27.736715');
 INSERT INTO public.shelves (shelf_id, shelf_url, date_added, date_last_searched) OVERRIDING SYSTEM VALUE VALUES (6, 'https://www.goodreads.com/review/list/161795839?shelf=to-read&sort=position&order=a', '2024-09-04 01:42:59.489135', '2024-09-04 01:52:59.240974');
 INSERT INTO public.shelves (shelf_id, shelf_url, date_added, date_last_searched) OVERRIDING SYSTEM VALUE VALUES (13, 'https://www.goodreads.com/review/list/10001241?shelf=currently-reading&sort=position&order=d', '2024-09-07 15:53:06.456185', '2024-09-07 15:58:09.69231');
 INSERT INTO public.shelves (shelf_id, shelf_url, date_added, date_last_searched) OVERRIDING SYSTEM VALUE VALUES (4, 'https://www.goodreads.com/review/list/158747789?shelf=to-read&sort=position&order=d', '2024-09-03 04:39:16.877058', '2024-09-07 20:20:52.81133');
+INSERT INTO public.shelves (shelf_id, shelf_url, date_added, date_last_searched) OVERRIDING SYSTEM VALUE VALUES (1, 'https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=to-read', '2024-09-02 09:46:54.835456', '2024-09-02 09:46:54.835456');
 
 
 --
 -- Data for Name: shelf_searches; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (1, 1, 4, '2024-09-02 09:46:54.835456', '2024-09-02 09:46:58.51341', 127, '{1,2,3,4}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (2, 1, 4, '2024-09-02 23:03:45.622513', '2024-09-02 23:03:45.626169', 128, '{6,7,8,9}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (3, 1, 4, '2024-09-03 04:25:27.736715', '2024-09-03 04:25:37.06636', 128, '{11,12,13,14}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (4, 4, 4, '2024-09-03 04:39:16.877058', '2024-09-03 04:39:24.836954', 128, '{16,17,18,19}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (5, 4, 4, '2024-09-03 18:26:08.26731', '2024-09-03 18:26:17.246519', 128, '{21,22,23,24}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (6, 6, 2, '2024-09-04 01:42:59.489135', '2024-09-04 01:43:02.575516', 2, '{26,27}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (7, 6, 2, '2024-09-04 01:52:55.270739', '2024-09-04 01:52:55.271589', 2, '{26,27}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (8, 6, 2, '2024-09-04 01:52:59.240974', '2024-09-04 01:52:59.241595', 2, '{26,27}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (9, 4, 4, '2024-09-04 22:33:44.123466', '2024-09-04 22:33:54.186585', 129, '{36,37,4,11}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (10, 4, 4, '2024-09-05 02:08:56.93004', '2024-09-05 02:09:05.946273', 129, '{9,41,42,3}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (11, 4, 4, '2024-09-05 02:11:25.101794', '2024-09-05 02:11:25.106478', 129, '{21,2,48,49}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (12, 4, 4, '2024-09-05 02:11:30.036162', '2024-09-05 02:11:30.037503', 129, '{23,51,52,53}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (13, 13, 4, '2024-09-07 15:53:06.456185', '2024-09-07 15:53:11.286964', 22, '{54,55,56,57}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (14, 13, 4, '2024-09-07 15:53:06.456185', '2024-09-07 15:53:11.286964', 22, '{54,55,56,57}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (15, 13, 4, '2024-09-07 15:57:54.961436', '2024-09-07 15:57:54.962409', 22, '{76,77,78,79}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (16, 13, 4, '2024-09-07 15:58:02.314147', '2024-09-07 15:58:02.315018', 22, '{80,81,56,77}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (17, 13, 4, '2024-09-07 15:58:09.69231', '2024-09-07 15:58:09.693273', 22, '{57,77,81,87}');
-INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned) OVERRIDING SYSTEM VALUE VALUES (18, 4, 4, '2024-09-07 20:20:52.81133', '2024-09-07 20:21:02.862943', 129, '{88,89,90,41}');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (1, 1, 4, '2024-09-02 09:46:54.835456', '2024-09-02 09:46:58.51341', 127, '{1,2,3,4}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (2, 1, 4, '2024-09-02 23:03:45.622513', '2024-09-02 23:03:45.626169', 128, '{6,7,8,9}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (3, 1, 4, '2024-09-03 04:25:27.736715', '2024-09-03 04:25:37.06636', 128, '{11,12,13,14}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (4, 4, 4, '2024-09-03 04:39:16.877058', '2024-09-03 04:39:24.836954', 128, '{16,17,18,19}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (5, 4, 4, '2024-09-03 18:26:08.26731', '2024-09-03 18:26:17.246519', 128, '{21,22,23,24}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (6, 6, 2, '2024-09-04 01:42:59.489135', '2024-09-04 01:43:02.575516', 2, '{26,27}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (7, 6, 2, '2024-09-04 01:52:55.270739', '2024-09-04 01:52:55.271589', 2, '{26,27}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (8, 6, 2, '2024-09-04 01:52:59.240974', '2024-09-04 01:52:59.241595', 2, '{26,27}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (9, 4, 4, '2024-09-04 22:33:44.123466', '2024-09-04 22:33:54.186585', 129, '{36,37,4,11}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (10, 4, 4, '2024-09-05 02:08:56.93004', '2024-09-05 02:09:05.946273', 129, '{9,41,42,3}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (11, 4, 4, '2024-09-05 02:11:25.101794', '2024-09-05 02:11:25.106478', 129, '{21,2,48,49}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (12, 4, 4, '2024-09-05 02:11:30.036162', '2024-09-05 02:11:30.037503', 129, '{23,51,52,53}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (13, 13, 4, '2024-09-07 15:53:06.456185', '2024-09-07 15:53:11.286964', 22, '{54,55,56,57}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (14, 13, 4, '2024-09-07 15:53:06.456185', '2024-09-07 15:53:11.286964', 22, '{54,55,56,57}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (15, 13, 4, '2024-09-07 15:57:54.961436', '2024-09-07 15:57:54.962409', 22, '{76,77,78,79}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (16, 13, 4, '2024-09-07 15:58:02.314147', '2024-09-07 15:58:02.315018', 22, '{80,81,56,77}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (17, 13, 4, '2024-09-07 15:58:09.69231', '2024-09-07 15:58:09.693273', 22, '{57,77,81,87}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (18, 4, 4, '2024-09-07 20:20:52.81133', '2024-09-07 20:21:02.862943', 129, '{88,89,90,41}', 'Shuffle');
+INSERT INTO public.shelf_searches (shelf_search_id, shelf_id, num_books, time_start, time_complete, total_book_count, books_returned, search_type) OVERRIDING SYSTEM VALUE VALUES (19, 1, 4, '2024-09-02 09:46:54.835456', '2024-09-02 09:46:58.51341', 127, '{1,2,3,4}', 'Shuffle');
 
 
 --
 -- Name: books_book_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.books_book_id_seq', 93, true);
+SELECT pg_catalog.setval('public.books_book_id_seq', 98, true);
 
 
 --
 -- Name: library_searches_library_search_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.library_searches_library_search_id_seq', 27, true);
+SELECT pg_catalog.setval('public.library_searches_library_search_id_seq', 28, true);
 
 
 --
 -- Name: shelf_searches_shelf_search_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.shelf_searches_shelf_search_id_seq', 18, true);
+SELECT pg_catalog.setval('public.shelf_searches_shelf_search_id_seq', 19, true);
 
 
 --
 -- Name: shelves_shelf_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.shelves_shelf_id_seq', 18, true);
+SELECT pg_catalog.setval('public.shelves_shelf_id_seq', 19, true);
 
 
 --

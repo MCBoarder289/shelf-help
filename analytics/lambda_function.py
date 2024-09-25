@@ -89,7 +89,8 @@ def insert_into_database(data):
                 time_start=data['time_start'],
                 time_complete=data['time_end'],
                 total_book_count=data['total_books'],
-                books_returned=new_book_ids
+                books_returned=new_book_ids,
+                search_type=data['search_type']
             )
 
             session.add(new_shelf_search)

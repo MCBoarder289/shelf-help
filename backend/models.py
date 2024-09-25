@@ -1,6 +1,6 @@
 
 from pydantic import BaseModel, ConfigDict
-from typing import List
+from typing import List, Dict, Optional
 from libraryEnum import LibraryEnum
 
 MAX_PAGES = 10  # If List of Pages is so big, then randomly reduce it down to this number
@@ -36,11 +36,15 @@ class Book(BaseModel):
 
 class BookList(BaseModel):
     books: List[Book]
+    book_keys: List[str]
 
+class BookDict(BaseModel):
+    books: Dict[str, Book]
 
 class GetBooksRequest(BaseModel):
     num_books: int
     gr_url: str
+    book_keys: Optional[List[str]] = None
 
     model_config = ConfigDict(extra='forbid')
 

@@ -32,6 +32,7 @@ CREATE TABLE shelf_searches (
     time_complete TIMESTAMP,
     total_book_count INT,
     books_returned BIGINT[],
+    search_type VARCHAR,
     PRIMARY KEY (shelf_search_id),
     CONSTRAINT shelf_searches_shelf_id_fkey
       FOREIGN KEY(shelf_id)

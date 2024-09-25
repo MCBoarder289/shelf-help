@@ -51,6 +51,7 @@ class ShelfSearch(Base):
     time_complete = Column(TIMESTAMP)
     total_book_count = Column(Integer)
     books_returned = Column(ARRAY(BigInteger))
+    search_type = Column(String)
 
     __table_args__ = (
         Index('idx_shelf_searches_books_returned', 'books_returned', postgresql_using='gin'),
