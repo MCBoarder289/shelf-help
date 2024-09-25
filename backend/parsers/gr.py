@@ -1,3 +1,4 @@
+import time
 from typing import List, Optional
 
 import feedparser
@@ -21,12 +22,23 @@ def retrieve_goodreads_shelf_data(shelf_url: str) -> BookDict:
     return retrieve_books_from_rss_feeds(rss_link)
 
 
-def get_rss_link(shelf_url: str) -> Optional[str]:
-    element = get_initial_page_soup(shelf_url).find("link", attrs={"rel": "alternate"})
-    if element["href"]:
-        return element["href"]
-    else:
-        return None
+def get_rss_link(shelf_url: str, retries: int = 5, backoff_factor: int = 2) -> Optional[str]:
+    attempt = 0
+    while attempt < retries:
+        try:
+            element = get_initial_page_soup(shelf_url).find("link", attrs={"rel": "alternate"})
+            if element and element.get("href"):
+                return element["href"]
+            else:
+                raise ValueError("Failed to find a valid RSS link")
+        except (requests.RequestException, ValueError) as e:
+            # Exponential Backoff
+            attempt += 1
+            wait_time = backoff_factor ** attempt
+            print(f"Attempt {attempt} failed: {e}. Retrying in {wait_time} seconds...")
+            time.sleep(wait_time)
+    print(f"Failed to retrieve RSS link after {retries} attempts.")
+    return None
 
 
 def retrieve_books_from_rss_feeds(rss_url: str, max_items: int = TOTAL_BOOKS_MAX):
