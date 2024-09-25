@@ -17,7 +17,7 @@
 
 .button {
     flex: 2;
-    max-width: 32%;
+    font-size: large;
     justify-content: center ;
 }
 

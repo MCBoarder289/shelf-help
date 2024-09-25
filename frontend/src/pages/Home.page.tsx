@@ -19,13 +19,14 @@ export type Book = {
 
   };
 
-export type bookRequest = {num_books: number, gr_url: string};
+export type bookRequest = {num_books: number, gr_url: string, book_keys: string [] | null};
 
 
 export function HomePage() {
 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Book[]>([])
+  const [bookList, setBookList] = useState<string[]|undefined>(undefined)
   const [library, setLibrary] = useState("")
 
 
@@ -45,6 +46,7 @@ export function HomePage() {
   })
   .then(data => {
       setData(data.books);
+      setBookList(data.book_keys)
       setLoading(false);
   })
   .catch(error => {
@@ -68,7 +70,7 @@ export function HomePage() {
         </Flex>
         </Container>
         <br></br>
-        <QueryForm onFormSubmit={getBookData} loading={loading} librarySubmit={setLibrary} library={library}></QueryForm>
+        <QueryForm onFormSubmit={getBookData} loading={loading} librarySubmit={setLibrary} library={library} bookList={bookList}></QueryForm>
         <br></br>
         <Results input={data} library={library}/>
       </AppShell.Main>

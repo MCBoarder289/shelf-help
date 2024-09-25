@@ -5,7 +5,7 @@ import requests
 import orjson
 
 from parsers.library import get_initial_page_soup
-from models import Book, HEADERS
+from models import Book, HEADERS, BookDict
 import urllib.parse
 import logging
 
@@ -15,7 +15,7 @@ PER_PAGE_MAX = 200
 TOTAL_BOOKS_MAX = 800
 
 
-def retrieve_goodreads_shelf_data(shelf_url: str) -> List[Book]:
+def retrieve_goodreads_shelf_data(shelf_url: str) -> BookDict:
     logging.info("Retrieving Shelf Data")
     rss_link = get_rss_link(shelf_url)
     return retrieve_books_from_rss_feeds(rss_link)
@@ -40,7 +40,7 @@ def retrieve_books_from_rss_feeds(rss_url: str, max_items: int = TOTAL_BOOKS_MAX
         else:
             book_data_list.extend(list(map(convert_rss_item_to_book, results)))
             page += 1
-    return book_data_list
+    return BookDict(books={f"{book.searchable_title} - {book.author}": book for book in book_data_list})
 
 
 def convert_rss_item_to_book(rss_item) -> Book:
@@ -93,5 +93,15 @@ if __name__ == "__main__":
     # page_list = retrieve_goodreads_page_list(many_page)
 
     retrieved_book_data = retrieve_goodreads_shelf_data(many_page)
+    # from operator import itemgetter
+    # import random
+    # import timeit
+    #
+    # book_dict = {f"{book.title} - {book.author}": book for book in retrieved_book_data}
+    # book_keys = random.sample(sorted(book_dict.keys()), 100)
+    # code = "results = list(itemgetter(*book_keys)(book_dict))"
+    #
+    # item_getter_results = timeit.repeat(stmt=code, number=1000, setup="from operator import itemgetter", globals=globals())
+    # list_comp_results = timeit.repeat(stmt="""results = [book_dict[book] for book in book_keys]""", number=1000, globals=globals())
     print(retrieved_book_data[0].isbn)
     print(len(retrieved_book_data))

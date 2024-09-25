@@ -1,9 +1,9 @@
-import { Button, Container, Flex, Select, Slider, TextInput, Stack, rem } from "@mantine/core";
+import { Button, Center, Container, Skeleton, SegmentedControl, Select, MultiSelect, Slider, TextInput, Stack, rem } from "@mantine/core";
 import classes from "./QueryForm.module.css"
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { bookRequest } from "../../pages/Home.page";
-import { IconGripHorizontal } from '@tabler/icons-react';
+import { IconGripHorizontal, IconArrowsShuffle, IconSearch } from '@tabler/icons-react';
 import { librarySelectValues } from "../../LibraryConstants";
 
 
@@ -12,17 +12,22 @@ export function QueryForm({
     loading, 
     librarySubmit = (_libraryName: String) => {},
     library,
+    bookList,
 }: { 
     onFormSubmit: (request: bookRequest) => void, 
     loading: boolean,  
     librarySubmit: (libraryName: string) => void,
-    library: string
+    library: string,
+    bookList: string[] | undefined,
 }) {
 
     const [link, setLink] = useState("");
     const [errorStatus, setErrorStatus] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [numBooks, setNumBooks] = useState(4)
+    const [searchMode, setSearchMode] = useState('shuffle')
+    const [bookListSearch, setBookListSearch] = useState<string[] | null>(null)
+
 
 
     const marks = [
@@ -32,6 +37,8 @@ export function QueryForm({
         { value: 4, label: '4' },
       ];
       
+    const shuffleIcon = <IconArrowsShuffle size={28} />
+    const searchIcon = <IconSearch size={28} />
 
     // Initialize the link state with the value of the "gr_id" parameter from URL
     useEffect(() => {
@@ -92,9 +99,17 @@ export function QueryForm({
             // Update the search parameters in the URL
             setSearchParams(params);
             // Call the onFormSubmit function with the updated request
-            onFormSubmit({ num_books: numBooks, gr_url: link });
+            const request = searchMode == 'shuffle' ? 
+                { num_books: numBooks, gr_url: link, book_keys: null } 
+                : { num_books: 0, gr_url: link, book_keys: bookListSearch ? bookListSearch : null }
+            onFormSubmit(request);
         }
       };
+
+      function searchSpecificBooks(bookList: string[]) {
+        setBookListSearch(bookList)
+        onFormSubmit({num_books: 0, gr_url: link, book_keys: bookList})
+      }
 
 
     return (
@@ -109,21 +124,6 @@ export function QueryForm({
                     error={errorStatus}
                     onChange={(e) => updateErrorAndLink(e)}
                 ></TextInput>
-            <label className={"m_8fdc1311 mantine-InputWrapper-label mantine-TextInput-label"}>Number of Suggested Books</label>
-            <Slider
-                classNames={classes}
-                thumbChildren={
-                    <IconGripHorizontal style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-                }
-                defaultValue={4}
-                onChange={(value) => setNumBooks(value)}
-                min={1}
-                max={4}
-                marks={marks}
-            />
-            </Stack>
-            <br></br>
-            <Flex justify="Flex-start" align="Flex-end" gap="md">
             <Select
                 className={classes.select}
                 label="Select Library"
@@ -134,13 +134,74 @@ export function QueryForm({
                 searchable
                 onChange={(value, _option) => updateLibraryId(value!!)}
             ></Select>
+            <SegmentedControl
+            value={searchMode}
+            data={[
+              {
+                value: "shuffle",
+                label: (
+                    <Center style={{ gap: 10 }}>
+                        <IconArrowsShuffle></IconArrowsShuffle>
+                        <span>Shuffle</span>
+                    </Center>
+                ),
+              },
+              {
+                value: "search",
+                label: (
+                    <Center style={{ gap: 10 }}>
+                        <IconSearch></IconSearch>
+                        <span>Search</span>
+                    </Center>
+                ),
+              }
+            ]}
+            onChange={setSearchMode}
+            ></SegmentedControl>
+            {
+                searchMode === 'shuffle' ? (
+                    <>
+                        <label className={"m_8fdc1311 mantine-InputWrapper-label mantine-TextInput-label"}>Number of Suggested Books</label>
+                        <Slider
+                            classNames={classes}
+                            thumbChildren={
+                                <IconGripHorizontal style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+                            }
+                            defaultValue={numBooks}
+                            onChange={(value) => setNumBooks(value)}
+                            min={1}
+                            max={4}
+                            marks={marks}
+                        />
+                        <br></br>
+                    </>
+                ) : (
+                    <>
+                        <Skeleton visible={loading}>
+                        <MultiSelect
+                            label="Select Books"
+                            placeholder="Search for books/authors.."
+                            data={bookList}
+                            maxValues={10}
+                            disabled={bookList == undefined}
+                            onChange={searchSpecificBooks}
+                            nothingFoundMessage="Nothing found..."
+                            searchable
+                        />
+                        </Skeleton>
+                    </>
+                )
+            }
+            </Stack>
+            <br></br>
             <Button 
                 className={classes.button}
                 onClick={handleFormSubmit}
                 loading={loading}
+                leftSection={searchMode == 'shuffle' ? shuffleIcon : searchIcon}
                 radius="md"
+                fullWidth
                 >Get Data</Button>
-            </Flex>
         </Container>
     );
 }
