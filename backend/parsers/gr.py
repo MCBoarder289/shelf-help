@@ -22,7 +22,7 @@ def retrieve_goodreads_shelf_data(shelf_url: str) -> BookDict:
 
 
 def get_rss_link(shelf_url: str) -> Optional[str]:
-    element = get_initial_page_soup(shelf_url).find("img", "inter").parent
+    element = get_initial_page_soup(shelf_url).find("link", attrs={"rel": "alternate"})
     if element["href"]:
         return element["href"]
     else:
