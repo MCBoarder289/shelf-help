@@ -203,6 +203,7 @@ export function QueryForm({
                             disabled={bookList == undefined}
                             onChange={searchSpecificBooks}
                             nothingFoundMessage="Nothing found..."
+                            comboboxProps={{ position: 'bottom', middlewares: { flip: false, shift: false } }}
                             searchable
                         />
                         </Skeleton>
