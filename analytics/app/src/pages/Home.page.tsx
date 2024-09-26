@@ -7,6 +7,7 @@ import { NumberIndicator } from '../components/NumberIndicator/NumberIndicator.t
 import { AreaChartCard } from '../components/AreaChartCard/AreaChartCard.tsx';
 import { BarChartCard } from '../components/BarChartCard/BarChartCard.tsx';
 import { HourlyBarChartCard } from '../components/HourlyBarChartCard/HourlyBarChartCard.tsx';
+import { SearchTypePieChartCard } from '../components/SearchTypePieChartCard/SearchTypePieChartCard.tsx';
 
 // Create a single supabase client for interacting with your database
 const supabase = createClient<Database>('https://hluofzrmkoznskamwkxg.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsdW9menJta296bnNrYW13a3hnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU0ODYzMzAsImV4cCI6MjA0MTA2MjMzMH0.Y4uKt_QoE6me4y1EqOaJbYGvdEdPkX3QH3pfPN_tPDE')
@@ -22,6 +23,7 @@ export function HomePage() {
     const [cumulativeShelfCountsData, setCumulativeShelfCountsData] = useState<any[] | null>(null);
     const [libraryAvailByMediumData, setLibraryAvailByMediumData] = useState<any[] | null>(null);
     const [hourlyShelfSearchesData, setHourlyShelfSearchesData] = useState<any[] | null>(null);
+    const [totalSearchTypeData, setTotalSearchTypeData] = useState<any[] | null>(null);
     const [totalsLoading, setTotalsLoading] = useState(true);
     const [trendsLoading, setTrendsLoading] = useState(true);
 
@@ -41,6 +43,7 @@ export function HomePage() {
                     cumulativeShelfDataResponse,
                     libraryAvailByMediumDataResponse,
                     hourlyShelfSearchesDataResponse,
+                    totalSearchTypesDataResponse,
                 ] = await Promise.all([
                     supabase.from('total_unique_shelves').select('*').single(),
                     supabase.from('total_shelf_searches').select('*').single(),
@@ -49,6 +52,7 @@ export function HomePage() {
                     supabase.from('cumulative_shelf_counts_daily').select('*'),
                     supabase.from('library_availability_by_medium').select('*'),
                     supabase.from('hourly_shelf_searches').select('*'),
+                    supabase.from('search_type_summary').select('*'),
                 ]);
 
                 if (shelvesResponse.error) throw shelvesResponse.error
@@ -58,6 +62,7 @@ export function HomePage() {
                 if (cumulativeShelfDataResponse.error) throw cumulativeShelfDataResponse.error
                 if (libraryAvailByMediumDataResponse.error) throw libraryAvailByMediumDataResponse.error
                 if (hourlyShelfSearchesDataResponse.error) throw hourlyShelfSearchesDataResponse.error
+                if (totalSearchTypesDataResponse.error) throw totalSearchTypesDataResponse.error
                 setUniqueShelves(shelvesResponse.data.count)
                 setTotalShelfSearches(shelfSearchesResponse.data.count)
                 setTotalLibrarySearches(librarySearchesResponse.data.count)
@@ -65,6 +70,7 @@ export function HomePage() {
                 setCumulativeShelfCountsData(cumulativeShelfDataResponse.data)
                 setLibraryAvailByMediumData(libraryAvailByMediumDataResponse.data)
                 setHourlyShelfSearchesData(hourlyShelfSearchesDataResponse.data)
+                setTotalSearchTypeData(totalSearchTypesDataResponse.data)
 
             } catch (error) {
                 console.log('Error fetching data', error)
@@ -126,6 +132,14 @@ export function HomePage() {
                         loading={trendsLoading}
                         yAxisLimit={uniqueShelves ? uniqueShelves + 5 : 10}
                        />
+                    </Skeleton>
+                    <br></br>
+                    <Skeleton visible={totalsLoading}>
+                        <SearchTypePieChartCard
+                        data={totalSearchTypeData}
+                        title="Mix of Search Types"
+                        loading={totalsLoading}
+                        />
                     </Skeleton>
                     <br></br>
                     <Skeleton visible={totalsLoading}>

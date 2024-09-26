@@ -154,6 +154,7 @@ export type Database = {
         Row: {
           books_returned: number[] | null
           num_books: number | null
+          search_type: string | null
           shelf_id: number | null
           shelf_search_id: number
           time_complete: string | null
@@ -163,6 +164,7 @@ export type Database = {
         Insert: {
           books_returned?: number[] | null
           num_books?: number | null
+          search_type?: string | null
           shelf_id?: number | null
           shelf_search_id?: never
           time_complete?: string | null
@@ -172,6 +174,7 @@ export type Database = {
         Update: {
           books_returned?: number[] | null
           num_books?: number | null
+          search_type?: string | null
           shelf_id?: number | null
           shelf_search_id?: never
           time_complete?: string | null
@@ -256,6 +259,14 @@ export type Database = {
           Available: number | null
           medium: string | null
           Unavailable: number | null
+        }
+        Relationships: []
+      }
+      search_type_summary: {
+        Row: {
+          color: string | null
+          name: string | null
+          value: number | null
         }
         Relationships: []
       }
