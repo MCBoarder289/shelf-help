@@ -1,4 +1,4 @@
-import { Button, Center, Container, Skeleton, SegmentedControl, Select, MultiSelect, Slider, TextInput, Stack, rem } from "@mantine/core";
+import { Button, Center, Container, SegmentedControl, Select, MultiSelect, Slider, TextInput, Stack, rem, LoadingOverlay, Box } from "@mantine/core";
 import classes from "./QueryForm.module.css"
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -194,7 +194,8 @@ export function QueryForm({
                     </>
                 ) : (
                     <>
-                        <Skeleton visible={loading}>
+                        <Box pos="relative">
+                        <LoadingOverlay visible={loading} loaderProps={{ children: ' ' }} />
                         <MultiSelect
                             label="Select Books"
                             placeholder="Search for books/authors.."
@@ -206,7 +207,7 @@ export function QueryForm({
                             comboboxProps={{ position: 'bottom', middlewares: { flip: false, shift: false } }}
                             searchable
                         />
-                        </Skeleton>
+                        </Box>
                     </>
                 )
             }
