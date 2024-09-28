@@ -31,7 +31,7 @@ services:
       value: 3.12.3
     region: ohio
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app -t 60 --keep-alive 60
+    startCommand: gunicorn --workers=1 --worker-class=gevent app:app -t 60 --keep-alive 60
     rootDir: backend
     pullRequestPreviewsEnabled: true
 
