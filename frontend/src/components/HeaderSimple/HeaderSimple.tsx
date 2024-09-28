@@ -2,11 +2,41 @@ import { Container, Title, rem, useMantineTheme, Switch, useMantineColorScheme }
 import classes from './HeaderSimple.module.css';
 import icon from "/images/icon.png"
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
+import { useEffect } from 'react';
 
 
 export function HeaderSimple() {
  
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
+
+  // Function to dynamically update the theme color in the meta tag
+  const updateStatusBarColor = (theme: 'light' | 'dark') => {
+    const themeColor = theme === 'dark' ? '#242424' : '#ffffff';
+    const metaTag = document.querySelector('meta[name="theme-color"]');
+
+    if (metaTag) {
+      metaTag.setAttribute('content', themeColor);
+    }
+  };
+
+  function toggleColorSchemeAndTheme() {
+    toggleColorScheme()
+    const metaTag = document.querySelector('meta[name="theme-color"]');
+      if (metaTag) {
+        if (colorScheme === 'dark') {
+          metaTag.setAttribute('content', '#ffffff'); // Turn it back to white
+        } else {
+          metaTag.setAttribute('content', '#242424'); // Turn it back to dark
+        }
+      }
+    }
+
+  // On initial render, check the current theme and set the meta tag color accordingly
+  useEffect(() => {
+    const theme = colorScheme === 'dark' ? 'dark' : 'light';
+    updateStatusBarColor(theme);
+  }, []);
+
 
   const theme = useMantineTheme();
 
@@ -32,7 +62,7 @@ export function HeaderSimple() {
         <Title className={classes.title}>
           Shelf Help
         </Title>
-        <Switch size="md" color="dark.4" onLabel={sunIcon} offLabel={moonIcon} checked={colorScheme === 'dark' ? true : false} onChange={toggleColorScheme} />
+        <Switch size="md" color="dark.4" onLabel={sunIcon} offLabel={moonIcon} checked={colorScheme === 'dark' ? true : false} onChange={toggleColorSchemeAndTheme} />
       </Container>
   );
 }
