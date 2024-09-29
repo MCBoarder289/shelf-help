@@ -18,7 +18,7 @@ from parsers.library import parser_factory
 cache = Cache(config={
     'CACHE_TYPE': 'filesystem',
     'CACHE_DIR': 'cache',
-    'CACHE_THRESHOLD': 100
+    'CACHE_THRESHOLD': 1000
 })
 
 app = Flask(__name__)
