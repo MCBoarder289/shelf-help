@@ -63,13 +63,6 @@ export function HomePage() {
       </AppShell.Header>
 
       <AppShell.Main pt={`calc(${rem(60)} + var(--mantine-spacing-md))`}>
-        <Container>
-        <Flex justify={"space-between"}>
-          <Info></Info>
-          <CoffeeButton></CoffeeButton>
-        </Flex>
-        </Container>
-        <br></br>
         <QueryForm onFormSubmit={getBookData} loading={loading} librarySubmit={setLibrary} library={library} bookList={bookList}></QueryForm>
         <br></br>
         <Results input={data} library={library}/>
