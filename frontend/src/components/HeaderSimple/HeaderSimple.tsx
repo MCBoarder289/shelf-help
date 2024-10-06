@@ -1,10 +1,9 @@
 import { Container, Title, rem, useMantineTheme, Switch, useMantineColorScheme, Space, Burger, Menu, Group, Modal, ScrollArea, Text, Image, CloseButton } from '@mantine/core';
 import classes from './HeaderSimple.module.css';
 import icon from "/images/icon.png"
-import { IconCoffee, IconInfoCircle, IconMoonStars, IconSun } from '@tabler/icons-react';
+import { IconBrandGithub, IconCoffee, IconInfoCircle, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
-import { GithubButton } from '../GithubButton/GithubButton';
 
 
 export function HeaderSimple() {
@@ -88,8 +87,10 @@ export function HeaderSimple() {
               <Menu.Item leftSection={<IconCoffee size={16} />} onClick={supportModalHandlers.open}>
                 Buy me a coffee
               </Menu.Item>
+              <Menu.Item leftSection={<IconBrandGithub size={16} />} onClick={() => window.open("https://github.com/MCBoarder289/shelf-help", "_blank")}>
+                Source Code
+              </Menu.Item>
             </Menu.Dropdown>
-
           </Menu>
         </div>
       </Container>
@@ -107,7 +108,6 @@ export function HeaderSimple() {
           <Group justify="center" align={"center"}>
             <IconInfoCircle size={16} style={{ margin: 3 }} />
             <Text fw={700}>How to use</Text>
-            <GithubButton></GithubButton>
           </Group>
         }>
         <Text>
