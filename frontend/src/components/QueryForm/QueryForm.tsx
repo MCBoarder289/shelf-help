@@ -134,7 +134,7 @@ export function QueryForm({
             <Stack>
             <TextInput
                     className={classes.input}
-                    label="Shelf URL"
+                    label="Goodreads Shelf URL"
                     placeholder="Enter Goodreads Shelf URL"
                     size="sm"
                     value={link}
