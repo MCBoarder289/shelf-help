@@ -10,7 +10,8 @@ export default defineConfig({
     VitePWA({ 
       registerType: 'autoUpdate',
       devOptions: {
-        enabled: true
+        enabled: true,
+        type: 'module',
       },
       manifest: {
         "description": "Tool to help you pick your next book on a big shelf",
