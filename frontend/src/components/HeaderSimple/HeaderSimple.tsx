@@ -1,10 +1,11 @@
 import { Container, Title, rem, useMantineTheme, Switch, useMantineColorScheme, Space, Burger, Menu, Group, Modal, ScrollArea, Text, Image, CloseButton } from '@mantine/core';
 import classes from './HeaderSimple.module.css';
 import icon from "/images/ios/256.png"
-import { IconBrandGithub, IconCoffee, IconInfoCircle, IconMoonStars, IconSun } from '@tabler/icons-react';
+import { IconBrandGithub, IconBulb, IconCoffee, IconInfoCircle, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 
+declare var $sleek: any;
 
 export function HeaderSimple() {
 
@@ -12,8 +13,6 @@ export function HeaderSimple() {
   const [burgerOpened, burgerHandlers] = useDisclosure();
   const [infoModalOpened, infoModalHandlers] = useDisclosure(false);
   const [supportModalOpened, supportModalHandlers] = useDisclosure(false);
-
-
 
   // Function to dynamically update the theme color in the meta tag
   const updateStatusBarColor = (theme: 'light' | 'dark') => {
@@ -35,6 +34,10 @@ export function HeaderSimple() {
         metaTag.setAttribute('content', '#242424'); // Turn it back to dark
       }
     }
+  }
+
+  function openSleek() {
+    $sleek.open()
   }
 
   // On initial render, check the current theme and set the meta tag color accordingly
@@ -86,6 +89,9 @@ export function HeaderSimple() {
               </Menu.Item>
               <Menu.Item leftSection={<IconCoffee size={16} />} onClick={supportModalHandlers.open}>
                 Buy me a coffee
+              </Menu.Item>
+              <Menu.Item leftSection={<IconBulb size={16} />} onClick={openSleek}>
+                Give us feedback
               </Menu.Item>
               <Menu.Item leftSection={<IconBrandGithub size={16} />} onClick={() => window.open("https://github.com/MCBoarder289/shelf-help", "_blank")}>
                 Source Code
@@ -179,63 +185,63 @@ export function HeaderSimple() {
       </Modal>
       {/* Buy me a coffee modal */}
       <Modal
-                opened={supportModalOpened}
-                onClose={supportModalHandlers.close}
-                withCloseButton={false} // Disable default close button
-                size="400px"
-                overlayProps={{
-                    backgroundOpacity: 0.55,
-                    blur: 3,
-                }}
-                styles={{
-                    body: {
-                        padding: 0, // Remove default padding
-                        maxWidth: "400px",
-                        width: "100%",
-                        height: "90vh",
-                        borderRadius: "10px",
-                        display: "flex",
-                        justifyContent: "center",
-                        overflow: "hidden", // Prevent scrollbars
-                    },
-                }}
-            >
-                <div
-                    style={{
-                        position: "relative",
-                        width: "100%",
-                        height: "100%",
-                        backgroundColor: "white",
-                        borderRadius: "10px",
-                        overflow: "hidden",
-                        display: "flex",
-                        justifyContent: "center",
-                    }}
-                >
-                    <iframe
-                        src="https://www.buymeacoffee.com/widget/page/michaelchapman?description=support-me&color=%23FFDD00"
-                        title="Buy Me a Coffee"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            border: "none",
-                            overflow: "hidden", // Prevent iframe scroll
-                        }}
-                        allow="payment"
-                    ></iframe>
+        opened={supportModalOpened}
+        onClose={supportModalHandlers.close}
+        withCloseButton={false} // Disable default close button
+        size="400px"
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        styles={{
+          body: {
+            padding: 0, // Remove default padding
+            maxWidth: "400px",
+            width: "100%",
+            height: "90vh",
+            borderRadius: "10px",
+            display: "flex",
+            justifyContent: "center",
+            overflow: "hidden", // Prevent scrollbars
+          },
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "white",
+            borderRadius: "10px",
+            overflow: "hidden",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <iframe
+            src="https://www.buymeacoffee.com/widget/page/michaelchapman?description=support-me&color=%23FFDD00"
+            title="Buy Me a Coffee"
+            style={{
+              width: "100%",
+              height: "100%",
+              border: "none",
+              overflow: "hidden", // Prevent iframe scroll
+            }}
+            allow="payment"
+          ></iframe>
 
-                    {/* Mantine Close Button */}
-                    <CloseButton
-                        onClick={supportModalHandlers.close}
-                        style={{
-                            position: "absolute",
-                            top: "10px",
-                            right: "10px",
-                           
-                        }}
-                    />
-                </div>
-            </Modal>
+          {/* Mantine Close Button */}
+          <CloseButton
+            onClick={supportModalHandlers.close}
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+
+            }}
+          />
+        </div>
+      </Modal>
     </>
   );
 }
