@@ -1,6 +1,6 @@
 import { Container, Title, rem, useMantineTheme, Switch, useMantineColorScheme, Space, Burger, Menu, Group, Modal, ScrollArea, Text, Image, CloseButton } from '@mantine/core';
 import classes from './HeaderSimple.module.css';
-import icon from "/images/icon.png"
+import icon from "/images/ios/256.png"
 import { IconBrandGithub, IconCoffee, IconInfoCircle, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
@@ -67,8 +67,8 @@ export function HeaderSimple() {
       <Container size="md" className={classes.inner}>
         <div className={classes.inner}>
           <img src={icon} className={classes.headerlogo} />
-          <Space w="md" />
-          <Title className={classes.title}>
+          <Space w="sm" />
+          <Title size="h2" className={classes.title}>
             Shelf Help
           </Title>
         </div>
@@ -236,7 +236,6 @@ export function HeaderSimple() {
                     />
                 </div>
             </Modal>
-
     </>
   );
 }
