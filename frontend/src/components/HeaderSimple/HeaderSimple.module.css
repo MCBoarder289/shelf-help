@@ -14,18 +14,14 @@
 }
 
 .headerlogo {
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 73%;
+  max-height: 73%;
   border-radius: 20%;
 }
 
 .title {
   color: light-dark(var(--mantine-color-blue-text), var(--mantine-color-white));
-  font-weight: 900;
-  letter-spacing: rem(-2px);
+  font-weight: 800;
+  letter-spacing: rem(-1px);
   align-items: center;
-
-  @media (max-width: $mantine-breakpoint-md) {
-    font-size: rem(30px);
-  }
 }
