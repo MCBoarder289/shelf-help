@@ -6,7 +6,12 @@ import App from './App.tsx'
 import { registerSW } from 'virtual:pwa-register';
 
 // Register the service worker with immediate update
-registerSW({ immediate: true });
+registerSW({ 
+  immediate: true,
+  onNeedRefresh() {
+    window.location.reload();  // Force a reload when new assets are available
+  },
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

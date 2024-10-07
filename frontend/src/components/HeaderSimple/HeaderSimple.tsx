@@ -126,7 +126,7 @@ export function HeaderSimple() {
           Shelf Help was designed to help you make a quick decision on what book should be next in your "to-read" shelf on Goodreads.
         </Text>
         <Space h="sm" />
-        <Text fw={700}>Step 1: Insert a Goodreads shelf URL</Text>
+        <Text fw={700}>Step 1: Insert a Goodreads Shelf URL</Text>
         <Text>
           Simply copy the `Share` link from Goodreads and paste it into the input box.
         </Text>
