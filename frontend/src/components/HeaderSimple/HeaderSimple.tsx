@@ -11,8 +11,14 @@ export function HeaderSimple() {
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [burgerOpened, burgerHandlers] = useDisclosure();
-  const [infoModalOpened, infoModalHandlers] = useDisclosure(false);
-  const [supportModalOpened, supportModalHandlers] = useDisclosure(false);
+  const [infoModalOpened, infoModalHandlers] = useDisclosure(false, {
+    onOpen: () => $sleek.hideButton(),
+    onClose: () => $sleek.showButton(),
+  });
+  const [supportModalOpened, supportModalHandlers] = useDisclosure(false, {
+    onOpen: () => $sleek.hideButton(),
+    onClose: () => $sleek.showButton(),
+  });
 
   // Function to dynamically update the theme color in the meta tag
   const updateStatusBarColor = (theme: 'light' | 'dark') => {
