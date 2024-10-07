@@ -119,75 +119,60 @@ export function HeaderSimple() {
         title={
           <Group justify="center" align={"center"}>
             <IconInfoCircle size={16} style={{ margin: 3 }} />
-            <Text fw={700}>How to use</Text>
+            <Text fw={700}>How to Use Shelf Help</Text>
           </Group>
         }>
         <Text>
-          Shelf Help was designed to help you make a quick decision on what book should be next in your "to-read" shelf on Goodreads.
+          <strong>Shelf Help</strong> is designed to make choosing your next read from your Goodreads shelf super easy!
         </Text>
         <Space h="sm" />
-        <Text fw={700}>Step 1: Insert a Goodreads Shelf URL</Text>
-        <Text>
-          Simply copy the `Share` link from Goodreads and paste it into the input box.
-        </Text>
+        <Text>Just follow these simple steps:</Text>
+
         <Space h="sm" />
+        <Text fw={700}>🔗 Step 1: Insert a Goodreads Shelf URL</Text>
         <Text>
-          Images below show you how to do this from the Goodreads app:
+          Copy the <code>Share</code> link from Goodreads and paste it into the input box. Here's how to do it from the Goodreads app:
         </Text>
+
         <Group justify="center" grow>
-          <Image
-            src={"https://drive.google.com/thumbnail?id=1ScHB-yypcEf2gbH7vvuK1qMeLI3BasAX&sz=w1000"}
-          />
-          <Image
-            src={"https://drive.google.com/thumbnail?id=1s2Zpgs6cWdWwK2js3jPqsdET9TWBlY0I&sz=w1000"}
-          />
+          <Image src="https://drive.google.com/thumbnail?id=1ScHB-yypcEf2gbH7vvuK1qMeLI3BasAX&sz=w1000" />
+          <Image src="https://drive.google.com/thumbnail?id=1s2Zpgs6cWdWwK2js3jPqsdET9TWBlY0I&sz=w1000" />
         </Group>
+
         <Space h="sm" />
-        <Text fw={700}>Step 2: Select your library</Text>
+        <Text fw={700}>🏛️ Step 2: Select Your Library</Text>
         <Text>
-          Depending on which library you select will dictate if you can search for physical books. Libby is available for all libraries listed.
+          Pick your library! Your choice determines if you can search for Libby e-books 📱 or physical books 📖.
         </Text>
+
         <Space h="sm" />
-        <Text fw={700}>Step 3: Choose to Shuffle or Search</Text>
+        <Text fw={700}>🔄 Step 3: Shuffle or Search</Text>
         <Text>
-          In Shuffle mode, you can choose how many suggestions to receive. 4 is the max and the default.
+          Choose to shuffle for suggestions (up to 4) or use the search option to find specific titles/authors.
         </Text>
+
         <Space h="sm" />
+        <Text fw={700}>📚 Step 4: Click "Get Data"</Text>
         <Text>
-          In Search mode, you will be able to search for a Title/Author in the search bar after you click "Get Data"
-        </Text>
-        <Space h="sm" />
-        <Text fw={700}>Step 4: Click Get Data</Text>
-        <Text>
-          Your shelf data is cached for 30 minutes. After that, any changes you make would be reflected.
-        </Text>
-        <Space h="sm" />
-        <Text>
-          Your Goodreads url and Library are saved and you can bookmark this link to skip steps 1 and 2 next time!
-        </Text>
-        <Space h="sm" />
-        <Text fw={700}>Step 5: Check Goodreads Review or Library Availability</Text>
-        <Text>
-          The "Goodreads Review" button will take you to the Goodreads review page.
+          Give us a minute to read your shelf data ⏳. Once that's done, your next shuffles/searches are super fast ⚡️ for the next 30 minutes.
         </Text>
         <Space h="sm" />
         <Text>
-          The "Check Library" button will see if it is available at your selected library.
+          Tip: Bookmark your custom URL to skip steps 1 and 2 next time! 💡
         </Text>
+
         <Space h="sm" />
+        <Text fw={700}>✅ Step 5: Check Goodreads or Library Availability</Text>
         <Text>
-          Choosing "Book" will search for availability of a physical copy, whereas choosing "Libby" will search for Libby availability.
+          Click "Goodreads Review" to view book reviews or "Check Library" to see if the book is available in your library.
+          You can check if it's available on Libby 📱 or for a physical copy (Book) 📖 for select libraries.
         </Text>
+
         <Space h="sm" />
-        <Text fw={700}>Step 6: Repeat as needed!</Text>
+        <Text fw={700}>🔁 Step 6: Repeat as Needed!</Text>
         <Text>
-          In shuffle mode, feel free to click "Get Data" multiple times and get new suggestions!
+          In shuffle mode, click "Get Data" as many times as you'd like for fresh suggestions! And don't worry—you can switch libraries or mediums anytime. 🔄
         </Text>
-        <Space h="sm" />
-        <Text>
-          You can also change libraries or mediums at any time.
-        </Text>
-        <Space h="sm" />
       </Modal>
       {/* Buy me a coffee modal */}
       <Modal
