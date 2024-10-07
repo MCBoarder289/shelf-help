@@ -3,6 +3,7 @@ import { AppShell, rem } from '@mantine/core';
 import { useState } from 'react';
 import { QueryForm } from '../components/QueryForm/QueryForm';
 import { Results } from '../components/Results/Results';
+import classes from './Home.module.css'
 
 export type Book = {
     title: string,
@@ -56,7 +57,7 @@ export function HomePage() {
 
   return (
     <AppShell header={{ height: 60, offset: false }} padding="md">
-      <AppShell.Header>
+      <AppShell.Header className={classes.header_padding}>
         <HeaderSimple />
       </AppShell.Header>
 

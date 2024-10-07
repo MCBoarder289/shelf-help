@@ -1,0 +1,4 @@
+.header_padding {
+    padding-inline-start: calc(var(--app-shell-navbar-offset, 0rem) + var(--app-shell-padding));
+    padding-inline-end: calc(var(--app-shell-aside-offset, 0rem) + var(--app-shell-padding));
+}
