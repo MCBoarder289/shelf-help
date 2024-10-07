@@ -5,8 +5,9 @@ import { useState } from "react";
 import React from "react";
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import { bookSupportedLibraries } from "../../LibraryConstants";
+import { useDisclosure } from "@mantine/hooks";
 
-
+declare var $sleek: any;
   
 type ResultsProps = {
     input: Book[];
@@ -32,7 +33,10 @@ export function Results({input, library}: ResultsProps) {
   const [values, setValues] = useState<string[]>(input.map(() => "Libby"));
   const [loading, setLoading] = useState<boolean[]>(input.map(() => false));
 
-  const [showModal, setShowModal] = useState(false); // State for controlling modal visibility
+  const [showModal, setShowModalHandlers] = useDisclosure(false, {
+    onOpen: () => $sleek.hideButton(),
+    onClose: () => $sleek.showButton(),
+  });
   const [modalContent, setModalContent] = useState<LibraryStatusResponse>(); // State for modal content
 
 
@@ -55,7 +59,8 @@ export function Results({input, library}: ResultsProps) {
     }
       }).then(res => res.json()).then(data => {
         setModalContent(data)
-        setShowModal(true)
+        setShowModalHandlers.open()
+        $sleek.hideButton()
       }).finally(
         () => {
           // Set loading state for the corresponding index to false when the request completes
@@ -175,7 +180,7 @@ export function Results({input, library}: ResultsProps) {
               {modalContent?.is_available ? <GreenCheckIcon /> : <RedCrossIcon />}
               </>
           }
-          onClose={() => setShowModal(false)}
+          onClose={setShowModalHandlers.close}
           opened={showModal}
           size="md"
           centered
