@@ -58,7 +58,7 @@ export function HomePage() {
   return (
     <AppShell header={{ height: 60, offset: false }} padding="md">
       <AppShell.Header className={classes.header_padding}>
-        <HeaderSimple />
+        <HeaderSimple privacyPage={false} />
       </AppShell.Header>
 
       <AppShell.Main pt={`calc(${rem(60)} + var(--mantine-spacing-md))`}>

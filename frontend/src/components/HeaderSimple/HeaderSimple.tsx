@@ -1,24 +1,47 @@
 import { Container, Title, rem, useMantineTheme, Switch, useMantineColorScheme, Space, Burger, Menu, Group, Modal, ScrollArea, Text, Image, CloseButton } from '@mantine/core';
 import classes from './HeaderSimple.module.css';
 import icon from "/images/ios/256.png"
-import { IconBrandGithub, IconBulb, IconCoffee, IconInfoCircle, IconMoonStars, IconSun } from '@tabler/icons-react';
+import { IconArrowBackUp, IconBrandGithub, IconBulb, IconCoffee, IconCookie, IconInfoCircle, IconLock, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
+import * as CookieConsent from 'vanilla-cookieconsent';
+import { useNavigate } from "react-router-dom";
 
-declare var $sleek: any;
 
-export function HeaderSimple() {
+declare var $sleek: any | undefined;
+
+
+function hideSleekButton() {
+  if (typeof $sleek !== 'undefined' && $sleek.hideButton) {
+    $sleek.hideButton();
+  }
+}
+
+function showSleekButton() {
+  if (typeof $sleek !== 'undefined' && $sleek.showButton) {
+    $sleek.showButton();
+  }
+}
+
+type HeaderProps = {
+  privacyPage: boolean
+};
+
+
+export function HeaderSimple({privacyPage}: HeaderProps) {
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [burgerOpened, burgerHandlers] = useDisclosure();
-  const [infoModalOpened, infoModalHandlers] = useDisclosure(false, {
-    onOpen: () => $sleek.hideButton(),
-    onClose: () => $sleek.showButton(),
-  });
-  const [supportModalOpened, supportModalHandlers] = useDisclosure(false, {
-    onOpen: () => $sleek.hideButton(),
-    onClose: () => $sleek.showButton(),
-  });
+  const [infoModalOpened, infoModalHandlers] = useDisclosure(false);
+  const [supportModalOpened, supportModalHandlers] = useDisclosure(false);
+  const [feedbackModalOpened, feedbackModalHandlers] = useDisclosure(false);
+
+
+  let navigate = useNavigate(); 
+  const routeChange = () =>{ 
+    let path = privacyPage ? "/" : "/privacy"; // if this is a privacy page menu navigate back, otherwise we're on the main and need to navigate to privacy 
+    navigate(path);
+  }
 
   // Function to dynamically update the theme color in the meta tag
   const updateStatusBarColor = (theme: 'light' | 'dark') => {
@@ -36,14 +59,21 @@ export function HeaderSimple() {
     if (metaTag) {
       if (colorScheme === 'dark') {
         metaTag.setAttribute('content', '#ffffff'); // Turn it back to white
+        document.documentElement.classList.remove('cc--darkmode');  // Turn CookieConsent Light
+
       } else {
         metaTag.setAttribute('content', '#242424'); // Turn it back to dark
+        document.documentElement.classList.add('cc--darkmode'); // Turn CookieConsent Dark
       }
     }
   }
 
   function openSleek() {
-    $sleek.open()
+    if (typeof $sleek !== 'undefined' && $sleek.open) {
+      $sleek.open();
+    } else {
+      feedbackModalHandlers.open()
+    }
   }
 
   // On initial render, check the current theme and set the meta tag color accordingly
@@ -51,6 +81,18 @@ export function HeaderSimple() {
     const theme = colorScheme === 'dark' ? 'dark' : 'light';
     updateStatusBarColor(theme);
   }, []);
+
+  useEffect(() => {
+    // Check if $sleek is available after page load or refresh
+    if (typeof $sleek !== 'undefined') {
+      // If the modal is open, hide the Sleek button
+      if (infoModalOpened || supportModalOpened) {
+        hideSleekButton();
+      } else {
+        showSleekButton();
+      }
+    }
+  }, [infoModalOpened, supportModalOpened]); // Re-run whenever the modal states change
 
 
   const theme = useMantineTheme();
@@ -98,6 +140,23 @@ export function HeaderSimple() {
               </Menu.Item>
               <Menu.Item leftSection={<IconBulb size={16} />} onClick={openSleek}>
                 Give us feedback
+              </Menu.Item>
+              {
+                privacyPage && (
+                  <Menu.Item leftSection={<IconArrowBackUp size={16} />} onClick={routeChange}>
+                    Back to App
+                  </Menu.Item>
+                )
+              }
+               {
+                !privacyPage && (
+                  <Menu.Item leftSection={<IconLock size={16} />} onClick={routeChange}>
+                    Privacy
+                  </Menu.Item>
+                )
+              }
+              <Menu.Item leftSection={<IconCookie size={16} />} onClick={() => CookieConsent.showPreferences()}>
+                Cookie preferences
               </Menu.Item>
               <Menu.Item leftSection={<IconBrandGithub size={16} />} onClick={() => window.open("https://github.com/MCBoarder289/shelf-help", "_blank")}>
                 Source Code
@@ -232,6 +291,28 @@ export function HeaderSimple() {
             }}
           />
         </div>
+      </Modal>
+      {/* Feedback Modal */}
+      <Modal opened={feedbackModalOpened} onClose={feedbackModalHandlers.close}
+        styles={{
+          title: { fontWeight: 510, alignItems: "center", display: "flex" }
+        }}
+        scrollAreaComponent={ScrollArea.Autosize}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        title={
+          <Group justify="center" align={"center"}>
+            <IconBulb size={16} style={{ margin: 3 }} />
+            <Text fw={700}>Give Us Feedback</Text>
+          </Group>
+        }>
+        <Text>
+         We want to hear from you! If you're seeing this message, that means you have not accepted the optional cookies that allows you to interact with Sleekplan (the tool where we collect your feedback!)
+        </Text>
+        <Space h="sm" />
+        <Text>Simply accept the cookies, and you should be able to give us any feedback you'd like. If you need, there is a <strong>Cookie preferences</strong> item in the menu. You can turn them on or off at any time.</Text>
       </Modal>
     </>
   );
