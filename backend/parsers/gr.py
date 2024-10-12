@@ -26,7 +26,14 @@ def get_rss_link(shelf_url: str, retries: int = 5, backoff_factor: int = 2) -> O
     attempt = 0
     while attempt < retries:
         try:
-            element = get_initial_page_soup(shelf_url).find("link", attrs={"rel": "alternate"})
+            soup = get_initial_page_soup(shelf_url)
+            error = soup.find("div", {"class": "errorBox"})
+            if error:
+                if "private" in error.text.strip().lower():
+                    raise RuntimeError("The shelf you are trying to reference is private. Update your Goodreads profile to be public in order to use Shelf Help.")
+                else:
+                    raise RuntimeError(f"We are getting an unexpected error from Goodreads: {error.text.strip()}")
+            element = soup.find("link", attrs={"rel": "alternate"})
             if element and element.get("href"):
                 return element["href"]
             else:
@@ -35,9 +42,9 @@ def get_rss_link(shelf_url: str, retries: int = 5, backoff_factor: int = 2) -> O
             # Exponential Backoff
             attempt += 1
             wait_time = backoff_factor ** attempt
-            print(f"Attempt {attempt} failed: {e}. Retrying in {wait_time} seconds...")
+            logging.info(f"Attempt {attempt} failed: {e}. Retrying in {wait_time} seconds...")
             time.sleep(wait_time)
-    print(f"Failed to retrieve RSS link after {retries} attempts.")
+    logging.error(f"Failed to retrieve RSS link after {retries} attempts.")
     return None
 
 

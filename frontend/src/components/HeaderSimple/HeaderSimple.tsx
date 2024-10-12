@@ -28,17 +28,23 @@ type HeaderProps = {
 };
 
 
-export function HeaderSimple({privacyPage}: HeaderProps) {
+export function HeaderSimple({ privacyPage }: HeaderProps) {
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [burgerOpened, burgerHandlers] = useDisclosure();
-  const [infoModalOpened, infoModalHandlers] = useDisclosure(false);
-  const [supportModalOpened, supportModalHandlers] = useDisclosure(false);
+  const [infoModalOpened, infoModalHandlers] = useDisclosure(false, {
+    onOpen: () => hideSleekButton(),
+    onClose: () => showSleekButton(),
+  });
+  const [supportModalOpened, supportModalHandlers] = useDisclosure(false, {
+    onOpen: () => hideSleekButton(),
+    onClose: () => showSleekButton(),
+  });
   const [feedbackModalOpened, feedbackModalHandlers] = useDisclosure(false);
 
 
-  let navigate = useNavigate(); 
-  const routeChange = () =>{ 
+  let navigate = useNavigate();
+  const routeChange = () => {
     let path = privacyPage ? "/" : "/privacy"; // if this is a privacy page menu navigate back, otherwise we're on the main and need to navigate to privacy 
     navigate(path);
   }
@@ -81,19 +87,6 @@ export function HeaderSimple({privacyPage}: HeaderProps) {
     const theme = colorScheme === 'dark' ? 'dark' : 'light';
     updateStatusBarColor(theme);
   }, []);
-
-  useEffect(() => {
-    // Check if $sleek is available after page load or refresh
-    if (typeof $sleek !== 'undefined') {
-      // If the modal is open, hide the Sleek button
-      if (infoModalOpened || supportModalOpened) {
-        hideSleekButton();
-      } else {
-        showSleekButton();
-      }
-    }
-  }, [infoModalOpened, supportModalOpened]); // Re-run whenever the modal states change
-
 
   const theme = useMantineTheme();
 
@@ -148,7 +141,7 @@ export function HeaderSimple({privacyPage}: HeaderProps) {
                   </Menu.Item>
                 )
               }
-               {
+              {
                 !privacyPage && (
                   <Menu.Item leftSection={<IconLock size={16} />} onClick={routeChange}>
                     Privacy
@@ -309,7 +302,7 @@ export function HeaderSimple({privacyPage}: HeaderProps) {
           </Group>
         }>
         <Text>
-         We want to hear from you! If you're seeing this message, that means you have not accepted the optional cookies that allows you to interact with Sleekplan (the tool where we collect your feedback!)
+          We want to hear from you! If you're seeing this message, that means you have not accepted the optional cookies that allows you to interact with Sleekplan (the tool where we collect your feedback!)
         </Text>
         <Space h="sm" />
         <Text>Simply accept the cookies, and you should be able to give us any feedback you'd like. If you need, there is a <strong>Cookie preferences</strong> item in the menu. You can turn them on or off at any time.</Text>
