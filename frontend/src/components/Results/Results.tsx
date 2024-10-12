@@ -7,7 +7,7 @@ import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import { bookSupportedLibraries } from "../../LibraryConstants";
 import { useDisclosure } from "@mantine/hooks";
 
-declare var $sleek: any;
+declare var $sleek: any | undefined;
   
 type ResultsProps = {
     input: Book[];
@@ -26,6 +26,18 @@ type LibraryStatusResponse = {
   link: string
 }
 
+function hideSleekButton() {
+  if (typeof $sleek !== 'undefined' && $sleek.hideButton) {
+    $sleek.hideButton();
+  }
+}
+
+function showSleekButton() {
+  if (typeof $sleek !== 'undefined' && $sleek.showButton) {
+    $sleek.showButton();
+  }
+}
+
 
 export function Results({input, library}: ResultsProps) {
 
@@ -34,8 +46,8 @@ export function Results({input, library}: ResultsProps) {
   const [loading, setLoading] = useState<boolean[]>(input.map(() => false));
 
   const [showModal, setShowModalHandlers] = useDisclosure(false, {
-    onOpen: () => $sleek.hideButton(),
-    onClose: () => $sleek.showButton(),
+    onOpen: () => hideSleekButton,
+    onClose: () => showSleekButton,
   });
   const [modalContent, setModalContent] = useState<LibraryStatusResponse>(); // State for modal content
 
