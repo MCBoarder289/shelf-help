@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 
@@ -56,27 +57,33 @@ def get_book_choices():
         except ValidationError as e:
             return e.json(), 400
 
-        shelf_data: BookDict = fetch_shelf_data_from_goodreads(url=get_books_request.gr_url.strip())
-        sample_number = get_books_request.num_books if len(shelf_data.books) >= get_books_request.num_books else len(shelf_data.books)
+        try:
+            shelf_data: BookDict = fetch_shelf_data_from_goodreads(url=get_books_request.gr_url.strip())
+            sample_number = get_books_request.num_books if len(shelf_data.books) >= get_books_request.num_books else len(shelf_data.books)
 
-        if get_books_request.book_keys:
-            book_list: List[Book] = [shelf_data.books[book] for book in get_books_request.book_keys]
-        else:
-            book_list: List[Book] = random.sample(list(shelf_data.books.values()), sample_number)
+            if get_books_request.book_keys:
+                book_list: List[Book] = [shelf_data.books[book] for book in get_books_request.book_keys]
+            else:
+                book_list: List[Book] = random.sample(list(shelf_data.books.values()), sample_number)
 
-        if book_list:  # Preventing sending an event for an empty book list
-            publish_to_sns(
-                {
-                    "msg_type": "SHELFSEARCH",
-                    "shelf_url": get_books_request.gr_url.strip(),
-                    "books": [book.model_dump() for book in book_list],
-                    "num_books": len(book_list),
-                    "time_start": start_time,
-                    "time_end": datetime.now(),
-                    "total_books": len(shelf_data.books),
-                    "search_type": "Search" if get_books_request.book_keys else "Shuffle"
-                }
-            )
+            if book_list:  # Preventing sending an event for an empty book list
+                publish_to_sns(
+                    {
+                        "msg_type": "SHELFSEARCH",
+                        "shelf_url": get_books_request.gr_url.strip(),
+                        "books": [book.model_dump() for book in book_list],
+                        "num_books": len(book_list),
+                        "time_start": start_time,
+                        "time_end": datetime.now(),
+                        "total_books": len(shelf_data.books),
+                        "search_type": "Search" if get_books_request.book_keys else "Shuffle"
+                    }
+                )
+
+        except Exception as e:
+            logging.error(f"Error occurred in getting shelf data: {str(e)}")
+            return {"error": str(e)}, 500
+
 
         return BookList(books=book_list, book_keys=shelf_data.books.keys()).model_dump_json(), 200
 
@@ -95,35 +102,39 @@ def get_library_status():
         except ValidationError as e:
             return e.json(), 400
 
-        if library_status_request.is_libby:
-            available, message, link = search_libby(
-                library_id=library_status_request.library,
-                title=library_status_request.book.searchable_title,
-                author=library_status_request.book.author
-            )
-
-        else:
-            library_parser = parser_factory(library_status_request.library)
-            available, message, link = library_parser.get_library_availability(
-                library_links=library_parser.get_library_links(
-                    isbn=library_status_request.book.isbn,
+        try:
+            if library_status_request.is_libby:
+                available, message, link = search_libby(
+                    library_id=library_status_request.library,
                     title=library_status_request.book.searchable_title,
                     author=library_status_request.book.author
                 )
-            )
 
-        publish_to_sns(
-            {
-                "msg_type": "LIBRARYSEARCH",
-                "library_id": library_status_request.library,
-                "is_libby": library_status_request.is_libby,
-                "time_start": start_time,
-                "time_end": datetime.now(),
-                "book": library_status_request.book.model_dump(),
-                "available": available,
-                "availability_message": message
-            }
-        )
+            else:
+                library_parser = parser_factory(library_status_request.library)
+                available, message, link = library_parser.get_library_availability(
+                    library_links=library_parser.get_library_links(
+                        isbn=library_status_request.book.isbn,
+                        title=library_status_request.book.searchable_title,
+                        author=library_status_request.book.author
+                    )
+                )
+
+            publish_to_sns(
+                {
+                    "msg_type": "LIBRARYSEARCH",
+                    "library_id": library_status_request.library,
+                    "is_libby": library_status_request.is_libby,
+                    "time_start": start_time,
+                    "time_end": datetime.now(),
+                    "book": library_status_request.book.model_dump(),
+                    "available": available,
+                    "availability_message": message
+                }
+            )
+        except Exception as e:
+            logging.error(f"Error occurred in getting library status: {str(e)}")
+            return {"error": str(e)}, 500
 
         return LibraryStatusResponse(
             is_available=available,
