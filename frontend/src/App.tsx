@@ -133,7 +133,7 @@ function App() {
                 {
                   title: 'Cookie Usage',
                   description:
-                    'We use cookies minimally to ensure the basic functionalities of the website and to allow you to share your feedback with us. You can choose for each category to opt-in/out whenever you want. For more details relative to cookies and other sensitive data, please read the full <a href="#" class="cc__link">privacy policy</a>.',
+                    'We use cookies minimally to ensure the basic functionalities of the website and to allow you to share your feedback with us. You can choose for each category to opt-in/out whenever you want. For more details relative to cookies and other sensitive data, please read the full <a href="/privacy#privacy-policy" class="cc__link">privacy policy</a>.',
                 },
                 {
                   title: 'Strictly necessary cookies',
