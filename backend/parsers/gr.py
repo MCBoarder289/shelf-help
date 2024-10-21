@@ -1,12 +1,13 @@
 import time
 from typing import List, Optional
 
-import feedparser
 import requests
 import orjson
 
+import random
 from parsers.library import get_initial_page_soup
-from models import Book, HEADERS, BookDict
+from models import Book, HEADERS, BookDict, USER_AGENTS
+from lxml import etree
 import urllib.parse
 import logging
 
@@ -48,12 +49,37 @@ def get_rss_link(shelf_url: str, retries: int = 5, backoff_factor: int = 2) -> O
     return None
 
 
+def fetch_rss_feed(url: str) -> bytes:
+    response = requests.get(url, headers={'user-agent': random.choice(USER_AGENTS)})
+    return response.content
+
+
+def parse_rss(feed_content: bytes):
+    root = etree.fromstring(feed_content)
+    items = root.findall(".//item")
+
+    parsed_items = []
+    for item in items:
+        parsed_items.append({
+            'title': item.findtext("title"),
+            'author_name': item.findtext("author_name"),
+            'isbn': item.findtext("isbn"),
+            'average_rating': item.findtext("average_rating"),
+            'user_date_added': item.findtext("user_date_added"),
+            'book_id': item.findtext("book_id"),
+            'book_large_image_url': item.findtext("book_large_image_url"),
+        })
+
+    return parsed_items
+
+
 def retrieve_books_from_rss_feeds(rss_url: str, max_items: int = TOTAL_BOOKS_MAX):
     page = 1
     not_complete = True
     book_data_list: List[Book] = []
     while not_complete:
-        results = feedparser.parse(f"{rss_url}&page={page}&per_page={PER_PAGE_MAX}").entries
+        feed_content = fetch_rss_feed(f"{rss_url}&page={page}&per_page={PER_PAGE_MAX}")
+        results = parse_rss(feed_content)
         if len(results) == 0 or len(results) + len(book_data_list) >= max_items:
             not_complete = False
         else:
@@ -110,8 +136,13 @@ if __name__ == "__main__":
     single_page = "https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=currently-reading"
 
     # page_list = retrieve_goodreads_page_list(many_page)
+    start = time.time()
 
     retrieved_book_data = retrieve_goodreads_shelf_data(many_page)
+
+    end = time.time()
+
+    print(end - start)
     # from operator import itemgetter
     # import random
     # import timeit
