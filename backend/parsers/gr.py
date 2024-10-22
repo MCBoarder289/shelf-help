@@ -58,19 +58,7 @@ def parse_rss(feed_content: bytes):
     root = etree.fromstring(feed_content)
     items = root.findall(".//item")
 
-    parsed_items = []
-    for item in items:
-        parsed_items.append({
-            'title': item.findtext("title"),
-            'author_name': item.findtext("author_name"),
-            'isbn': item.findtext("isbn"),
-            'average_rating': item.findtext("average_rating"),
-            'user_date_added': item.findtext("user_date_added"),
-            'book_id': item.findtext("book_id"),
-            'book_large_image_url': item.findtext("book_large_image_url"),
-        })
-
-    return parsed_items
+    return items
 
 
 def retrieve_books_from_rss_feeds(rss_url: str, max_items: int = TOTAL_BOOKS_MAX):
@@ -89,20 +77,20 @@ def retrieve_books_from_rss_feeds(rss_url: str, max_items: int = TOTAL_BOOKS_MAX
 
 
 def convert_rss_item_to_book(rss_item) -> Book:
-    title = rss_item["title"]
+    title = rss_item.findtext("title")
     searchable_title = title.partition("(")[0].strip() if "(" in title else title
-    author = ' '.join(rss_item["author_name"].split())  # TODO: See if this is ok vs. lastname, first
-    isbn = get_isbn(rss_item["isbn"], title, author)
+    author = ' '.join(rss_item.findtext("author_name").split())  # TODO: See if this is ok vs. lastname, first
+    isbn = get_isbn(rss_item.findtext("isbn"), title, author)
     return Book(
         title=title,
         author=author,
         isbn=isbn,
-        avg_rating=float(rss_item["average_rating"]),
-        date_added=rss_item["user_date_added"],
-        link=f"https://www.goodreads.com/book/show/{rss_item['book_id']}",
+        avg_rating=float(rss_item.findtext("average_rating")),
+        date_added=rss_item.findtext("user_date_added"),
+        link=f"https://www.goodreads.com/book/show/{rss_item.findtext("book_id")}",
         searchable_title=searchable_title,
-        image_link=rss_item["book_large_image_url"],
-        goodreads_id=rss_item["book_id"],
+        image_link=rss_item.findtext("book_large_image_url"),
+        goodreads_id=rss_item.findtext("book_id"),
     )
 
 
