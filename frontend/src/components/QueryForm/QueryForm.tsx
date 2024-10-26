@@ -147,7 +147,7 @@ export function QueryForm({
                 data={librarySelectValues}
                 placeholder="Search for library here..."
                 value={library}
-                limit={10}
+                limit={100}
                 searchable
                 onChange={(value, _option) => updateLibraryId(value!!)}
             ></Select>

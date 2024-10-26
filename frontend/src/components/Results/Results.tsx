@@ -4,7 +4,7 @@ import classes from "./Results.module.css"
 import { useState } from "react";
 import React from "react";
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
-import { bookSupportedLibraries } from "../../LibraryConstants";
+import { bookSupportedLibraries, libraryToLibbyId } from "../../LibraryConstants";
 import { useDisclosure } from "@mantine/hooks";
 
 declare var $sleek: any | undefined;
@@ -113,7 +113,7 @@ export function Results({ input, library }: ResultsProps) {
     // need to check book support in case user switches between an unsupported library and back
     if (currentValue === "Libby" || !(library in bookSupportedLibraries) || currentValue === undefined) {
       // Perform action for Libby
-      getLibraryStatus({ is_libby: true, library: library, book: book }, index)
+      getLibraryStatus({ is_libby: true, library: libraryToLibbyId[library], book: book }, index)
     } else {
       getLibraryStatus({ is_libby: false, library: library, book: book }, index)
     }
