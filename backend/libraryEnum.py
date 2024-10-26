@@ -1,5 +1,6 @@
 from enum import Enum
 
+# TODO: Update database migrations with new libraries added before merging any changes
 
 class LibraryEnum(str, Enum):
     # See frontend/src/components/QueryForm/LibrarySelectList.ts
@@ -982,6 +983,7 @@ class LibraryEnum(str, Enum):
     simbacqlm = "simbacqlm"
     uwashington = "uwashington"
     gatech = "gatech"
+    belmontu = "belmontu"
     gifucitydlibrary = "gifucity-d-library"  # Replaced key/name due to hyphens
     hzlib = "hzlib"
     middletown = "middletown"
@@ -1316,8 +1318,7 @@ class LibraryEnum(str, Enum):
     aialouisiana = "aialouisiana"
     crossroadshospice = "crossroadshospice"
     harrisonco = "harrisonco"
-    1
-    stsfgroup = "1stsfgroup"
+    stsfgroup = "1stsfgroup" # started with a number which the enum didn't like, but keys should matter here, only values
     dgcbc = "dgcbc"
     caltech = "caltech"
     siskiyous = "siskiyous"
@@ -1388,3 +1389,4 @@ class LibraryEnum(str, Enum):
     bundabergqld = "bundabergqld"
     betterhealthlibrary = "betterhealthlibrary"
     swindonuk = "swindonuk"
+    newrichmondwisc = "newrichmondwisc"
