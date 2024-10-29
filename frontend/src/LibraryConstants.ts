@@ -8,6 +8,7 @@ export const bookSupportedLibraries = {
     phoenix: true,
     wplc: true,
     toledo: true,
+    newrichmondwisc: true,
 
 } as const;
 
