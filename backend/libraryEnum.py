@@ -1,7 +1,5 @@
 from enum import Enum
 
-# TODO: Update database migrations with new libraries added before merging any changes
-
 class LibraryEnum(str, Enum):
     # See frontend/src/components/QueryForm/LibrarySelectList.ts
     # Using Libby's id value as what gets passed around

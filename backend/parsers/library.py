@@ -7,20 +7,6 @@ from bs4 import BeautifulSoup
 
 from models import USER_AGENTS
 
-SUPPORTED_LIBRARIES = [
-
-    {'label': 'Nashville', 'value': 'Nashville'},
-    {'label': 'Miami', 'value': 'Miami'},
-    {'label': 'Syracuse', 'value': 'Syracuse'},
-    {'label': 'Columbus', 'value': 'Columbus'},
-    {'label': 'Cincinnati', 'value': 'Cincinnati'},
-    {'label': 'San Francisco', 'value': 'San Francisco'},
-    {'label': 'Phoenix', 'value': 'Phoenix'},
-    {'label': 'Delafield', 'value': 'Delafield'},
-    {'label': 'Toledo', 'value': 'Toledo'},
-
-]
-
 BOOK_NOT_FOUND_MESSAGE = "Book Not Found: Check link to refine search (other locations, formats, etc.)"
 
 # Qualities of the library parsers:
@@ -60,7 +46,7 @@ class NashvillePublicLibraryParser(BaseLibraryParser):
     def __init__(self):
         super().__init__()
 
-    def make_isbn_search_url(self, isbn) -> str:
+    def make_isbn_search_url(self, isbn: str) -> str:
         return f"https://catalog.library.nashville.org/Search/Results?join=AND&lookfor0%5B%5D={isbn}&type0%5B%5D=ISN"
 
     def make_free_text_search_url(self, title: str, author: str) -> str:
@@ -559,7 +545,7 @@ class ToledoPublicLibraryParser(BaseLibraryParser):
         results = library_isbn_search.find_all("span", {"class": "cp-availability-status"})
         if results:
             status = results[0].text.upper().strip()
-            return status == "AVAILABLE", f"{status} - Click button to see where"
+            return status == "AVAILABLE", f"{status} - Open Search to see where"
         else:
             return False, BOOK_NOT_FOUND_MESSAGE
 
@@ -569,6 +555,52 @@ class ToledoPublicLibraryParser(BaseLibraryParser):
 
         return final_availability, final_shelf_status, final_link
 
+class MoreWisconsinLibraryParser(BaseLibraryParser):
+    def __init__(self):
+        super().__init__()
+
+    def make_isbn_search_url(self, isbn: str) -> str:
+        return f"https://more.bibliocommons.com/v2/search?custom_edit=false&query=identifier%3A({isbn})%20%20%20formatcode%3A(BK%20)&searchType=bl&suppress=true"
+
+    def make_free_text_search_url(self, title: str, author: str) -> str:
+        return f"https://more.bibliocommons.com/v2/search?custom_edit=false&query=anywhere%3A({urllib.parse.quote(title)}%20{urllib.parse.quote(author)})%20%20%20formatcode%3A(BK%20)&searchType=bl&suppress=true"
+
+    def get_library_links(self, isbn: str, title: str, author: str) -> List[str]:
+        return [
+            self.make_isbn_search_url(isbn=isbn),
+            self.make_free_text_search_url(title=title, author=author)
+        ]
+
+    def find_book_in_inventory(self, library_url) -> Tuple[bool, str, str]:
+        library_isbn_search = get_initial_page_soup(library_url)
+        results = library_isbn_search.find_all("span", {"class": "cp-availability-status"})
+        if results:
+            # TODO: There can be multiple formats of book (ex: by publishing year), so need to loop through these likely
+            status = results[0].text.upper().strip()
+            if status.startswith("AVAILABLE"):  # TODO: Status of "AVAILABLE BUT NOT HOLDABLE" - may need to consider this unavailable?
+                return True, f"{status} - Open search to see where", library_url
+            else:
+                return False, f"UNAVAILABLE: {status}", library_url
+        else:
+            return False, BOOK_NOT_FOUND_MESSAGE, library_url
+
+    def get_library_availability(self, library_links: List[str]) -> Tuple[bool, str, str]:
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
+        final_link: str = library_links[1]
+        final_availability: bool = False
+        for link in library_links:
+            available, status, url = self.find_book_in_inventory(link)
+
+            if available and status is not None:
+                final_availability = True
+                final_shelf_status = status
+                final_link = url
+                break
+            elif status is not None and status.startswith("UNAVAILABLE"):
+                final_shelf_status = status
+                final_link = url
+
+        return final_availability, final_shelf_status, final_link
 
 def parser_factory(library_name="Nashville") -> BaseLibraryParser:
     """Factory Method for returning correct library parser"""
@@ -583,6 +615,7 @@ def parser_factory(library_name="Nashville") -> BaseLibraryParser:
         "phoenix": PhoenixPublicLibraryParser,
         "wplc": DelafieldPublicLibraryParser,
         "toledo": ToledoPublicLibraryParser,
+        "newrichmondwisc": MoreWisconsinLibraryParser,
     }
 
     return library_parsers[library_name]()
