@@ -1388,3 +1388,4 @@ class LibraryEnum(str, Enum):
     betterhealthlibrary = "betterhealthlibrary"
     swindonuk = "swindonuk"
     newrichmondwisc = "newrichmondwisc"
+    harfordcountrypublicmd = "harfordcountrypublicmd"

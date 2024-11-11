@@ -602,6 +602,104 @@ class MoreWisconsinLibraryParser(BaseLibraryParser):
 
         return final_availability, final_shelf_status, final_link
 
+class HarfordCountryMdLibraryParser(BaseLibraryParser):
+    def __init__(self):
+        super().__init__()
+
+    def make_isbn_search_url(self, isbn: str) -> str:
+        return f"https://library.hcplonline.org/polaris/search/searchresults.aspx?ctx=1.1033.0.0.1&type=Advanced&term={isbn}&relation=ALL&by=ISBN&bool4=AND&limit=&sort=RELEVANCE&page=0&searchid=5"
+
+    def make_free_text_search_url(self, title: str, author: str) -> str:  # TODO: Cleanup URL encoding for the title (since we include quotes now)
+        return f'https://library.hcplonline.org/polaris/search/searchresults.aspx?ctx=1.1033.0.0.1&type=Advanced&term={urllib.parse.quote(title)}&relation=ALL&by=TI&term2={urllib.parse.quote(author)}&relation2=ALL&by2=AU&bool1=AND&bool4=NOT&term5=Overdrive&relation5=ALL&by5=AU&limit=&sort=RELEVANCE&page=0&searchid=4'
+
+    def get_library_links(self, isbn: str, title: str, author: str) -> List[str]:
+        return [
+            self.make_isbn_search_url(isbn=isbn),
+            self.make_free_text_search_url(title=title, author=author)
+        ]
+
+    def find_book_in_inventory(self, library_url):
+        session = requests.Session()
+        headers = {'user-agent': random.choice(USER_AGENTS)}
+        session.get(library_url, headers=headers)
+        new_headers = headers.copy()
+        new_headers.update(
+            {
+                "Referer": library_url,
+                "Sec-Fetch-Dest": "empty",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Site": "same-site",
+                "sec-ch-ua": '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"macOS"',
+                "Connection": "keep-alive",
+                "X-Requested-With": "XMLHttpRequest",
+            }
+        )
+        response = session.get(
+            "https://library.hcplonline.org/polaris/search/components/ajaxResults.aspx?page=1",
+            headers=new_headers,
+            params={"page": 1},
+        )
+
+        inventory_check = (None, None)
+
+        if response.ok:
+            inventory_soup = BeautifulSoup(response.text, "html.parser")
+
+            # Filtering out overdrive and Large Print Editions, since they come up at the top of searches
+            non_overdrive_books = [item for item in inventory_soup.find_all("span", "nsm-short-item nsm-e105") if
+                                   not "OverDrive" in item.text and not "Large print" in item.text]
+
+            if non_overdrive_books:
+                local_availability = non_overdrive_books[0].findParents("table")[0].find_all_next("span",
+                                                                                                  "nsm-brief-inline-subzone")
+            else:
+                local_availability = None
+
+            if local_availability:
+                local_avail_copies, local_total_copies = self.get_available_copies(local_availability[0])
+                avail_copies, total_copies = self.get_available_copies(local_availability[1])
+
+                if local_total_copies != 0:
+                    inventory_check = (
+                    f"AVAILABLE - Locally: {local_avail_copies} out of {local_total_copies} at THIS library, {avail_copies} out of {total_copies} at ALL libraries",
+                    library_url)
+                elif avail_copies != 0:
+                    inventory_check = (
+                    f"AVAILABLE - Other Libraries: {local_avail_copies} out of {local_total_copies} at THIS library, {avail_copies} out of {total_copies} at ALL libraries",
+                    library_url)
+                else:
+                    inventory_check = (
+                    f"UNAVAILABLE: {local_avail_copies} out of {local_total_copies} at THIS library, {avail_copies} out of {total_copies} at ALL libraries",
+                    library_url)
+
+        return inventory_check
+
+    def get_available_copies(self, local_availability_item):
+        all_copies = local_availability_item.text.replace("(", "").replace("of", "").replace(")", "").split()
+        avail_copies = int(all_copies[0])
+        total_copies = int(all_copies[1])
+        return avail_copies, total_copies
+
+    def get_library_availability(self, library_links: List[str]) -> Tuple[bool, str, str]:
+        final_shelf_status: str = BOOK_NOT_FOUND_MESSAGE
+        final_link: str = library_links[1]
+        final_availability: bool = False
+        for link in library_links:
+            status, url = self.find_book_in_inventory(link)
+
+            if status is not None and status.startswith("AVAILABLE"):
+                final_availability = True
+                final_shelf_status = status
+                final_link = url
+                break
+            elif status is not None and status.startswith("UNAVAILABLE"):
+                final_shelf_status = status
+                final_link = url
+
+        return final_availability, final_shelf_status, final_link
+
 def parser_factory(library_name="Nashville") -> BaseLibraryParser:
     """Factory Method for returning correct library parser"""
     # See
@@ -616,6 +714,7 @@ def parser_factory(library_name="Nashville") -> BaseLibraryParser:
         "wplc": DelafieldPublicLibraryParser,
         "toledo": ToledoPublicLibraryParser,
         "newrichmondwisc": MoreWisconsinLibraryParser,
+        "harfordcountrypublicmd": HarfordCountryMdLibraryParser
     }
 
     return library_parsers[library_name]()

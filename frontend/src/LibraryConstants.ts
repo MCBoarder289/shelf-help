@@ -9,6 +9,7 @@ export const bookSupportedLibraries = {
     wplc: true,
     toledo: true,
     newrichmondwisc: true,
+    harfordcountrypublicmd: true,
 
 } as const;
 
@@ -1396,6 +1397,7 @@ export const librarySelectValues = [
     { value: "betterhealthlibrary", label: "Better Health Library" },
     { value: "swindonuk", label: "Swindon Borough Council" },
     { value: "newrichmondwisc", label: "Friday Memorial Library - New Richmond" },
+    { value: "harfordcountrypublicmd", label: "Harford County Public Library - Maryland"}
 ] as const;
 
 export const libraryToLibbyId: { [key: string]: string }  = {
@@ -2782,4 +2784,5 @@ export const libraryToLibbyId: { [key: string]: string }  = {
         "betterhealthlibrary": "betterhealthlibrary",
         "swindonuk": "swindonuk",
         "newrichmondwisc": "wplc",
+        "harfordcountrypublicmd": "maryland",
     }
