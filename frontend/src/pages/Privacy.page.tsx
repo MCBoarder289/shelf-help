@@ -15,7 +15,7 @@ export function Privacy() {
                 <Container size='md'>
                     <div id="privacy-summary"></div>
                     <h1>Privacy Summary</h1>
-                    <h2>What data to we track?</h2>
+                    <h2>What data do we track?</h2>
                     <p>Not much really, and nothing that isn't public. The only reason we have any cookies at all are to implement the Sleekplan widget, which allows those who opt-in to give us feedback. Even with that tool, you can remain anonymous.</p>
                     <p>We do analyze performance of the application, which includes what shelves have been pulled, how many books were on the shelf, times that it was searched, and related information. We use that data to track performance and how fast the app is working.
                         We also track what libraries are searched, what books were presented to you, what the availability status was, all with the intent later to maybe implement some data-driven algorithms to recommend books that are not on your shelf in the future.
