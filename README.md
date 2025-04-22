@@ -7,7 +7,7 @@ Do you have a really large `to-read` shelf on Goodreads, and need some help deci
 
 Do you also love the library, whether it be physical books or using [Libby](https://libbyapp.com/)?
 
-If you answered yes to either of those questions, then [Shelf Help](https://shelfhelp.onrender.com) is a great app for you!
+If you answered yes to either of those questions, then [Shelf Help](https://shelfhelpapp.com/) is a great app for you!
 
 
 ## Background
