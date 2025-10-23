@@ -1,7 +1,7 @@
 
 from pydantic import BaseModel, ConfigDict
 from typing import List, Dict, Optional
-from libraryEnum import LibraryEnum
+from shelfhelp_api.libraryEnum import LibraryEnum
 
 MAX_PAGES = 10  # If List of Pages is so big, then randomly reduce it down to this number
 
@@ -32,6 +32,7 @@ class Book(BaseModel):
     searchable_title: str
     image_link: str
     goodreads_id: str
+    ai_recommended: bool = False
 
 
 class BookList(BaseModel):
@@ -45,6 +46,7 @@ class GetBooksRequest(BaseModel):
     num_books: int
     gr_url: str
     book_keys: Optional[List[str]] = None
+    get_ai_recs: bool = False
 
     model_config = ConfigDict(extra='forbid')
 
@@ -61,4 +63,10 @@ class LibraryStatusResponse(BaseModel):
     is_available: bool
     msg: str
     link: str
+
+class BookRecommendation(BaseModel):
+    link: str  # Direct Goodreads link
+
+class BookRecommendations(BaseModel):
+    recommendations: List[BookRecommendation]
 

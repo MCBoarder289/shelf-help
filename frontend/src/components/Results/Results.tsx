@@ -3,7 +3,7 @@ import { Card, Container, Group, Image, Text, Button, SimpleGrid, SegmentedContr
 import classes from "./Results.module.css"
 import { useState } from "react";
 import React from "react";
-import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
+import { IconCircleCheck, IconCircleX, IconSparkles } from "@tabler/icons-react";
 import { bookSupportedLibraries, libraryToLibbyId } from "../../LibraryConstants";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -147,6 +147,32 @@ export function Results({ input, library }: ResultsProps) {
                     height={160}
                     fit="contain"
                   />
+                  {d.ai_recommended && ( // Assuming you have a way to determine if it's an AI suggestion
+                    <Group 
+                      gap="xs"
+                      style={{ 
+                        position: 'absolute', 
+                        top: 10, 
+                        right: 10, 
+                        alignItems: 'center' 
+                      }}
+                    >
+                      <IconSparkles 
+                        style={{ 
+                          color: '#6a00ffff',
+                          fontSize: '1.5rem' 
+                        }} 
+                      />
+                      <Text 
+                        style={{ 
+                          color: '#6a00ffff', // Match the icon color
+                          fontSize: '0.9rem' // Adjust font size as needed
+                        }}
+                      >
+                        AI
+                      </Text>
+                    </Group>
+                  )}
                 </Card.Section>
                 <Group key={index + "infoText"} justify="space-between" mt="md" mb="xs">
                   <Text key={index + "text1"} fw={600}>{d.title}</Text>

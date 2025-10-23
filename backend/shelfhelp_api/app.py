@@ -11,10 +11,11 @@ from flask import Flask, request
 from flask_caching import Cache
 from pydantic import ValidationError
 
-from models import GetBooksRequest, Book, BookList, LibraryStatusRequest, LibraryStatusResponse, BookDict
-from parsers.gr import retrieve_goodreads_shelf_data
-from parsers.libby import search_libby
-from parsers.library import parser_factory
+from shelfhelp_api.models import GetBooksRequest, Book, BookList, LibraryStatusRequest, LibraryStatusResponse, BookDict
+from shelfhelp_api.parsers.gr import retrieve_goodreads_shelf_data, get_book_dict_from_url_recs
+from shelfhelp_api.parsers.openai_recs import get_recommendations_mock
+from shelfhelp_api.parsers.libby import search_libby
+from shelfhelp_api.parsers.library import parser_factory
 
 cache = Cache(config={
     'CACHE_TYPE': 'filesystem',
@@ -26,6 +27,7 @@ app = Flask(__name__)
 cache.init_app(app)
 
 ANALYTICS_ENABLED = os.environ.get('ENABLE_ANALYTICS', 'False').lower() == 'true'
+AI_RECS_ENABLED = os.environ.get('ENABLE_AI_RECS', 'False').lower() == 'true'
 
 if ANALYTICS_ENABLED:
     sns_client = boto3.client(
@@ -65,6 +67,15 @@ def get_book_choices():
                 book_list: List[Book] = [shelf_data.books[book] for book in get_books_request.book_keys]
             else:
                 book_list: List[Book] = random.sample(list(shelf_data.books.values()), sample_number)
+
+            if get_books_request.get_ai_recs and AI_RECS_ENABLED:
+                # Limiting number of books in case the search includes many books
+                reference_books = [f"{book.searchable_title} by {book.author}" for book in book_list[:4]]
+                ai_recs = get_recommendations_mock(reference_books=", ".join(reference_books))
+                ai_recs_dict = get_book_dict_from_url_recs(book_recs=ai_recs)
+                ai_recs_to_add = [book for key, book in ai_recs_dict.books.items() if key not in shelf_data.books]
+
+                book_list.extend(ai_recs_to_add)
 
             if book_list:  # Preventing sending an event for an empty book list
                 publish_to_sns(

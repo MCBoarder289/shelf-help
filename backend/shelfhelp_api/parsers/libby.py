@@ -4,7 +4,7 @@ from typing import Tuple
 import requests
 import orjson
 
-from libraryEnum import LibraryEnum
+from shelfhelp_api.libraryEnum import LibraryEnum
 
 # Starting only with eBooks, not audiobooks or other formats (magazines)
 

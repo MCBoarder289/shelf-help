@@ -1,10 +1,11 @@
-import { Button, Center, Container, SegmentedControl, Select, MultiSelect, Slider, TextInput, Stack, rem, LoadingOverlay, Box } from "@mantine/core";
+import { Button, Center, Container, SegmentedControl, Select, MultiSelect, Slider, TextInput, Stack, rem, LoadingOverlay, Box, Switch, Loader, Group } from "@mantine/core";
 import classes from "./QueryForm.module.css"
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { bookRequest } from "../../pages/Home.page";
-import { IconGripHorizontal, IconArrowsShuffle, IconSearch } from '@tabler/icons-react';
+import { IconGripHorizontal, IconArrowsShuffle, IconSearch, IconRocketOff, IconRocket } from '@tabler/icons-react';
 import { librarySelectValues } from "../../LibraryConstants";
+import { Text } from '@mantine/core';
 
 
 export function QueryForm({ 
@@ -27,8 +28,28 @@ export function QueryForm({
     const [numBooks, setNumBooks] = useState(4)
     const [searchMode, setSearchMode] = useState('shuffle')
     const [bookListSearch, setBookListSearch] = useState<string[] | null>(null)
+    const [getAiRecs, setGetAiRecs] = useState(false)
 
+    const AI_ENABLED = import.meta.env.VITE_AI_ENABLED === 'true';
 
+    const aiMessages = [
+        "Asking the AI for recommendations...",
+        "Waiting for the AI to get you some new ideas...",
+        "Analyzing your reading preferences...",
+        "Searching the digital library universe...",
+    ];
+
+    const [currentMessage, setCurrentMessage] = useState(aiMessages[0]);
+
+    useEffect(() => {
+        let index = 0;
+        const interval = setInterval(() => {
+            index = (index + 1) % aiMessages.length; // Cycle through messages
+            setCurrentMessage(aiMessages[index]);
+        }, 6000); // Change message every 6 seconds
+
+    return () => clearInterval(interval); // Cleanup on unmount
+    }, []);
 
     const marks = [
         { value: 1, label: '1' },
@@ -100,8 +121,8 @@ export function QueryForm({
             setSearchParams(params);
             // Call the onFormSubmit function with the updated request
             const request = searchMode == 'shuffle' ? 
-                { num_books: numBooks, gr_url: link, book_keys: null } 
-                : { num_books: 0, gr_url: link, book_keys: bookListSearch ? bookListSearch : null }
+                { num_books: numBooks, gr_url: link, book_keys: null, get_ai_recs: getAiRecs } 
+                : { num_books: 0, gr_url: link, book_keys: bookListSearch ? bookListSearch : null, get_ai_recs: getAiRecs }
             onFormSubmit(request);
         }
       };
@@ -119,7 +140,9 @@ export function QueryForm({
 
             // Update the search parameters in the URL
             setSearchParams(params);
-            onFormSubmit({num_books: 0, gr_url: link, book_keys: bookList})
+            // no longer submitting simply when selecting on the dropdown
+            // the ux implication is that we have to hit "Get Data" onces bookList is selected
+            // onFormSubmit({num_books: 0, gr_url: link, book_keys: bookList, get_ai_recs: getAiRecs})
         }
       }
 
@@ -175,6 +198,31 @@ export function QueryForm({
             ]}
             onChange={setSearchModeAndClearList}
             ></SegmentedControl>
+            <SegmentedControl
+                value={getAiRecs ? 'true' : 'false'}
+                data={[
+                    { 
+                        value: 'false', 
+                        label: (
+                            <Center style={{ gap: 10 }}>
+                                <IconRocketOff></IconRocketOff>
+                                <span>No AI</span>
+                            </Center>
+                        ) 
+                    },
+                    { 
+                        value: 'true',
+                        disabled: !AI_ENABLED,
+                        label: (
+                            <Center style={{ gap: 10 }}>
+                                <IconRocket></IconRocket>
+                                <span>AI Suggestions</span>
+                            </Center>
+                        ) 
+                    },
+                ]}
+                onChange={(val) => setGetAiRecs(val === 'true')}
+            ></SegmentedControl>
             {
                 searchMode === 'shuffle' ? (
                     <>
@@ -210,6 +258,17 @@ export function QueryForm({
                         </Box>
                     </>
                 )
+            }
+            {
+                getAiRecs && loading ? (
+                    <>
+                    <Group justify="center">
+                         <Text className={classes.pulse}>
+                            {currentMessage}
+                            </Text>
+                    </Group>
+                    </>
+                ) : null
             }
             </Stack>
             <br></br>

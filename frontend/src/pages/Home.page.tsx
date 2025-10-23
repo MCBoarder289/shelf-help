@@ -15,10 +15,10 @@ export type Book = {
   searchable_title: string,
   image_link: string,
   goodreads_id: string,
-
+  ai_recommended: boolean,
 };
 
-export type bookRequest = { num_books: number, gr_url: string, book_keys: string[] | null };
+export type bookRequest = { num_books: number, gr_url: string, book_keys: string[] | null , get_ai_recs: boolean };
 
 
 export function HomePage() {

@@ -5,7 +5,7 @@ import random
 import requests
 from bs4 import BeautifulSoup
 
-from models import USER_AGENTS
+from shelfhelp_api.models import USER_AGENTS
 
 BOOK_NOT_FOUND_MESSAGE = "Book Not Found: Check link to refine search (other locations, formats, etc.)"
 
