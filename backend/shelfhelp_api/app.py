@@ -11,9 +11,10 @@ from flask import Flask, request
 from flask_caching import Cache
 from pydantic import ValidationError
 
+from parsers.openai_recs import get_recommendations_mock
 from shelfhelp_api.models import GetBooksRequest, Book, BookList, LibraryStatusRequest, LibraryStatusResponse, BookDict
 from shelfhelp_api.parsers.gr import retrieve_goodreads_shelf_data, get_book_dict_from_url_recs
-from shelfhelp_api.parsers.openai_recs import get_recommendations_mock
+from shelfhelp_api.parsers.openai_recs import get_recommendations
 from shelfhelp_api.parsers.libby import search_libby
 from shelfhelp_api.parsers.library import parser_factory
 

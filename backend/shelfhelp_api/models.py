@@ -33,6 +33,8 @@ class Book(BaseModel):
     image_link: str
     goodreads_id: str
     ai_recommended: bool = False
+    description: Optional[str] = None
+    genres: Optional[List[str]] = None
 
 
 class BookList(BaseModel):

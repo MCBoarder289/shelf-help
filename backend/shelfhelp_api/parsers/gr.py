@@ -4,6 +4,7 @@ from typing import List, Optional
 import feedparser
 import requests
 import orjson
+from bs4 import BeautifulSoup
 
 from shelfhelp_api.parsers.library import get_initial_page_soup
 from shelfhelp_api.models import Book, HEADERS, BookDict, BookRecommendations
@@ -37,6 +38,9 @@ def get_goodreads_info_from_url(url: str) -> Book | None:
     info_script_result = soup.find("script", attrs={"type": "application/ld+json"})
     info_script_obj = orjson.loads(info_script_result.text) if info_script_result else None
 
+    description_div = soup.find("div", class_="TruncatedContent__text TruncatedContent__text--large")
+    description_text = description_div.get_text(strip=True) if description_div else ""
+
     book = None
     if title_result and author_result and info_script_obj:
         try:
@@ -51,6 +55,7 @@ def get_goodreads_info_from_url(url: str) -> Book | None:
                 image_link=info_script_obj["image"],
                 goodreads_id=re.search(r"(\d+)", url).group(1),
                 ai_recommended=True,
+                description=description_text,
             )
         except Exception as e:
             logging.error(e)
@@ -118,6 +123,17 @@ def convert_rss_item_to_book(rss_item) -> Book:
     searchable_title = title.partition("(")[0].strip() if "(" in title else title
     author = ' '.join(rss_item["author_name"].split())  # TODO: See if this is ok vs. lastname, first
     isbn = get_isbn(rss_item["isbn"], title, author)
+    # soup = get_initial_page_soup(f"https://www.goodreads.com/book/show/{rss_item['book_id']}")
+    # genres_section = soup.find("div", attrs={"data-testid": "genresList"})
+    # genres = []
+
+    # if genres_section:
+    #     for genre_span in genres_section.find_all("span", class_="Button__labelItem"):
+    #         genre_text = genre_span.get_text(strip=True)
+    #         if genre_text and genre_text.lower() not in  ["...more", "...show all"]:
+    #             genres.append(genre_text)
+    # TODO: get summary from rss_item['book_description']
+    #   scraping for genres is super slow...
     return Book(
         title=title,
         author=author,
@@ -128,6 +144,9 @@ def convert_rss_item_to_book(rss_item) -> Book:
         searchable_title=searchable_title,
         image_link=rss_item["book_large_image_url"],
         goodreads_id=rss_item["book_id"],
+        ai_recommended=False,
+        description=normalize_description(rss_item["book_description"]),
+        # genres=genres,
     )
 
 
@@ -150,6 +169,10 @@ def get_isbn(isbn, title, author, skip_isbn_check=True):
 
         return new_isbn
 
+def normalize_description(html: str) -> str:
+    soup = BeautifulSoup(html, "html.parser")
+    return soup.get_text(" ", strip=True)
+
 
 if __name__ == "__main__":
     # TODO: Refactor these into actual tests
@@ -162,7 +185,7 @@ if __name__ == "__main__":
 
     # page_list = retrieve_goodreads_page_list(many_page)
 
-    retrieved_book_data = retrieve_goodreads_shelf_data(many_page)
+    retrieved_book_data = retrieve_goodreads_shelf_data(multi_page)
     # test_books = get_book_dict_from_url_recs(get_recommendations_mock("test"))
     # print(test_books)
     # from operator import itemgetter
