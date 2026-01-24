@@ -1,11 +1,10 @@
-import time
 from typing import List, Optional
 
 import feedparser
 import requests
 import orjson
+import re
 
-from parsers.library import get_initial_page_soup
 from models import Book, HEADERS, BookDict
 import urllib.parse
 import logging
@@ -22,30 +21,30 @@ def retrieve_goodreads_shelf_data(shelf_url: str) -> BookDict:
     return retrieve_books_from_rss_feeds(rss_link)
 
 
-def get_rss_link(shelf_url: str, retries: int = 5, backoff_factor: int = 2) -> Optional[str]:
-    attempt = 0
-    while attempt < retries:
-        try:
-            soup = get_initial_page_soup(shelf_url)
-            error = soup.find("div", {"class": "errorBox"})
-            if error:
-                if "private" in error.text.strip().lower():
-                    raise RuntimeError("The shelf you are trying to reference is private. Update your Goodreads profile to be public in order to use Shelf Help.")
-                else:
-                    raise RuntimeError(f"We are getting an unexpected error from Goodreads: {error.text.strip()}")
-            element = soup.find("link", attrs={"rel": "alternate"})
-            if element and element.get("href"):
-                return element["href"]
-            else:
-                raise ValueError("Failed to find a valid RSS link")
-        except (requests.RequestException, ValueError) as e:
-            # Exponential Backoff
-            attempt += 1
-            wait_time = backoff_factor ** attempt
-            logging.info(f"Attempt {attempt} failed: {e}. Retrying in {wait_time} seconds...")
-            time.sleep(wait_time)
-    logging.error(f"Failed to retrieve RSS link after {retries} attempts.")
-    return None
+def get_rss_link(shelf_url: str) -> str:
+    parsed = urllib.parse.urlparse(shelf_url)
+
+    # Extract user ID from path
+    match = re.search(r"/review/list/(\d+)", parsed.path)
+    if not match:
+        raise ValueError("Could not extract Goodreads user ID from URL")
+
+    user_id = match.group(1)
+
+    query_params = urllib.parse.parse_qs(parsed.query, keep_blank_values=True)
+
+    flattened_params = {
+        key: values[0]
+        for key, values in query_params.items()
+    }
+
+    query_string = urllib.parse.urlencode(flattened_params)
+
+    return (
+            f"https://www.goodreads.com/review/list_rss/"
+            f"{user_id}"
+            + (f"?{query_string}" if query_string else "")
+    )
 
 
 def retrieve_books_from_rss_feeds(rss_url: str, max_items: int = TOTAL_BOOKS_MAX):
@@ -122,5 +121,5 @@ if __name__ == "__main__":
     #
     # item_getter_results = timeit.repeat(stmt=code, number=1000, setup="from operator import itemgetter", globals=globals())
     # list_comp_results = timeit.repeat(stmt="""results = [book_dict[book] for book in book_keys]""", number=1000, globals=globals())
-    print(retrieved_book_data[0].isbn)
-    print(len(retrieved_book_data))
+    # print(retrieved_book_data[0].isbn)
+    print(len(retrieved_book_data.books))
