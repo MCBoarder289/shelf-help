@@ -1,9 +1,13 @@
 import logging
 import os
 import random
+import ssl
 
 import boto3
 import orjson
+import truststore
+
+truststore.inject_into_ssl()
 from datetime import datetime
 from typing import List
 

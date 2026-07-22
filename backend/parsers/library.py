@@ -45,7 +45,7 @@ def get_page_soup_with_anubis(url: str, headers: dict) -> BeautifulSoup:
     """
     logging.info(f"Getting Webpage Data To Parse (Anubis-aware). URL: {url}")
     session = requests.Session()
-    response = session.get(url, headers=headers, verify=False)
+    response = session.get(url, headers=headers)
 
     challenge_match = re.search(
         r'<script id="anubis_challenge" type="application/json">(.*?)</script>',
@@ -59,6 +59,10 @@ def get_page_soup_with_anubis(url: str, headers: dict) -> BeautifulSoup:
     challenge_data = json.loads(challenge_match.group(1))
     rules = challenge_data["rules"]
     challenge = challenge_data["challenge"]
+
+    algorithm = rules["algorithm"]
+    if algorithm not in ("fast", "slow"):
+        raise NotImplementedError(f"Unsupported Anubis algorithm: {algorithm!r}. Update the PoW solver.")
 
     hash_hex, nonce = _solve_anubis_pow(challenge["randomData"], rules["difficulty"])
     logging.info(f"Anubis PoW solved: nonce={nonce}")
@@ -75,10 +79,9 @@ def get_page_soup_with_anubis(url: str, headers: dict) -> BeautifulSoup:
             "elapsedTime": "100",
         },
         headers=headers,
-        verify=False,
     )
 
-    response = session.get(url, headers=headers, verify=False)
+    response = session.get(url, headers=headers)
     return BeautifulSoup(response.text, "html.parser")
 
 
