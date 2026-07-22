@@ -42,10 +42,14 @@ def get_page_soup_with_anubis(url: str, headers: dict) -> BeautifulSoup:
     Fetch a URL, solving an Anubis proof-of-work challenge if present.
     Uses a session so the challenge cookie persists for follow-up requests.
     Only used by parsers whose sites are protected by Anubis.
+
+    verify=False is required because Nashville's server sends an incomplete TLS chain
+    (missing the COMODO RSA OV intermediate CA), which Linux's system CA store cannot
+    bridge. This is a server-side misconfiguration; the risk is isolated to this parser.
     """
     logging.info(f"Getting Webpage Data To Parse (Anubis-aware). URL: {url}")
     session = requests.Session()
-    response = session.get(url, headers=headers)
+    response = session.get(url, headers=headers, verify=False)
 
     challenge_match = re.search(
         r'<script id="anubis_challenge" type="application/json">(.*?)</script>',
@@ -79,9 +83,10 @@ def get_page_soup_with_anubis(url: str, headers: dict) -> BeautifulSoup:
             "elapsedTime": "100",
         },
         headers=headers,
+        verify=False,
     )
 
-    response = session.get(url, headers=headers)
+    response = session.get(url, headers=headers, verify=False)
     return BeautifulSoup(response.text, "html.parser")
 
 
