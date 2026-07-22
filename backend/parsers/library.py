@@ -1,4 +1,7 @@
+import hashlib
+import json
 import logging
+import re
 import urllib.parse
 from typing import List, Tuple
 import random
@@ -17,8 +20,66 @@ BOOK_NOT_FOUND_MESSAGE = "Book Not Found: Check link to refine search (other loc
 
 def get_initial_page_soup(url):
     logging.info(f"Getting Webpage Data To Parse. URL: {url}")
-    page_data = requests.get(url, headers={'user-agent': random.choice(USER_AGENTS)})
+    page_data = requests.get(url, headers={'user-agent': random.choice(USER_AGENTS)}, verify=False)
     return BeautifulSoup(page_data.text, "html.parser")
+
+
+def _solve_anubis_pow(random_data: str, difficulty: int) -> tuple[str, int]:
+    """Solve Anubis SHA256 proof-of-work. Returns (hash_hex, nonce)."""
+    full_zero_bytes = difficulty // 2
+    check_nibble = difficulty % 2 != 0
+    nonce = 0
+    while True:
+        digest = hashlib.sha256((random_data + str(nonce)).encode()).digest()
+        if digest[:full_zero_bytes] == b"\x00" * full_zero_bytes:
+            if not check_nibble or digest[full_zero_bytes] >> 4 == 0:
+                return digest.hex(), nonce
+        nonce += 1
+
+
+def get_page_soup_with_anubis(url: str, headers: dict) -> BeautifulSoup:
+    """
+    Fetch a URL, solving an Anubis proof-of-work challenge if present.
+    Uses a session so the challenge cookie persists for follow-up requests.
+    Only used by parsers whose sites are protected by Anubis.
+    """
+    logging.info(f"Getting Webpage Data To Parse (Anubis-aware). URL: {url}")
+    session = requests.Session()
+    response = session.get(url, headers=headers, verify=False)
+
+    challenge_match = re.search(
+        r'<script id="anubis_challenge" type="application/json">(.*?)</script>',
+        response.text,
+        re.DOTALL,
+    )
+    if not challenge_match:
+        return BeautifulSoup(response.text, "html.parser")
+
+    logging.info("Anubis challenge detected — solving proof-of-work")
+    challenge_data = json.loads(challenge_match.group(1))
+    rules = challenge_data["rules"]
+    challenge = challenge_data["challenge"]
+
+    hash_hex, nonce = _solve_anubis_pow(challenge["randomData"], rules["difficulty"])
+    logging.info(f"Anubis PoW solved: nonce={nonce}")
+
+    parsed = urllib.parse.urlparse(url)
+    base_url = f"{parsed.scheme}://{parsed.netloc}"
+    session.get(
+        f"{base_url}/.within.website/x/cmd/anubis/api/pass-challenge",
+        params={
+            "id": challenge["id"],
+            "response": hash_hex,
+            "nonce": str(nonce),
+            "redir": url,
+            "elapsedTime": "100",
+        },
+        headers=headers,
+        verify=False,
+    )
+
+    response = session.get(url, headers=headers, verify=False)
+    return BeautifulSoup(response.text, "html.parser")
 
 
 class BaseLibraryParser:
@@ -43,14 +104,16 @@ class BaseLibraryParser:
 
 
 class NashvillePublicLibraryParser(BaseLibraryParser):
+    BASE_URL = "https://catalog.library.nashville.gov"
+
     def __init__(self):
         super().__init__()
 
     def make_isbn_search_url(self, isbn: str) -> str:
-        return f"https://catalog.library.nashville.org/Search/Results?join=AND&lookfor0%5B%5D={isbn}&type0%5B%5D=ISN"
+        return f"{self.BASE_URL}/Search/Results?join=AND&lookfor0%5B%5D={isbn}&type0%5B%5D=ISN"
 
     def make_free_text_search_url(self, title: str, author: str) -> str:
-        return f"https://catalog.library.nashville.org/Union/Search?view=list&showCovers=on&lookfor={urllib.parse.quote_plus(title)}+{urllib.parse.quote_plus(author)}&searchIndex=Keyword"
+        return f"{self.BASE_URL}/Union/Search?view=list&showCovers=on&lookfor={urllib.parse.quote_plus(title)}+{urllib.parse.quote_plus(author)}&searchIndex=Keyword"
 
     def get_library_links(self, isbn: str, title: str, author: str) -> List[str]:
         if isbn == "":
@@ -64,12 +127,12 @@ class NashvillePublicLibraryParser(BaseLibraryParser):
             ]
 
     def find_book_in_inventory(self, library_url):
-        library_isbn_search = get_initial_page_soup(library_url)
+        soup = get_page_soup_with_anubis(library_url, self.headers)
 
-        if len(library_isbn_search.find_all("a", {"aria-label": "View Book"})) > 0:
-            return library_isbn_search.find_all("a", {"aria-label": "View Book"})[0]
-        elif len(library_isbn_search.find_all("a", {"aria-label": "View Manifestations for Book"})) > 0:
-            return library_isbn_search.find_all("a", {"aria-label": "View Manifestations for Book"})[0]
+        if len(soup.find_all("a", {"aria-label": "View Book"})) > 0:
+            return soup.find_all("a", {"aria-label": "View Book"})[0]
+        elif len(soup.find_all("a", {"aria-label": "View Manifestations for Book"})) > 0:
+            return soup.find_all("a", {"aria-label": "View Manifestations for Book"})[0]
         else:
             return None
 
