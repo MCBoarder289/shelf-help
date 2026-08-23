@@ -1,0 +1,20 @@
+[project]
+name = "shelf-help-analytics"
+version = "0.1.0"
+description = "Analytics pipeline and database migrations for shelf help"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "boto3==1.35.10",
+    "orjson==3.10.3",
+    "psycopg2-binary==2.9.9",
+    "sqlalchemy==2.0.32",
+]
+
+[dependency-groups]
+dev = [
+    # Used by atlas --env sqlalchemy to introspect SQLAlchemy models for migration diffs
+    "atlas-provider-sqlalchemy==0.2.2",
+]
+
+[tool.uv]
+package = false
