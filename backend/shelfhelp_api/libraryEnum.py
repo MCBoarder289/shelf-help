@@ -1,6 +1,7 @@
-from enum import Enum
+import enum
 
-class LibraryEnum(str, Enum):
+
+class LibraryEnum(enum.StrEnum):
     # See frontend/src/components/QueryForm/LibrarySelectList.ts
     # Using Libby's id value as what gets passed around
     # This enum will ensure that only these values are used as input, but the actual enum key(name) doesn't matter.
@@ -1316,7 +1317,9 @@ class LibraryEnum(str, Enum):
     aialouisiana = "aialouisiana"
     crossroadshospice = "crossroadshospice"
     harrisonco = "harrisonco"
-    stsfgroup = "1stsfgroup" # started with a number which the enum didn't like, but keys should matter here, only values
+    stsfgroup = (
+        "1stsfgroup"  # started with a number which the enum didn't like, but keys should matter here, only values
+    )
     dgcbc = "dgcbc"
     caltech = "caltech"
     siskiyous = "siskiyous"

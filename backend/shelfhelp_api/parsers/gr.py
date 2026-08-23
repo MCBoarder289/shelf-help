@@ -1,15 +1,14 @@
-from typing import List, Optional
+import logging
+import re
+import urllib.parse
 
 import feedparser
-import requests
 import orjson
-import re
+import requests
 
-from models import Book, HEADERS, BookDict
-import urllib.parse
-import logging
+from shelfhelp_api.models import HEADERS, Book, BookDict
 
-logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+logging.basicConfig(format="%(asctime)s %(message)s", level=logging.INFO)
 
 PER_PAGE_MAX = 200
 TOTAL_BOOKS_MAX = 800
@@ -33,24 +32,17 @@ def get_rss_link(shelf_url: str) -> str:
 
     query_params = urllib.parse.parse_qs(parsed.query, keep_blank_values=True)
 
-    flattened_params = {
-        key: values[0]
-        for key, values in query_params.items()
-    }
+    flattened_params = {key: values[0] for key, values in query_params.items()}
 
     query_string = urllib.parse.urlencode(flattened_params)
 
-    return (
-            f"https://www.goodreads.com/review/list_rss/"
-            f"{user_id}"
-            + (f"?{query_string}" if query_string else "")
-    )
+    return f"https://www.goodreads.com/review/list_rss/{user_id}" + (f"?{query_string}" if query_string else "")
 
 
 def retrieve_books_from_rss_feeds(rss_url: str, max_items: int = TOTAL_BOOKS_MAX):
     page = 1
     not_complete = True
-    book_data_list: List[Book] = []
+    book_data_list: list[Book] = []
     while not_complete:
         results = feedparser.parse(f"{rss_url}&page={page}&per_page={PER_PAGE_MAX}").entries
         if len(results) == 0 or len(results) + len(book_data_list) >= max_items:
@@ -64,7 +56,7 @@ def retrieve_books_from_rss_feeds(rss_url: str, max_items: int = TOTAL_BOOKS_MAX
 def convert_rss_item_to_book(rss_item) -> Book:
     title = rss_item["title"]
     searchable_title = title.partition("(")[0].strip() if "(" in title else title
-    author = ' '.join(rss_item["author_name"].split())  # TODO: See if this is ok vs. lastname, first
+    author = " ".join(rss_item["author_name"].split())  # TODO: See if this is ok vs. lastname, first
     isbn = get_isbn(rss_item["isbn"], title, author)
     return Book(
         title=title,
@@ -87,7 +79,7 @@ def get_isbn(isbn, title, author, skip_isbn_check=True):
         new_isbn = ""
         query_response = requests.get(
             f"https://openlibrary.org/search.json?q=title:{urllib.parse.quote_plus(title.lower())}+author:{urllib.parse.quote_plus(author.lower())}",
-            headers=HEADERS
+            headers=HEADERS,
         )
         if query_response.ok:
             response_json = orjson.loads(query_response.text)
@@ -101,25 +93,11 @@ def get_isbn(isbn, title, author, skip_isbn_check=True):
 
 if __name__ == "__main__":
     # TODO: Refactor these into actual tests
-    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+    logging.basicConfig(format="%(asctime)s %(message)s", level=logging.INFO)
     # multi-page examples:
     multi_page = "https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=to-read"
     many_page = "https://www.goodreads.com/review/list/73257606-cole?ref=nav_mybooks&shelf=to-read"
     # single-page example:
     single_page = "https://www.goodreads.com/review/list/158747789-michael-chapman?shelf=currently-reading"
 
-    # page_list = retrieve_goodreads_page_list(many_page)
-
     retrieved_book_data = retrieve_goodreads_shelf_data(many_page)
-    # from operator import itemgetter
-    # import random
-    # import timeit
-    #
-    # book_dict = {f"{book.title} - {book.author}": book for book in retrieved_book_data}
-    # book_keys = random.sample(sorted(book_dict.keys()), 100)
-    # code = "results = list(itemgetter(*book_keys)(book_dict))"
-    #
-    # item_getter_results = timeit.repeat(stmt=code, number=1000, setup="from operator import itemgetter", globals=globals())
-    # list_comp_results = timeit.repeat(stmt="""results = [book_dict[book] for book in book_keys]""", number=1000, globals=globals())
-    # print(retrieved_book_data[0].isbn)
-    print(len(retrieved_book_data.books))
